@@ -9,11 +9,12 @@ CUDA simulation code for
 This repository is an archival snapshot of the code that produced the published
 simulations. It holds two independent pieces:
 
-- **[`FFT_2D_P_L50/`](FFT_2D_P_L50/)** — the 2D GPU run set behind the main
-  results: a pseudo-spectral solver written directly against
+- **[`2D/`](2D/)** — the 2D GPU run set behind the main results: a
+  pseudo-spectral solver written directly against
   [CUDA.jl](https://github.com/JuliaGPU/CUDA.jl) and run as a Slurm array job on
   the [Baobab](https://doc.eresearch.unige.ch/hpc/start) cluster at the
-  University of Geneva.
+  University of Geneva. This is `Code/FFT_2D_P_L50` on the cluster, renamed here
+  for symmetry with `1D/`.
 - **[`1D/`](1D/)** — reduced 1D models of a single defect core and of a defect
   pair, as an interactive Pluto notebook, together with the data and sources for
   the figures they feed. These accompany the revised version of the paper.
@@ -48,7 +49,7 @@ plus the active terms $\zeta_\rho \Delta\mu\, \rho^3$ and
 $\zeta_p \Delta\mu\, \rho P_i P_j$.
 
 The exact expressions for $\mu$, $\mathbf{h}$ and $\sigma_{ij}$ are in
-[`FFT_2D_P_L50/kernels.jl`](FFT_2D_P_L50/kernels.jl); see the paper for their
+[`2D/kernels.jl`](2D/kernels.jl); see the paper for their
 derivation.
 
 Spatial derivatives and the Stokes solve are spectral (`rfft` along $x$, `fft`
@@ -61,7 +62,7 @@ CFL condition on $\mathbf{v}$ and by `dtmin`.
 
 ```
 .
-├── FFT_2D_P_L50/          # the simulation, exactly as run
+├── 2D/                    # the GPU simulation, as run on the cluster
 │   ├── AllInputParam.jl   # defines the sweep, writes DF.csv
 │   ├── DF.csv             # the 13 parameter sets used for the paper
 │   ├── InputParameters.jl # reads one DF.csv row, sets up grid and FFT plans
@@ -124,7 +125,7 @@ wall-clock limit.
 To regenerate `DF.csv` from the sweep definition:
 
 ```bash
-julia --project=. FFT_2D_P_L50/AllInputParam.jl
+julia --project=. 2D/AllInputParam.jl
 ```
 
 The committed `DF.csv` is the one used for the paper; regenerating overwrites it.
@@ -143,13 +144,13 @@ GB of device memory, so the grid as configured needs a 40 GB-class card.
 ```bash
 export DATA_DIR=/path/to/output/    # trailing slash
 export SIM_IDX=7                    # row of DF.csv
-julia --project=. --optimize=3 FFT_2D_P_L50/2D.jl
+julia --project=. --optimize=3 2D/2D.jl
 ```
 
 **The full array on Slurm:**
 
 ```bash
-sbatch --chdir=FFT_2D_P_L50 slurm/submit.sh
+sbatch --chdir=2D slurm/submit.sh
 ```
 
 `submit.sh` is reconstructed from the lab's `Code2Cluster.jl` job generator with
@@ -166,7 +167,7 @@ run aborts with status 1 if `rho` goes NaN.
 ```bash
 export DATA_DIR=/path/to/output/    # must also contain DF.csv
 export FIG_DIR=/path/to/figures/
-julia --project=. FFT_2D_P_L50/MakePlots.jl
+julia --project=. 2D/MakePlots.jl
 ```
 
 ---

@@ -30,16 +30,25 @@ mkdir -p "$WORK/ref" "$WORK/cur"
 git -C "$ROOT" archive "$REF" | tar -x -C "$WORK/ref"
 git -C "$ROOT" archive HEAD   | tar -x -C "$WORK/cur"
 
+# Locate the solver directory in each tree. It is not hardcoded because the
+# directory was renamed from FFT_2D_P_L50 to 2D, so older revisions differ.
+solver_dir() {
+    local found
+    found=$(find "$1" -maxdepth 2 -name 2D.jl -print -quit)
+    [ -n "$found" ] || { echo "no 2D.jl under $1" >&2; exit 1; }
+    dirname "$found"
+}
+
 # Shorten the run identically in both copies.
 for d in ref cur; do
-    f="$WORK/$d/FFT_2D_P_L50/InputParameters.jl"
+    f="$(solver_dir "$WORK/$d")/InputParameters.jl"
     sed -i.bak -E "s/^t_fin = .*/t_fin = $TFIN/; s/^t_prin = .*/t_prin = $TPRIN/" "$f"
     rm -f "$f.bak"
 done
 
 for d in ref cur; do
     echo "--- running $d ---"
-    ( cd "$WORK/$d/FFT_2D_P_L50" \
+    ( cd "$(solver_dir "$WORK/$d")" \
       && DATA_DIR="$WORK/out_$d/" SIM_IDX="$IDX" \
          julia --project="$WORK/$d" --optimize=3 2D.jl )
 done

@@ -3,7 +3,7 @@
 #  Slurm array job for the L50 run set: one task per row of DF.csv.
 #
 #  Submit from the simulation directory so that $SLURM_SUBMIT_DIR points at it:
-#      sbatch --chdir=FFT_2D_P_L50 ../slurm/submit.sh
+#      sbatch --chdir=2D ../slurm/submit.sh
 #
 #  Each task gets one GPU and runs 2D.jl with SLURM_ARRAY_TASK_ID as the
 #  simulation index; set DATA_DIR in your environment (or edit

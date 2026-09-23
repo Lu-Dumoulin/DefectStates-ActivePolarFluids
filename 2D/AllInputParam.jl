@@ -2,7 +2,7 @@
 #  Builds the parameter table DF.csv: one row per simulation.
 #
 #  Run once, before submitting the jobs:
-#      julia --project=. FFT_2D_P_L50/AllInputParam.jl
+#      julia --project=. 2D/AllInputParam.jl
 #
 #  Each `t...` vector below lists the values to sweep for one parameter;
 #  `generate_dataframe` (Utilities/JulUtils.jl) takes their full factorial
