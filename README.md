@@ -174,6 +174,12 @@ exceptions, each marked in place:
 3. **`MakePlots.jl`** — the two hard-coded figure paths likewise read from the
    environment.
 
+Beyond those three changes the files have been commented and stripped of
+commented-out dead code. Nothing executable was touched: each file was checked
+by parsing the original and the annotated version and comparing the resulting
+syntax trees, so the numerics are bit-for-bit those of the paper. `AllInputParam.jl`
+still regenerates the committed `DF.csv` byte-for-byte.
+
 `Project.toml` and `slurm/submit.sh` are new; the cluster runs installed packages
 on demand into the default environment via `Utilities/using.jl`, and the job
 script was generated on the fly. No `Manifest.toml` is shipped, because one
