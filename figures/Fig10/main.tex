@@ -1,0 +1,182 @@
+\documentclass[crop,tikz,10pt]{standalone}
+\usepackage{printlen}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{csvsimple}
+\usepackage{tikzscale}
+\usepackage{amsmath, esint}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+% \usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
+\setcounter{secnumdepth}{3}
+%\usepackage[francais]{babel}
+\usepackage[english]{babel}
+\usepackage{indentfirst}
+\selectlanguage{english}
+%\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage{float}
+\usepackage[colorlinks,bookmarks=false,linkcolor=blue,urlcolor=blue, citecolor=black]{hyperref}
+\usepackage{placeins}
+\usepackage{ulem}
+\usepackage[squaren, cdot]{SIunits}
+\usepackage{sistyle}
+\usepackage{epstopdf}
+%\usepackage{color}
+\usepackage{pgf, tikz}
+\usetikzlibrary{arrows,shapes,positioning}
+\usetikzlibrary{datavisualization}
+\usetikzlibrary{datavisualization.formats.functions}
+\usetikzlibrary[
+pgfplots.groupplots,
+decorations,
+decorations.pathmorphing,
+decorations.pathreplacing,
+decorations.text,
+decorations.markings,
+backgrounds,
+chains,
+calc,
+automata,
+arrows.meta,
+intersections
+]
+% \usetikzlibrary{external}
+% \tikzexternalize[prefix=Tikzpdf/]
+\usepackage{scalefnt}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{chemfig}
+\usepackage{chemarr}
+\usepackage{listings}
+\usepackage{inconsolata}
+\usepackage{color} 
+\usepackage{pgfplots}
+\usepgfplotslibrary{colormaps}
+\usepackage{pgfplotstable}
+\usepackage{svg}
+\pgfplotsset{compat=newest}
+\pgfplotstableset{col sep=comma}
+\usepackage{cancel}
+\usepackage{dirtytalk}
+\usepackage{float}
+\usepackage[export]{adjustbox}
+%\usepackage{textcomp}
+\paperheight=297mm
+\paperwidth=210mm
+% \usepackage[capbesideposition={right,top},facing=yes,capbesidesep=quad]{floatrow}
+\usepackage[rightcaption]{sidecap}
+\sidecaptionvpos{figure}{t}
+% \usepackage[top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{pdfpages}
+%\pagestyle{empty}
+
+% Abreviation
+\def \be {\begin{equation}}
+\def \ee {\end{equation}}
+\def \bc {\begin{center}}
+\def \ec {\end{center}}
+\def \bf {\begin{figure}[h!]}
+\def \ef {\end{figure}}
+\def \dd  {{\rm d}}
+\def \dD  {{\rm D}}
+\def \v {\mathbf}
+\def \pourmille {$\,^0\!/_{00}$}
+\def\Z{\mbox{Z\hspace{-.4em}Z}}
+\def \epsi {\varepsilon}
+\def \u {\underline}
+\def \dive {{\rm div}}
+\def \vect {{\rm vect}}
+\def \grad {\v{grad}}
+\def \vnab {\boldsymbol{\nabla}}
+\def \vg  {\boldsymbol}
+\def \e {{\hspace{.2em}\rm e}}
+\def \l {\left}
+\def \r {\right}
+\def \bee{\begin{equation*}}
+\def \eee{\end{equation*}}
+\def \ba {\begin{aligned}}
+\def \ea {\end{aligned}}
+% \def \bl{\begin{lstlisting}}
+% \def \el{\end{lstlisting}}
+\def \inf{\infty}
+\def \i{\ensuremath{^{-1}}}
+\def \ii{\ensuremath{^{-2}}}
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\erf}{erf}
+\DeclareMathOperator{\Tr}{Tr}
+\def\cpp{C\raisebox{0.48ex}{\scriptsize\textbf{++}}\,}
+\def \kT {\text{k}_\text{B}\text{T}}
+\def \kb {k_{\text B}}
+\def \ab {{\alpha\beta}}
+\def \abg {{\alpha\beta\gamma}}
+\def \Tr {\text{Tr}}
+% Nouvelles commandes
+\newcommand{\ex}[1] {\cdot10^{#1}}
+\newcommand {\vn}[1] {\mathbf{\widehat{#1}}}
+\newcommand{\mail}[1]{{\href{mailto:#1}{#1}}}
+\newcommand{\ftplink}[1]{{\href{ftp://#1}{#1}}}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\fder}[2]{\ensuremath{\dfrac{\delta #1}{\delta #2}}}
+\newcommand{\der}[2]{\ensuremath{\dfrac{\dd #1}{\dd #2}}}
+\newcommand{\Der}[2]{\ensuremath{\dfrac{\dD #1}{\dD #2}}}
+\newcommand{\dder}[2]{\ensuremath{\dfrac{\dd^2 #1}{\dd #2^2}}}
+\newcommand{\D}[2]{\ensuremath{\dfrac{\partial #1}{\partial #2}}}
+\newcommand{\DD}[2]{\ensuremath{\dfrac{\partial^2 #1}{\partial #2^2}}}
+\newcommand{\ket}[1]{\ensuremath{|#1\rangle}}
+\newcommand{\bra}[1]{\ensuremath{\langle#1|}}
+\newcommand{\pmat}[4]{\ensuremath{\begin{pmatrix} #1 & #2 \\ #3 & #4\end{pmatrix}}}
+\newcommand{\vv}[2]{\ensuremath{\begin{pmatrix}#1\\#2\end{pmatrix}}}
+\newcommand{\moy}[1]{\ensuremath{\left\langle#1\right\rangle}}
+\newcommand{\mmoy}[1]{\ensuremath{\langle\hspace{-0.05cm}\langle#1\rangle\hspace{-0.08cm}\rangle}}
+\newcommand{\kr}[3]{\ensuremath{\varepsilon_{#1 #2 #3}}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\Red}[1]{\textcolor{red}{#1}}
+\newcommand{\orange}[1]{\textcolor{orange}{#1}}
+\newcommand{\citep}[1]{(\cite{#1})}
+
+\renewcommand{\thesection}{\arabic{section}}
+
+% \definecolor{Gray}{rgb}{0.5, 0.5, 0.5}
+% \definecolor{Blue}{rgb}{0.0, 0.0, 1.0}
+% \definecolor{Olive}{rgb}{0.5, 0.5, 0.0}
+% \definecolor{Maroon}{rgb}{0.5, 0.0, 0.0}
+\definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
+\definecolor{ao}{rgb}{0.0, 0.5, 0.0}
+\definecolor{bleudefrance}{rgb}{0.19, 0.55, 0.91}
+% \definecolor{actincolor}{HTML}{ffc311}
+% \definecolor{nuccolor}{HTML}{0600ff}
+% \definecolor{myosincolor}{HTML}{26a22b}
+% \definecolor{cyan}{rgb}{0.0, 1.0, 1.0}
+
+\usepackage{ifthen}
+\def \LW {246.0pt}
+
+\begin{document}
+\usepgfplotslibrary{fillbetween}
+
+\begin{tikzpicture}[scale={1}, domain=0:50]%50]
+
+\begin{axis} [width=\LW, xlabel={Time $t$ (in $10^3$ time unit)}, ylabel={$\hat C\left(\rho(t_f-t),\rho(t_f)\right)$}, legend style={at={(axis cs:53,0.83)},anchor=south east}]
+
+    \addlegendimage{only marks, color=black}
+    \addlegendentry{Data};
+    \addlegendimage{no marks, dashed, color={black}, thick};
+    \addlegendentry{Exponential fit};
+ 
+    \addplot[only marks, mark options={draw=Blue!27!white, fill=Blue!27!white}] table[x=x,y=y1, col sep = comma] {DF_tikz_exp_3_50.csv};
+    \addplot[no marks, dashed, color={Blue!27!white}, thick] {exp(-x/27.41)};
+    \addplot[only marks, mark options={draw=Blue!72!white, fill=Blue!72!white}] table[x=x,y=y2, col sep = comma] {DF_tikz_exp_3_50.csv};
+    \addplot[no marks, dashed, color={Blue!72!white}, thick] {exp(-x/71.75)};
+    \addplot[only marks, mark options={draw=Blue!9!white, fill=Blue!9!white}] table[x=x,y=y3, col sep = comma] {DF_tikz_exp_3_50.csv};
+    \addplot[no marks, dashed, color={Blue!9!white}, thick] {exp(-x/8.82)};
+
+    % \addlegendentry{Data};    
+    % \addlegendimage{no marks, color=black, style={ultra thick}};
+\end{axis}
+\end{tikzpicture}
+
+\end{document}

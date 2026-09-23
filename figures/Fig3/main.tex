@@ -1,0 +1,71 @@
+%==============================================================================
+%  PRL/PRX single-column figure  --  standalone wrapper (pgfplots/tikz)
+%  Target width: 8.6 cm (3.375 in), the APS single-column width.
+%  Size plots with `width=\prlcol` (see \prlcol below).
+%
+%  FONT MATCHING WITH THE PAPER
+%  The paper is  \documentclass[prx,...,twocolumn]{revtex4-2}, whose APS base
+%  size is 10 pt.  This wrapper is 10pt with lmodern (Latin Modern = Computer
+%  Modern shapes), so the fonts match the paper IF:
+%    (1) the figure uses the default \normalsize (no per-axis font overrides), and
+%    (2) the built PDF is included at NATURAL SIZE -- do NOT rescale, e.g. use
+%        \includegraphics{fig.pdf}  (or width=\columnwidth, since that equals
+%        \prlcol here).  Any other width= rescales and changes the apparent pt.
+%
+%  Trimmed from the general template: dropped chem/units/listings/float/doc-only
+%  packages and the duplicate color loads. Add a package back if a figure needs it.
+%==============================================================================
+\documentclass[border=0pt,tikz,10pt,varwidth=180mm]{standalone}
+
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+
+% --- math ---
+\usepackage{amsmath}
+\usepackage{amssymb}   % pulls in amsfonts
+\usepackage{calc}        % \widthof{...} for exact tick-label width
+
+% --- colour + plotting ---
+\usepackage{xcolor}
+\usepackage{pgfplots}
+\usepgfplotslibrary{colormaps}
+\usepgfplotslibrary{groupplots}
+\usepackage{pgfplotstable}
+\usetikzlibrary{
+  arrows.meta,
+  positioning,
+  calc,
+  decorations.pathreplacing,
+  intersections,
+}
+\pgfplotsset{compat=newest}
+\pgfplotstableset{col sep=comma}
+
+% --- links (optional; harmless in standalone) ---
+\usepackage[colorlinks,bookmarks=false,linkcolor=blue,urlcolor=blue,citecolor=black]{hyperref}
+
+% --- colours ---
+\definecolor{Gray}{rgb}{0.5, 0.5, 0.5}
+\definecolor{Blue}{rgb}{0.0, 0.0, 1.0}
+\definecolor{Olive}{rgb}{0.5, 0.5, 0.0}
+\definecolor{Maroon}{rgb}{0.5, 0.0, 0.0}
+\definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
+\definecolor{ao}{rgb}{0.0, 0.5, 0.0}
+\definecolor{bleudefrance}{rgb}{0.19, 0.55, 0.91}
+\definecolor{actincolor}{HTML}{ffc311}
+\definecolor{nuccolor}{HTML}{0600ff}
+\definecolor{myosincolor}{HTML}{26a22b}
+\definecolor{RdPu1}{HTML}{feebe2}
+\definecolor{RdPu2}{HTML}{f768a1}
+\definecolor{RdPu3}{HTML}{7a0177}
+
+% \input{some_command}
+
+\setlength{\parindent}{0pt}
+\def\lx{0.5*\linewidth}
+\def\prlcol{8.6cm}   % PRL single-column width
+
+\begin{document}%
+\input{fig_profile}%
+\end{document}

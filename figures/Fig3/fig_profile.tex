@@ -1,0 +1,74 @@
+% Two-panel figure for the polar (radial) model.
+% Data written by models.pluto.jl -> figdata/  (col sep=comma).
+% \input this from the standalone wrapper.  Swap the csv names / x=r->x=x
+% and drop the second fields file for the two-defect (FFT) run.
+% \footnotesize (8 pt at the 10pt base) is set on the tikzpicture so it cascades to
+% all axis text -- matches the revtex4-2 APS caption size when the PDF is included at
+% natural size (no rescaling). `font` is a TikZ key, not a pgfplots axis key.
+%
+% Measure the width of "-1.0" once into a length (pgfplots' `text width` chokes if you
+% pass \widthof directly -- it runs the value through its math parser). \footnotesize
+% here matches the tick-label font so the width is correct.
+\ifdefined\ytickw\else\newlength{\ytickw}\fi
+\settowidth{\ytickw}{\footnotesize$-1.0$}
+% small-r analytic approximation (see derivation, "Behaviour near the core"):
+%   rho = rhobar (1 + r^2/lam_rho^2),  p = r/lam_p,  v = r/tau_v
+% constants (rhobar, 1/lam_p, 1/tau_v from the core fit; 1/lam_rho^2 from the density eq)
+% \def\rhobar{0.8148}\def\arho{0.2768}% \arho = 1/lambda_rho^2
+% \def\ap{1.2132}%                       \ap  = 1/lambda_p
+% \def\av{0.5420}%                       \av  = 1/tau_v
+\def\rhobar{0.8149}\def\arho{0.2784}% \arho = 1/lambda_rho^2
+\def\ap{1.2148}%                       \ap  = 1/lambda_p
+\def\av{0.5416}%                       \av  = 1/tau_v
+\begin{tikzpicture}[font=\footnotesize]
+  \begin{groupplot}[
+      % PRL single column = 8.6 cm wide
+      group style={group size=1 by 2, vertical sep=1.1cm, group name=mainpanels},
+      width=\prlcol, height=5cm,     % \prlcol = 8.6 cm; pgfplots `width` = total incl. labels
+      xlabel=$r$,
+      xmin=0, xmax=3,
+      % reserve exactly the width of "-1.0" (measured above) for the y tick labels in
+      % both panels, so the axis boxes -- and hence the two ylabels -- line up vertically
+      yticklabel style={text width=\ytickw, align=right},
+      legend style={draw=none, fill=none},
+      legend cell align=left,
+    ]
+    % ---- panel 1: fields ----
+    \nextgroupplot[ylabel={Fields}, ylabel style={name=ylaba}, ymin=0, legend pos=north west]
+      \addplot[blue,  thick] table[x=r, y=rho]{figdata/polar_fields_rho.csv};
+      \addlegendentry{$\rho$}
+      \addplot[red,   thick] table[x=r, y=P]{figdata/polar_fields_Pv.csv};
+      \addlegendentry{$p$}
+      \addplot[black, thick] table[x=r, y=v]{figdata/polar_fields_Pv.csv};
+      \addlegendentry{$v$}
+      % small-r approximation (dashed, no legend entry)
+      \addplot[blue,  thick, dashed, forget plot, domain=0:1.2, samples=40] {\rhobar*(1+\arho*x^2)};
+      \addplot[red,   thick, dashed, forget plot, domain=0:1.0, samples=2]  {\ap*x};
+      \addplot[black, thick, dashed, forget plot, domain=0:1.0, samples=2]  {\av*x};
+    % ---- panel 2: density balance (rates) ----
+    \nextgroupplot[ylabel={Density balance}, ylabel style={name=ylabb}, legend pos=north east]
+      % blue = advection only = (total transport) - (diffusive part)
+      \addplot[blue,  thick] table[x=r, y expr=\thisrow{transport}-\thisrow{diffusive}]{figdata/polar_balance.csv};
+      \addlegendentry{$-\nabla\!\cdot(\boldsymbol v\rho)$}
+      \addplot[red,   thick] table[x=r, y=diffusive]{figdata/polar_balance.csv};
+      \addlegendentry{$\gamma\Delta\mu$}
+      \addplot[black, thick] table[x=r, y=turnover]{figdata/polar_balance.csv};
+      \addlegendentry{$-\dfrac{\rho-\rho_0}{\tau}$}
+  \end{groupplot}
+  % panel labels, horizontally aligned with the ylabels (x from ylabel node, y from panel top)
+  \node[anchor=south, yshift=-2mm] at (ylaba |- mainpanels c1r1.north) {(a)};
+  \node[anchor=south, yshift=-2mm] at (ylabb |- mainpanels c1r2.north) {(b)};
+  % --- inset in the fields panel: maximal velocity vs turnover time ---
+  % data: figdata/polar_vsweep_summary.csv (from the tau-sweep in models.pluto.jl)
+  \begin{axis}[
+      at={(mainpanels c1r1.south east)}, anchor=south east, xshift=-3pt, yshift=10mm,
+      width=3.8cm, height=2.8cm,
+      xmin=0, ymin=0,
+      xlabel=$\tau$, ylabel={$\max_r v$},
+      xlabel style={font=\scriptsize}, ylabel style={font=\scriptsize},
+      tick label style={font=\scriptsize},
+      axis background/.style={fill=white},
+    ]
+    \addplot[black, thick] table[x=tau, y=vmax]{figdata/polar_vsweep_summary.csv};
+  \end{axis}
+\end{tikzpicture}

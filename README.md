@@ -19,6 +19,11 @@ simulations. It holds two independent pieces:
   pair, as an interactive Pluto notebook, together with the data and sources for
   the figures they feed. These accompany the revised version of the paper.
 
+alongside [`figures/`](figures/), the LaTeX sources and data for the paper
+figures, and [`Analysis/`](Analysis/), the scripts that produce them.
+[`figures/README.md`](figures/README.md) maps each figure to the code that
+draws it.
+
 A more general, better-documented and actively maintained implementation of the
 same physics — CPU/CUDA/Metal via ParallelStencil.jl, with a Pluto front end and
 support for nematic and nematopolar order — lives in
@@ -68,6 +73,8 @@ CFL condition on $\mathbf{v}$ and by `dtmin`.
 │   ├── InputParameters.jl # reads one DF.csv row, sets up grid and FFT plans
 │   ├── kernels.jl         # the CUDA kernels
 │   └── 2D.jl              # entry point: fields, time loop, snapshot writing
+├── figures/               # one directory per paper figure: tikz, data, panels
+│   └── README.md          # which code generates which figure
 ├── Analysis/              # figure and analysis scripts (see caveats below)
 │   ├── Analysis.jl        # defect detection, spectra, Voronoi, figure panels
 │   └── PhaseDiagram.jl    # the phase diagram
@@ -233,9 +240,10 @@ separated, via `\addplot table`):
 - `fig_core_analytic.tex` — the core profiles against the analytic small-r form
   ρ ≈ ρ̄(1 + r²/λ_ρ²), p ≈ r/λ_p, v ≈ r/τ_v
 
-`standalone_fig.tex` wraps one of them for compiling on its own, but it also
-`\input`s a `some_command.tex` of shared macros that lives in the paper's LaTeX
-project and is **not** included here — supply your own, or strip that line.
+`standalone_fig.tex` wraps one of them for compiling on its own. It `\input`s a
+`some_command.tex` of shared macros, which is not in this directory but is
+committed at [`figures/Fig1/some_command.tex`](../figures/Fig1/some_command.tex);
+point the `\input` at that copy, or strip the line.
 
 ---
 

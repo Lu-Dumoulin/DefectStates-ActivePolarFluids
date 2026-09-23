@@ -1,0 +1,366 @@
+\documentclass[crop,tikz]{standalone}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{csvsimple}
+\usepackage{tikzscale}
+\usepackage{amsmath, esint}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+% \usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
+\setcounter{secnumdepth}{3}
+%\usepackage[francais]{babel}
+\usepackage[english]{babel}
+\usepackage{indentfirst}
+\selectlanguage{english}
+%\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage{float}
+\usepackage[colorlinks,bookmarks=false,linkcolor=blue,urlcolor=blue, citecolor=black]{hyperref}
+\usepackage{placeins}
+\usepackage{ulem}
+\usepackage[squaren, cdot]{SIunits}
+\usepackage{sistyle}
+\usepackage{epstopdf}
+%\usepackage{color}
+\usepackage{pgf, tikz}
+\usetikzlibrary{arrows,shapes,positioning}
+\usetikzlibrary{datavisualization}
+\usetikzlibrary{datavisualization.formats.functions}
+\usetikzlibrary[
+pgfplots.groupplots,
+decorations,
+decorations.pathmorphing,
+decorations.pathreplacing,
+decorations.text,
+decorations.markings,
+backgrounds,
+chains,
+calc,
+automata,
+arrows.meta,
+intersections
+]
+% \usetikzlibrary{external}
+% \tikzexternalize[prefix=Tikzpdf/]
+\usepackage{scalefnt}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{chemfig}
+\usepackage{chemarr}
+\usepackage{listings}
+\usepackage{inconsolata}
+\usepackage{color} 
+\usepackage{pgfplots}
+\usepgfplotslibrary{colormaps}
+\usepackage{pgfplotstable}
+\usepackage{svg}
+\pgfplotsset{compat=newest}
+\pgfplotstableset{col sep=comma}
+\usepackage{cancel}
+\usepackage{dirtytalk}
+\usepackage{float}
+\usepackage[export]{adjustbox}
+%\usepackage{textcomp}
+\paperheight=297mm
+\paperwidth=210mm
+% \usepackage[capbesideposition={right,top},facing=yes,capbesidesep=quad]{floatrow}
+\usepackage[rightcaption]{sidecap}
+\sidecaptionvpos{figure}{t}
+% \usepackage[top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+\usepackage{pdfpages}
+%\pagestyle{empty}
+
+% Abreviation
+\def \be {\begin{equation}}
+\def \ee {\end{equation}}
+\def \bc {\begin{center}}
+\def \ec {\end{center}}
+\def \bf {\begin{figure}[h!]}
+\def \ef {\end{figure}}
+\def \dd  {{\rm d}}
+\def \dD  {{\rm D}}
+\def \v {\mathbf}
+\def \pourmille {$\,^0\!/_{00}$}
+\def\Z{\mbox{Z\hspace{-.4em}Z}}
+\def \epsi {\varepsilon}
+\def \u {\underline}
+\def \dive {{\rm div}}
+\def \vect {{\rm vect}}
+\def \grad {\v{grad}}
+\def \vnab {\boldsymbol{\nabla}}
+\def \vg  {\boldsymbol}
+\def \e {{\hspace{.2em}\rm e}}
+\def \l {\left}
+\def \r {\right}
+\def \bee{\begin{equation*}}
+\def \eee{\end{equation*}}
+\def \ba {\begin{aligned}}
+\def \ea {\end{aligned}}
+% \def \bl{\begin{lstlisting}}
+% \def \el{\end{lstlisting}}
+\def \inf{\infty}
+\def \i{\ensuremath{^{-1}}}
+\def \ii{\ensuremath{^{-2}}}
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\erf}{erf}
+\DeclareMathOperator{\Tr}{Tr}
+\def\cpp{C\raisebox{0.48ex}{\scriptsize\textbf{++}}\,}
+\def \kT {\text{k}_\text{B}\text{T}}
+\def \kb {k_{\text B}}
+\def \ab {{\alpha\beta}}
+\def \abg {{\alpha\beta\gamma}}
+\def \Tr {\text{Tr}}
+
+% Nouvelles commandes
+\newcommand{\ex}[1] {\cdot10^{#1}}
+\newcommand {\vn}[1] {\mathbf{\widehat{#1}}}
+\newcommand{\mail}[1]{{\href{mailto:#1}{#1}}}
+\newcommand{\ftplink}[1]{{\href{ftp://#1}{#1}}}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\fder}[2]{\ensuremath{\dfrac{\delta #1}{\delta #2}}}
+\newcommand{\der}[2]{\ensuremath{\dfrac{\dd #1}{\dd #2}}}
+\newcommand{\Der}[2]{\ensuremath{\dfrac{\dD #1}{\dD #2}}}
+\newcommand{\dder}[2]{\ensuremath{\dfrac{\dd^2 #1}{\dd #2^2}}}
+\newcommand{\D}[2]{\ensuremath{\dfrac{\partial #1}{\partial #2}}}
+\newcommand{\DD}[2]{\ensuremath{\dfrac{\partial^2 #1}{\partial #2^2}}}
+\newcommand{\ket}[1]{\ensuremath{|#1\rangle}}
+\newcommand{\bra}[1]{\ensuremath{\langle#1|}}
+\newcommand{\pmat}[4]{\ensuremath{\begin{pmatrix} #1 & #2 \\ #3 & #4\end{pmatrix}}}
+\newcommand{\vv}[2]{\ensuremath{\begin{pmatrix}#1\\#2\end{pmatrix}}}
+\newcommand{\moy}[1]{\ensuremath{\left\langle#1\right\rangle}}
+\newcommand{\mmoy}[1]{\ensuremath{\langle\hspace{-0.05cm}\langle#1\rangle\hspace{-0.08cm}\rangle}}
+\newcommand{\kr}[3]{\ensuremath{\varepsilon_{#1 #2 #3}}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\Red}[1]{\textcolor{red}{#1}}
+\newcommand{\orange}[1]{\textcolor{orange}{#1}}
+\newcommand{\citep}[1]{(\cite{#1})}
+
+\renewcommand{\thesection}{\arabic{section}}
+
+% \definecolor{Gray}{rgb}{0.5, 0.5, 0.5}
+% \definecolor{Blue}{rgb}{0.0, 0.0, 1.0}
+% \definecolor{Olive}{rgb}{0.5, 0.5, 0.0}
+% \definecolor{Maroon}{rgb}{0.5, 0.0, 0.0}
+\definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
+\definecolor{ao}{rgb}{0.0, 0.5, 0.0}
+% \definecolor{bleudefrance}{rgb}{0.19, 0.55, 0.91}
+% \definecolor{actincolor}{HTML}{ffc311}
+% \definecolor{nuccolor}{HTML}{0600ff}
+% \definecolor{myosincolor}{HTML}{26a22b}
+% \definecolor{cyan}{rgb}{0.0, 1.0, 1.0}
+
+\usepackage{ifthen}
+
+\begin{document}
+\usepgfplotslibrary{fillbetween}
+% \input{abrv.tex}
+
+
+\begin{tikzpicture}%[scale=0.055]
+% \footnotesize
+% \def\scal{3}
+% \def\spac{1}
+% \def\Lx{12}
+% \def\Ly{14}
+% \csvreader[head to column names]{DF_tikz.csv}{}{
+\csvreader[head to column names]{DF_analyse_tikz_rho_20.csv}{}{
+\pgfmathtruncatemacro{\posx}{(\x-1)*2}
+\pgfmathtruncatemacro{\posy}{(\y-1)*2}
+
+% Defect Density
+\ifnum\fpeval{\a<3}=1
+    \pgfmathtruncatemacro{\colora}{\a/3*100}
+\else 
+    \pgfmathtruncatemacro{\colora}{100}
+\fi
+\filldraw [fill=Red!\colora!white, draw=Red!\colora!white] (\posx, \posy) rectangle ++(1,1);
+
+% Correlation time
+\ifnum \fpeval{\q<50}=1
+    \pgfmathtruncatemacro{\colorq}{\q/50*100}
+\else 
+    \pgfmathtruncatemacro{\colorq}{100}
+\fi
+\filldraw [fill=Blue!\colorq!white, draw=Blue!\colorq!white] (\posx, \posy+1) rectangle ++(1,1);
+
+% STD
+% \pgfmathtruncatemacro{\colorw}{\w*100}
+\ifnum \fpeval{\w<1}=1
+    \pgfmathtruncatemacro{\colorw}{\w/2*100}
+\else 
+    \pgfmathtruncatemacro{\colorw}{100}
+\fi
+\filldraw [fill=ao!\colorw!white, draw=ao!\colorw!white] (\posx+1, \posy+1) rectangle ++(1,1);
+
+% AVG
+% \pgfmathtruncatemacro{\colors}{\s*100}
+\ifnum \fpeval{\s<1}=1
+    \pgfmathtruncatemacro{\colors}{\s/2*100}
+\else 
+    \pgfmathtruncatemacro{\colors}{100}
+\fi
+\filldraw [fill=YellowOrange!\colors!white, draw=YellowOrange!\colors!white] (\posx+1, \posy) rectangle ++(1,1);
+\draw [black] (\posx,\posy) rectangle ++ (2,2);
+}
+
+% Sea of defects
+\foreach \xl [count=\y] in {8,8,8,8,9,9,7,5,5,3,3,2}{%
+    \foreach \x in {1,...,10}{%
+        \ifnum \x < \xl
+            \pgfmathtruncatemacro{\posx}{(\x-1)*2+1}
+            \pgfmathtruncatemacro{\posy}{(\y-1)*2+1}
+            \draw (\posx,\posy) node[mark=square*, mark size=8pt] {\pgfuseplotmark{square*}};
+        \fi
+    }
+}
+% HUPS
+\foreach \xl [count=\y] in {10,10,10,10,10,8,6,4,4,2,2,1}{%
+    \foreach \x in {1,...,10}{%
+        \ifnum \x > \xl
+            \pgfmathtruncatemacro{\posx}{(\x-1)*2+1}
+            \pgfmathtruncatemacro{\posy}{(\y-1)*2+1}
+            \draw (\posx,\posy) node[mark=diamond*, mark size=10pt] {\pgfuseplotmark{diamond*}};
+        \fi
+    }
+}
+% Waves
+\foreach \xl [count=\y] in {8,8,8,8,8,10,10,10,10,10,10,10}{%
+    \foreach \x in {1,...,10}{%
+        \ifnum \x > \xl
+            \pgfmathtruncatemacro{\posx}{(\x-1)*2+1}
+            \pgfmathtruncatemacro{\posy}{(\y-1)*2+1}
+            \draw (\posx,\posy) node[mark=triangle*, mark size=10pt] {\pgfuseplotmark{triangle*}};
+        \fi
+    }
+}
+% Foams + Waves
+\pgfmathtruncatemacro{\posx}{(8-1)*2+1}
+\pgfmathtruncatemacro{\posy}{(3-1)*2+1}
+\draw (\posx,\posy) node[mark=pentagon*, mark size=9pt] {\pgfuseplotmark{pentagon*}};
+\pgfmathtruncatemacro{\posx}{(8-1)*2+1}
+\pgfmathtruncatemacro{\posy}{(2-1)*2+1}
+\draw (\posx,\posy) node[mark=pentagon*, mark size=9pt] {\pgfuseplotmark{pentagon*}};
+
+
+% Foams
+\pgfmathtruncatemacro{\posx}{(8-1)*2+1}
+\pgfmathtruncatemacro{\posy}{(1-1)*2+1}
+\filldraw (\posx,\posy) circle (8pt);
+\pgfmathtruncatemacro{\posx}{(8-1)*2+1}
+\pgfmathtruncatemacro{\posy}{(4-1)*2+1}
+\filldraw (\posx,\posy) circle (8pt);
+            
+% x-axis
+\foreach \t [count=\k] in {0.1, 0.2, 0.5, 1.0, 1.25, 1.67, 2.5, 5.0, 10, 100}{%
+    \pgfmathtruncatemacro{\posx}{(\k-1)*2+1}
+    \node at (\posx, -0.5) {\Huge \t};
+}
+\node at (10, -1.2) {\Huge $\tau$};
+
+% y axis
+\foreach \r [count=\k] in {0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5}{%
+    \pgfmathtruncatemacro{\posy}{(\k-1)*2+1}
+    \node at (-1, \posy) {\Huge \r};
+}
+\node at (-2, 12) {\Huge $\rho_0$};
+
+% Colorbar
+\def\lc{4}
+\def\mid{10}
+\def\xpos{21}
+\shade[left color=white, right color=Red, draw=black] (\xpos, \mid-\lc) rectangle ++(\lc,\lc);
+\node[Red, anchor=north west] at (\xpos, \mid-\lc-1) {\Huge Density of defects};
+\node[Red, anchor=north east] at (\xpos+\lc, \mid-\lc) {\Huge $\geq 3$};
+\node[Red, anchor=north west] at (\xpos, \mid-\lc) {\Huge $0$};
+\shade[left color=white, right color=YellowOrange, draw=black] (\xpos+\lc, \mid-\lc) rectangle ++(\lc,\lc);
+\node[anchor=north west, YellowOrange] at (\xpos, \mid-\lc-2) {\Huge Area of low density region};
+\node[YellowOrange, anchor=north east] at (\xpos+2*\lc, \mid-\lc) {\Huge $\geq 2$};
+\node[YellowOrange, anchor=north west] at (\xpos+\lc, \mid-\lc) {\Huge $0$};
+\shade[left color=white, right color=Blue, draw=black] (\xpos, \mid) rectangle ++(\lc,\lc);
+\node[Blue, anchor=south west] at (\xpos, \mid+\lc+2) {\Huge Persistence time $(\cdot 10^3)$};
+\node[Blue, anchor=south east] at (\xpos+\lc, \mid+\lc) {\Huge $\geq 50$};
+\node[Blue, anchor=south west] at (\xpos, \mid+\lc) {\Huge $0$};
+\shade[left color=white, right color=ao, draw=black] (\xpos+\lc, \mid) rectangle ++(\lc,\lc);
+\node[ao, anchor=south west] at (\xpos, \mid+\lc+1) {\Huge Std of low density area};
+\node[ao, anchor=south east] at (\xpos+2*\lc, \mid+\lc) {\Huge $\geq 2$};
+\node[ao, anchor=south west] at (\xpos+\lc, \mid+\lc) {\Huge $0$};
+
+% Legend
+\def\top{24}
+\def\spa{1.2}
+\draw (\xpos, \top-1*\spa) node[anchor=east, mark=square*, mark size=8pt] {\pgfuseplotmark{square*} };
+\draw (\xpos + 0.2, \top-1*\spa) node[anchor=west] {\Huge Defect lattices};
+
+\draw (\xpos,\top-2*\spa) node[anchor=east, mark=triangle*, mark size=10pt] {\pgfuseplotmark{triangle*} };
+\draw (\xpos + 0.2,\top-2*\spa) node[anchor=west] {\Huge Waves};
+
+\filldraw (\xpos-0.15,\top-3*\spa) circle (8pt);
+\draw (\xpos + 0.2,\top-3*\spa) node[anchor=west] {\Huge Foams};
+
+\draw (\xpos,\top-4*\spa) node[anchor=east, mark=pentagon*, mark size=9pt] {\pgfuseplotmark{pentagon*} };
+\draw (\xpos + 0.2,\top-4*\spa) node[anchor=west] {\Huge Foams and waves};
+
+\draw (\xpos,\top-5*\spa) node[anchor=east, mark=diamond*, mark size=10pt] {\pgfuseplotmark{diamond*} };
+\draw (\xpos + 0.2,\top-5*\spa) node[anchor=west] {\Huge HUPS};
+
+\end{tikzpicture}
+
+\end{document}
+
+% % Sea of defects
+% \ifnum\fpeval{\a>0.4 && \q>25}=1
+%     \draw (\posx+1,\posy+1) node[mark=square*, mark size=5pt] {\pgfuseplotmark{square*}};
+% \fi
+% % Waves
+% \ifnum\fpeval{\a<0.1 && \q<25}=1
+%     \draw (\posx+1,\posy+1) node[mark=triangle*, mark size=5pt] {\pgfuseplotmark{triangle*}};
+% \fi
+% % HUPS
+% \ifnum\fpeval{\a<0.1 && \q>25}=1
+%     \draw (\posx+1,\posy+1) node[mark=diamond*, mark size=5pt] {\pgfuseplotmark{diamond*}};
+% \fi
+% % Foams
+% \ifnum\fpeval{\a>0.1 && \q<25 && \s>0.5 && \w<1.0}=1
+%     \filldraw (\posx+1,\posy+1) circle (5pt);
+% \fi
+% % Foams + waves
+% \ifnum\fpeval{\a<0.1 && \q<25 && \s>0.5 && \w>0.5}=1
+%     \draw (\posx+1,\posy+1) node[mark=pentagon*, mark size=5pt] {\pgfuseplotmark{pentagon*}};
+% \fi
+
+% % Legend
+% \draw (0,24.5) node[mark=square*, mark size=5pt] {\pgfuseplotmark{square*} };
+% \draw (3,24.5) node[mark=square*, mark size=5pt] {\Huge Sea of defects};
+
+% \draw (6,24.5) node[mark=triangle*, mark size=5pt] {\pgfuseplotmark{triangle*} };
+% \draw (7.5,24.5) node[mark=triangle*, mark size=5pt] {\Huge Waves};
+
+% \filldraw (9.5,24.5) circle (5pt);
+% \draw (11,24.5) node {\Huge Foams};
+
+% \draw (13,24.5) node[mark=pentagon*, mark size=5pt] {\pgfuseplotmark{pentagon*} };
+% \draw (16,24.5) node {\Huge Foams and waves};
+
+% \draw (19.5,24.5) node[mark=diamond*, mark size=5pt] {\pgfuseplotmark{diamond*} };
+% \draw (21,24.5) node {\Huge HUPS};
+
+% % Colorbar
+% \shade[bottom color=white, top color=Red, draw=black] (21, 0) rectangle ++(1,24);
+% \node[rotate = 90, align=center] at (22.5, 12) {\Huge Density of defects};
+% \node[rotate = 90, align=center] at (22.5, 23) {\Huge $\geq 3$};
+% \node[rotate = 90, align=center] at (22.5, 0) {\Huge $0$};
+% \shade[bottom color=white, top color=YellowOrange, draw=black] (25, 0) rectangle ++(1,24);
+% \node[rotate = 90, align=center] at (26.5, 12) {\Huge Average area of low density region};
+% \node[rotate = 90, align=center] at (26.5, 23) {\Huge $\geq 1$};
+% \node[rotate = 90, align=center] at (26.5, 0) {\Huge $0$};
+% \shade[bottom color=white, top color=Blue, draw=black] (23, 0) rectangle ++(1,24);
+% \node[rotate = 90, align=center] at (24.5, 12) {\Huge Autocorrelation time};
+% \node[rotate = 90, align=center] at (24.5, 23) {\Huge $\geq 50$};
+% \node[rotate = 90, align=center] at (24.5, 0) {\Huge $0$};
+% \shade[bottom color=white, top color=ao, draw=black] (27, 0) rectangle ++(1,24);
+% \node[rotate = 90, align=center] at (28.5, 12) {\Huge Standard deviation of low density area};
+% \node[rotate = 90, align=center] at (28.5, 23) {\Huge $\geq 1$};
+% \node[rotate = 90, align=center] at (28.5, 0) {\Huge $0$};
