@@ -1,0 +1,34 @@
+% Single-defect fields with the CLOSED-FORM core approximation of Sec. 1.7 as dashed:
+%   rho -> rhobar  (quartic 2 Gamma chi tau rhobar^4 = rho0(rho0-rhobar))
+%   p   -> sqrt(rhobar/rho0) * r/sqrt(r^2+b^2)   (Bernoulli)
+%   v   -> r/tau_v,  1/tau_v = Gamma chi rhobar^3/rho0   (linear)
+% Solid lines: numerical solution (figdata/, col sep=comma).
+% Constants for the parameters of Fig. (a=chi=rho0=Gamma=1, tau=0.2):
+\def\rhobar{0.8195}%  quartic root
+\def\psat{0.9053}%    sqrt(rhobar/rho0)
+\def\bcore{0.746}%    core radius b (matched to the outer solution)
+\def\vslope{0.5504}%  1/tau_v = rhobar^3
+\ifdefined\ytickw\else\newlength{\ytickw}\fi
+\settowidth{\ytickw}{\footnotesize$0.0$}
+\begin{tikzpicture}[font=\footnotesize]
+  \begin{axis}[
+      width=\prlcol, height=5.2cm,     % \prlcol = 8.6 cm (PRL single column)
+      xlabel=$r$, ylabel={fields},
+      xmin=0, xmax=2, ymin=0,
+      yticklabel style={text width=\ytickw, align=right},
+      legend style={draw=none, fill=none}, legend pos=south east,
+      legend cell align=left,
+    ]
+    % --- numerical solution (solid) ---
+    \addplot[blue,  thick] table[x=r, y=rho]{figdata/polar_fields_rho.csv};
+    \addlegendentry{$\rho$}
+    \addplot[red,   thick] table[x=r, y=P]{figdata/polar_fields_Pv.csv};
+    \addlegendentry{$p$}
+    \addplot[black, thick] table[x=r, y=v]{figdata/polar_fields_Pv.csv};
+    \addlegendentry{$v$}
+    % --- closed-form core approximation (dashed, Sec. 1.7) ---
+    \addplot[blue,  thick, dashed, forget plot, domain=0:2,   samples=2]  {\rhobar};
+    \addplot[red,   thick, dashed, forget plot, domain=0:2,   samples=80] {\psat*x/sqrt(x^2+\bcore*\bcore)};
+    \addplot[black, thick, dashed, forget plot, domain=0:0.9, samples=2]  {\vslope*x};
+  \end{axis}
+\end{tikzpicture}

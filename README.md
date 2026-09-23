@@ -7,11 +7,16 @@ CUDA simulation code for
 > [arXiv:2506.03795](https://arxiv.org/abs/2506.03795) (2025).
 
 This repository is an archival snapshot of the code that produced the published
-simulations. It is the `FFT_2D_P_L50` run set: a pseudo-spectral solver for a
-compressible active polar fluid with turnover, written directly against
-[CUDA.jl](https://github.com/JuliaGPU/CUDA.jl) and run as a Slurm array job on
-the [Baobab](https://doc.eresearch.unige.ch/hpc/start) cluster at the University
-of Geneva.
+simulations. It holds two independent pieces:
+
+- **[`FFT_2D_P_L50/`](FFT_2D_P_L50/)** — the 2D GPU run set behind the main
+  results: a pseudo-spectral solver written directly against
+  [CUDA.jl](https://github.com/JuliaGPU/CUDA.jl) and run as a Slurm array job on
+  the [Baobab](https://doc.eresearch.unige.ch/hpc/start) cluster at the
+  University of Geneva.
+- **[`1D/`](1D/)** — reduced 1D models of a single defect core and of a defect
+  pair, as an interactive Pluto notebook, together with the data and sources for
+  the figures they feed. These accompany the revised version of the paper.
 
 A more general, better-documented and actively maintained implementation of the
 same physics — CPU/CUDA/Metal via ParallelStencil.jl, with a Pluto front end and
@@ -63,6 +68,13 @@ CFL condition on $\mathbf{v}$ and by `dtmin`.
 │   ├── kernels.jl         # the CUDA kernels
 │   ├── 2D.jl              # entry point: fields, time loop, snapshot writing
 │   └── MakePlots.jl       # figures from the .jld snapshots
+├── 1D/                    # reduced 1D models (revised version of the paper)
+│   ├── models.pluto.jl    # Pluto notebook: radial and two-defect solvers
+│   ├── figdata/           # CSVs it writes, read directly by the figures
+│   ├── fig_active_polar.tex        # pgfplots figure built from figdata/
+│   ├── fig_active_polar_loglog.tex # log-log version of the same
+│   ├── fig_core_analytic.tex       # core profiles vs the analytic small-r form
+│   └── standalone_fig.tex          # wrapper to compile a figure on its own
 ├── Utilities/             # lab-internal helpers the scripts include
 │   ├── using.jl           # using_pkg / using_mod (install-on-demand)
 │   ├── JulUtils.jl        # generate_dataframe, file helpers
@@ -159,6 +171,77 @@ julia --project=. FFT_2D_P_L50/MakePlots.jl
 
 ---
 
+## The 1D models
+
+[`1D/models.pluto.jl`](1D/models.pluto.jl) is a self-contained
+[Pluto](https://plutojl.org/) notebook holding reduced models built from the
+same free energy as the 2D solver, with the symbols renamed:
+
+| 1D | 2D | |
+|---|---|---|
+| `A` | `ar` | compressibility |
+| `χ` | `ap` | polar ordering |
+| `κ` | `kp` | Frank constant |
+| `τ` | `1/kd` | turnover time |
+
+$$f = \tfrac{A}{4}\rho^4 - \tfrac{\chi}{2\rho_0}\rho^3 p^2 + \tfrac{\chi}{4}\rho^2 p^4 + \tfrac{\kappa}{2}\rho^2\Big[(\partial_r p)^2 + \tfrac{p^2}{r^2}\Big]$$
+
+Three solvers are selectable in the notebook:
+
+- **One defect (polar, radial)** — the 1D radial reduction around a single
+  defect core, on a staggered grid (ρ at cell centres, `p` and `v` at faces)
+  with finite volumes and IMEX implicit diffusion. This is the one the committed
+  figure data comes from.
+- **Two defects (explicit)** and **(implicit)** — a Cartesian pseudo-spectral
+  solver for a defect pair, closer in spirit to the 2D code.
+
+It also sweeps the turnover time τ and records the velocity field `v(r, τ)`.
+
+### Running it
+
+```julia
+using Pkg; Pkg.add("Pluto"); import Pluto; Pluto.run()
+```
+
+then open `1D/models.pluto.jl`. The notebook pins its own package versions in
+the embedded `PLUTO_PROJECT_TOML`/`PLUTO_MANIFEST_TOML` blocks, so it needs
+nothing from this repository's `Project.toml` and installs its own environment
+on first run.
+
+Parameters are set with the sliders, and the run starts when you flip the
+**ready** switch and press *Confirm*. Two checkboxes near the bottom write the
+CSVs into `figdata/`, overwriting what is committed here.
+
+### Figure data
+
+The committed `figdata/` is the data the figures use, exactly as the notebook
+wrote it. `p` and `v` live on the N+1 cell faces and ρ on the N centres, which
+is why the row counts differ by one.
+
+| File | Columns | |
+|---|---|---|
+| `polar_fields_rho.csv` | `r, rho` | density profile through the core |
+| `polar_fields_Pv.csv` | `r, P, v` | polarity and velocity profiles |
+| `polar_balance.csv` | `r, transport, diffusive, turnover` | the three terms of the density balance |
+| `polar_vsweep_summary.csv` | `tau, vmax, r_vmax, rdiv, v_rdiv` | one row per τ |
+| `polar_vsweep_heatmap.csv` | `r, tau, v` | full v(r, τ), 301 radii × 50 τ values |
+
+### Figures
+
+The `.tex` files are pgfplots figures that read those CSVs directly (comma
+separated, via `\addplot table`):
+
+- `fig_active_polar.tex` and `fig_active_polar_loglog.tex` — the profiles, the
+  balance and the τ-sweep summary
+- `fig_core_analytic.tex` — the core profiles against the analytic small-r form
+  ρ ≈ ρ̄(1 + r²/λ_ρ²), p ≈ r/λ_p, v ≈ r/τ_v
+
+`standalone_fig.tex` wraps one of them for compiling on its own, but it also
+`\input`s a `some_command.tex` of shared macros that lives in the paper's LaTeX
+project and is **not** included here — supply your own, or strip that line.
+
+---
+
 ## Relation to the code as it was run
 
 The simulation files are byte-identical to the cluster copies, with three
@@ -185,6 +268,10 @@ on demand into the default environment via `Utilities/using.jl`, and the job
 script was generated on the fly. No `Manifest.toml` is shipped, because one
 resolved off-cluster would pin the wrong CUDA artifacts — this does mean package
 versions are not pinned to those used for the paper.
+
+Everything under `1D/` is copied verbatim and is not annotated: Pluto manages
+the cell markers and cell-order block in `models.pluto.jl`, and the notebook
+already carries its equations in markdown cells.
 
 `Utilities/` is vendored verbatim from a lab-internal directory. `JulUtils.jl`
 pulls in Makie for a `screensize()` helper that nothing here calls; it is kept so
