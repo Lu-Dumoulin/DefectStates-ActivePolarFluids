@@ -1,0 +1,15 @@
+# Simulation output
+data/
+*.jld
+*.jld2
+
+# Figures produced by MakePlots.jl
+*.png
+*.gif
+
+# Slurm logs
+*.out
+
+# Julia
+Manifest.toml
+.DS_Store
