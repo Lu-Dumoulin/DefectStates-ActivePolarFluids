@@ -257,11 +257,43 @@ exceptions, each marked in place:
 3. **`MakePlots.jl`** — the two hard-coded figure paths likewise read from the
    environment.
 
-Beyond those three changes the files have been commented and stripped of
-commented-out dead code. Nothing executable was touched: each file was checked
-by parsing the original and the annotated version and comparing the resulting
-syntax trees, so the numerics are bit-for-bit those of the paper. `AllInputParam.jl`
-still regenerates the committed `DF.csv` byte-for-byte.
+`AllInputParam.jl` and `InputParameters.jl` are otherwise only commented and
+stripped of commented-out dead code; both were checked by parsing the original
+and the annotated version and comparing syntax trees. `AllInputParam.jl` still
+regenerates the committed `DF.csv` byte-for-byte.
+
+`kernels.jl` and `2D.jl` have additionally been tidied and de-allocated. The
+intent is that results stay bit-for-bit identical, so every change was chosen to
+leave the floating-point arithmetic alone:
+
+- **`kernels.jl`** — all 38 arithmetic expressions are carried over verbatim
+  (verified by extracting and diffing them). What changed is `@inbounds` on the
+  three kernels that lacked it, a shared inlined `thread_indices()` in place of
+  the index arithmetic repeated in all four, and docstrings.
+- **`2D.jl`** — dropped the unused `ρn` and `F` allocations (~600 MB of device
+  memory); replaced `minimum([a,b,c])` with `min(a,b,c)`, dropped an `abs.` on
+  a sum of squares and a multiply by an array of ones, and fused three
+  broadcasts that each materialised a full-grid temporary. Each of these four
+  was checked bitwise on CPU over random data and the signed-zero / tie / Inf /
+  NaN edge cases. Snapshot writing moved into `write_snapshot`, and the noise
+  amplitude, step-growth factor and CFL fraction became named constants holding
+  the same literals.
+
+**None of this has been run on a GPU** — it was prepared on a machine without
+one. Before trusting it, confirm on a GPU node:
+
+```bash
+tools/verify_bitwise.sh HEAD~1 1 20 10
+```
+
+which runs one simulation for a couple of snapshots under both the previous and
+the current revision and compares every dataset bit for bit.
+
+Not done: the time loop still allocates roughly 9 GB of full-grid temporaries
+per step, because each `W * x` and `Wi * (factor .* x)` materialises a fresh
+array. Reusing preallocated buffers via `mul!` would remove nearly all of it,
+but the inverse plan may clobber its input and the destinations are views, so
+that change needs a GPU to validate rather than reasoning alone.
 
 `Project.toml` and `slurm/submit.sh` are new; the cluster runs installed packages
 on demand into the default environment via `Utilities/using.jl`, and the job
