@@ -75,9 +75,13 @@ CFL condition on $\mathbf{v}$ and by `dtmin`.
 │   └── 2D.jl              # entry point: fields, time loop, snapshot writing
 ├── figures/               # one directory per paper figure: tikz, data, panels
 │   └── README.md          # which code generates which figure
-├── Analysis/              # figure and analysis scripts (see caveats below)
-│   ├── Analysis.jl        # defect detection, spectra, Voronoi, figure panels
-│   └── PhaseDiagram.jl    # the phase diagram
+├── Analysis/              # analysis and figure scripts (see caveats below)
+│   ├── config.jl          # run set from DATA_DIR / FIG_DIR
+│   ├── core.jl            # defect detection, spectra, Voronoi, batch passes
+│   ├── MakePlots.jl       # generic panels from .jld, any run set
+│   ├── make_fig_*.jl      # one per figure: its analysis, then its plot
+│   ├── PhaseDiagram.jl    # the phase diagram (not split yet)
+│   └── talk_figures.jl    # slides for a talk, not paper figures
 ├── 1D/                    # reduced 1D models (revised version of the paper)
 │   ├── models.pluto.jl    # Pluto notebook: radial and two-defect solvers
 │   ├── figdata/           # CSVs it writes, read directly by the figures
@@ -249,30 +253,52 @@ point the `\input` at that copy, or strip the line.
 
 ## Analysis
 
-[`Analysis/Analysis.jl`](Analysis/Analysis.jl) (which supersedes the earlier
-`MakePlots.jl`) and [`Analysis/PhaseDiagram.jl`](Analysis/PhaseDiagram.jl) hold
-the figure and analysis code: defect detection and counting, structure factors,
-Voronoi and bond-orientational order, the heatmap panels and the phase diagram.
+Split into a shared layer, a generic plotting script, and one script per figure.
+Each layer `include`s the one below it, so running any figure script pulls in
+everything it needs:
 
-**These are committed verbatim and do not run as-is.** They grew alongside the
-study rather than as a released tool, and they carry its whole history, not just
-the `2D/` run set in this repository:
+```
+config.jl          paths from the environment, loads DF.csv
+   |
+core.jl            defect detection, segmentation, structure factors,
+   |               correlations, batch passes over a run set
+MakePlots.jl       generic panels from .jld: density, angle, velocity, order,
+   |               defect overlays, Voronoi tessellations
+make_fig_*.jl      one per figure: the analysis that figure needs, then its plot
+```
 
-- Data roots are hard-coded Windows drive paths (`F:/ZetaP_v2/`, `Z:/2defects/`,
-  `D:/PDpaper/`, …) — around forty of them across four drive letters — pointing
-  at run sets that are not published here.
-- `PhaseDiagram.jl` expects four tables (`DF.csv`, `DF2.csv`, `DF_ph2.csv`,
-  `DF2_ph2.csv`) from larger sweeps, not the 13-row `2D/DF.csv`.
-- They need packages beyond this repository's `Project.toml` — `Images`,
-  `ImageSegmentation`, `DelaunayTriangulation`, `LsqFit`, `GaussianMixtures`,
-  `ShiftedArrays`, and `ImageView`, which needs a GUI toolkit.
-- Functions suffixed `_sout` produce slides for a talk, not paper figures.
+All of them take the run set through the environment:
 
-They are included so the analysis behind the figures is inspectable. Wiring them
-up — environment-driven paths, a pinned environment, and a map from each paper
-figure to the function that draws it — is in progress.
+```bash
+DATA_DIR=/path/to/runset/ julia --project=. Analysis/MakePlots.jl
+DATA_DIR=/path/to/runset/ FIG_DIR=/path/to/figures/ julia --project=. Analysis/make_fig_phases.jl
+```
 
----
+`DATA_DIR` is the directory holding `DF.csv` and one `<idx>/Data/` folder per
+simulation — the layout [`2D/`](2D/) writes. `FIG_DIR` defaults to it.
+
+[`Analysis/MakePlots.jl`](Analysis/MakePlots.jl) is deliberately figure-agnostic:
+run it against any run set and it renders the standard panels for every
+simulation in it. It reproduces no particular figure.
+
+Each [`make_fig_*.jl`](Analysis/) does reproduce one, and is meant to be the
+entry point for someone who has run the simulations for that figure and wants
+the analysis behind it. Running one directly executes the calls at the bottom of
+the file with the arguments the functions were written with; the ones that need
+a simulation index are listed there as commented examples. Which script draws
+which figure is in [`figures/README.md`](figures/README.md).
+
+[`Analysis/PhaseDiagram.jl`](Analysis/PhaseDiagram.jl) has not been split yet
+and still carries hard-coded paths. [`Analysis/talk_figures.jl`](Analysis/talk_figures.jl)
+holds slides for a talk, not paper figures.
+
+**Caveats.** The function bodies are unchanged from the single `Analysis.jl`
+they came from — the split moved them verbatim and this was checked by
+comparing every extracted body against the original. What that does *not* mean
+is that they now run end to end: they were written against run sets that are not
+published here, several expect intermediate tables (`DF2.csv`, `DF_analyse.csv`)
+produced by earlier passes, and none of it has been executed since the split,
+because no simulation output is available on the machine it was done on.
 
 ## Relation to the code as it was run
 
