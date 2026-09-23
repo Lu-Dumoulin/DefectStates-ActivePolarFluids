@@ -16,17 +16,27 @@ to terabytes.
 |---|---|---|---|
 | **Fig1** | `phases_L50_3.png`, `fig_schema_L50.tex` | [`Analysis/make_fig_schema.jl`](../Analysis/make_fig_schema.jl) — `make_plot_L50()` | code present; needs the L50 snapshots |
 | **Fig3** | `figdata/polar_*.csv`, `fig_profile.tex` | [`1D/models.pluto.jl`](../1D/models.pluto.jl) — the profile and τ-sweep export cells | **fully reproducible from this repository**; the committed data is byte-identical to [`1D/figdata/`](../1D/figdata) |
-| **Fig5** | `fig_LSA.*`, `omegarho.csv`, `tau1.csv`, `tau5.csv`, `zrc_eq*.csv` | *not identified* | **code missing** — see below |
+| **Fig5** | `fig_LSA.*`, `omegarho.csv`, `tau1.csv`, `tau5.csv`, `zrc_eq*.csv` | [`Analysis/make_fig_LSA.jl`](../Analysis/make_fig_LSA.jl), from [`LSA.jl`](../Analysis/LSA.jl) | `tau1.csv` and `tau5.csv` **regenerate byte for byte**; `omegarho.csv` and `zrc_eq*.csv` still unaccounted for |
 | **Fig7** | `DF_tikz*.csv`, `DF_analyse*.csv` | [`Analysis/PhaseDiagram.jl`](../Analysis/PhaseDiagram.jl) — `df_tikz_phase_diagram()` writes `DF_tikz_norm_adjusted.csv`; `DF_analyse.csv` is written further up the same file | code present; needs the phase-diagram sweep tables |
 | **Fig10** | `DF_tikz_exp*.csv`, `data.txt` | [`Analysis/PhaseDiagram.jl`](../Analysis/PhaseDiagram.jl) — `make_csv_exp_plot(t)` and `make_csv_exp_plot_3(t)` | code present |
 
 ## Still to do
 
-**Fig5 (linear stability analysis).** Nothing in this repository writes
-`omegarho.csv`, `zrc_eq.csv`, `zrc_eq2.csv`, `tau1.csv` or `tau5.csv`. The
-analysis scripts, the 1D notebook and the 2D solver were all searched for those
-names. Whatever produced the dispersion relation and the critical-activity
-curves still needs to be located and added.
+**Fig5 (linear stability analysis).** Partly solved. `LSA.jl` turned out to be
+the source: its closed-form `ζc_simp` and its numerical threshold reproduce
+`tau5.csv` (turnover `kd = 0.2`, i.e. τ = 5) and `tau1.csv` (`kd = 1.0`)
+exactly. `make_fig_LSA.jl` wraps it — same expressions, with `kd` an argument
+rather than a constant — and regenerates both files byte for byte:
+
+```bash
+julia --project=. Analysis/make_fig_LSA.jl        # no DATA_DIR needed
+```
+
+Still open: `omegarho.csv` (six growth-rate curves against ρ₀ over 0.3–0.8) and
+`zrc_eq.csv` / `zrc_eq2.csv` (critical-activity curves in `yp`/`zp`/`wp` and
+`ynop`/`znop`/`wnop` variants, apparently with and without polarity). `LSA.jl`
+defines the 2×2 coefficients `a`, `b`, `c`, `d` these would come from, but does
+not compute eigenvalues or the variant curves, and writes no files of its own.
 
 **Figures not yet here.** Only Fig1, Fig3, Fig5, Fig7 and Fig10 have been
 collected. The paper's figure set also includes the two-defect, lattice,
@@ -57,11 +67,16 @@ The per-figure scripts available so far, and the figures they belong to:
 | `make_fig_2defects.jl` | the two-defect figures |
 | `make_fig_saturation.jl` | the saturation figures |
 | `PhaseDiagram.jl` | the phase diagram and exponent fits — **Fig7**, **Fig10** |
+| `make_fig_LSA.jl` | the linear-stability curves — **Fig5** |
 
 These are named by content, not by figure number, because the revised
 numbering is not settled; only Fig1, Fig3, Fig5, Fig7 and Fig10 are known. They
 will be renamed `make_figN.jl` once it is, to line up with the per-figure
 `DF_N.csv` parameter tables.
+
+The phase-diagram tables ship in [`Analysis/PDpaper/`](../Analysis/PDpaper),
+so `PhaseDiagram.jl` finds them without any setup; `DATA_DIR` overrides that
+when you want to rebuild them from your own snapshots.
 
 `Analysis/MakePlots.jl` is separate from all of these: it renders the standard
 panels for any run set and reproduces no particular figure. See the caveats in

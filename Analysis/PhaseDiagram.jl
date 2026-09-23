@@ -3,7 +3,12 @@ using_pkg("CairoMakie, JLD, Printf, LaTeXStrings, FixedPointNumbers, DelimitedFi
 using_mod(".PictUtils")
 CairoMakie.activate!(type = "png")
 
-dir_df = "D:/PDpaper/"
+# The phase-diagram tables ship with the repository, so the figure functions
+# run out of the box. Override with DATA_DIR to point at your own run set; the
+# passes that rebuild DF_analyse.csv from .jld snapshots need one, the figure
+# functions only need these tables. Originally hard-coded to "D:/PDpaper/".
+dir_df = get(ENV, "DATA_DIR", abspath(joinpath(@__DIR__, "PDpaper")) * "/")
+endswith(dir_df, "/") || (dir_df *= "/")
 
 df1_ = CSV.read(dir_df*"DF.csv", DataFrame)
 df1b_ = CSV.read(dir_df*"DF2.csv", DataFrame)
