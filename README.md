@@ -67,8 +67,10 @@ CFL condition on $\mathbf{v}$ and by `dtmin`.
 │   ├── DF.csv             # the 13 parameter sets used for the paper
 │   ├── InputParameters.jl # reads one DF.csv row, sets up grid and FFT plans
 │   ├── kernels.jl         # the CUDA kernels
-│   ├── 2D.jl              # entry point: fields, time loop, snapshot writing
-│   └── MakePlots.jl       # figures from the .jld snapshots
+│   └── 2D.jl              # entry point: fields, time loop, snapshot writing
+├── Analysis/              # figure and analysis scripts (see caveats below)
+│   ├── Analysis.jl        # defect detection, spectra, Voronoi, figure panels
+│   └── PhaseDiagram.jl    # the phase diagram
 ├── 1D/                    # reduced 1D models (revised version of the paper)
 │   ├── models.pluto.jl    # Pluto notebook: radial and two-defect solvers
 │   ├── figdata/           # CSVs it writes, read directly by the figures
@@ -79,7 +81,7 @@ CFL condition on $\mathbf{v}$ and by `dtmin`.
 ├── Utilities/             # lab-internal helpers the scripts include
 │   ├── using.jl           # using_pkg / using_mod (install-on-demand)
 │   ├── JulUtils.jl        # generate_dataframe, file helpers
-│   └── PictUtils.jl       # png/gif helpers used by MakePlots.jl
+│   └── PictUtils.jl       # png/gif helpers used by the analysis scripts
 ├── slurm/submit.sh        # the array job
 └── Project.toml
 ```
@@ -162,13 +164,7 @@ Adjust the partition and constraint for your site.
 digits. Each file holds `rho` (Nx×Nz), `v` and `P` (Nx×Nz×2) as `Float64`. The
 run aborts with status 1 if `rho` goes NaN.
 
-**Figures:**
-
-```bash
-export DATA_DIR=/path/to/output/    # must also contain DF.csv
-export FIG_DIR=/path/to/figures/
-julia --project=. 2D/MakePlots.jl
-```
+**Figures.** See [Analysis](#analysis) below.
 
 ---
 
@@ -243,6 +239,33 @@ project and is **not** included here — supply your own, or strip that line.
 
 ---
 
+## Analysis
+
+[`Analysis/Analysis.jl`](Analysis/Analysis.jl) (which supersedes the earlier
+`MakePlots.jl`) and [`Analysis/PhaseDiagram.jl`](Analysis/PhaseDiagram.jl) hold
+the figure and analysis code: defect detection and counting, structure factors,
+Voronoi and bond-orientational order, the heatmap panels and the phase diagram.
+
+**These are committed verbatim and do not run as-is.** They grew alongside the
+study rather than as a released tool, and they carry its whole history, not just
+the `2D/` run set in this repository:
+
+- Data roots are hard-coded Windows drive paths (`F:/ZetaP_v2/`, `Z:/2defects/`,
+  `D:/PDpaper/`, …) — around forty of them across four drive letters — pointing
+  at run sets that are not published here.
+- `PhaseDiagram.jl` expects four tables (`DF.csv`, `DF2.csv`, `DF_ph2.csv`,
+  `DF2_ph2.csv`) from larger sweeps, not the 13-row `2D/DF.csv`.
+- They need packages beyond this repository's `Project.toml` — `Images`,
+  `ImageSegmentation`, `DelaunayTriangulation`, `LsqFit`, `GaussianMixtures`,
+  `ShiftedArrays`, and `ImageView`, which needs a GUI toolkit.
+- Functions suffixed `_sout` produce slides for a talk, not paper figures.
+
+They are included so the analysis behind the figures is inspectable. Wiring them
+up — environment-driven paths, a pinned environment, and a map from each paper
+figure to the function that draws it — is in progress.
+
+---
+
 ## Relation to the code as it was run
 
 The simulation files are byte-identical to the cluster copies, with three
@@ -255,9 +278,6 @@ exceptions, each marked in place:
    original code never created this directory; on the cluster it already existed
    from earlier runs, so a fresh checkout would have failed on the first
    snapshot write.
-3. **`MakePlots.jl`** — the two hard-coded figure paths likewise read from the
-   environment.
-
 `AllInputParam.jl` and `InputParameters.jl` are otherwise only commented and
 stripped of commented-out dead code; both were checked by parsing the original
 and the annotated version and comparing syntax trees. `AllInputParam.jl` still
