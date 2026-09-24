@@ -123,11 +123,13 @@ const M::Float64 = Tf(df[:M])/ar        # mobility; D = M·ar so this fixes D
 const sd = Int(df[:seed])               # RNG seed for the initial noise
 
 # --- Integration horizon -----------------------------------------------------
-# Not in DF.csv. These are the values used for the paper, sized for the 12 h
-# wall-clock limit of the Slurm job: snapshots every 1000 time units.
-t_fin = 150000
-t_prin = 1000
-t_check = 1
+# Taken from the parameter table when it provides them, since the horizon
+# differs by figure (see params/README.md). Tables without these columns - the
+# archival 2D/DF.csv among them - fall back to the values used for the paper's
+# L=50 runs, sized for the 12 h wall-clock limit of the Slurm job.
+t_fin   = hasproperty(df, :t_fin)   ? df[:t_fin]   : 150000
+t_prin  = hasproperty(df, :t_prin)  ? df[:t_prin]  : 1000
+t_check = hasproperty(df, :t_check) ? df[:t_check] : 1
 
 # Flush denormals to zero: they are worthless here and slow on GPU.
 set_zero_subnormals(true)

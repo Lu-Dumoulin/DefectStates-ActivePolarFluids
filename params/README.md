@@ -73,13 +73,27 @@ These would need a sentence in the manuscript before the table can be written.
 - **Fig5** is linear stability analysis, computed from the equations rather than
   from simulation output. See [`Analysis/make_fig_LSA.jl`](../Analysis/make_fig_LSA.jl).
 
-## One thing the schema cannot carry
+## The integration horizon
 
-`t_fin`, `t_prin` and `t_check` are not columns of `DF.csv`; they are set near
-the bottom of [`2D/InputParameters.jl`](../2D/InputParameters.jl) and apply to
-every row of whichever table is loaded. They are not the same for every figure:
-the article gives a total simulated time of 10⁵ typically, 2·10⁶ for the lattice
-figures (Fig8, Fig12), t_f = 287·10³ for Fig10, t > 8·10⁵ for Fig13, and Fig9
-characterises Γ_p at t = 1.4·10⁵. Reproducing a figure therefore means setting
-the horizon in `InputParameters.jl` as well as choosing `DF_FILE`. Promoting
-these to columns would make a figure's run fully described by its table.
+`t_fin`, `t_prin` and `t_check` are columns of these tables, so a figure's run
+is fully described by its row. `2D/InputParameters.jl` reads them when present
+and otherwise falls back to 150000 / 1000 / 1, the values the paper's L=50 runs
+used — so the archival [`2D/DF.csv`](../2D/DF.csv), which has no such columns,
+behaves exactly as before.
+
+`t_check` is 1 everywhere: Δt is retuned once per unit of simulated time.
+
+**`t_fin` and `t_prin` are provisional.** They are what the article says about
+run lengths, not what the runs were configured with, and are set in one place —
+the `HORIZON` table at the top of `make_dataframes.jl` — so they can be
+corrected in one edit followed by a regeneration.
+
+| Figure | t_fin | from |
+|---|---|---|
+| 1, 11 | 150 000 | the L=50 cluster runs |
+| 4, 9 | 100 000 | "a total simulated time of 10⁵" |
+| 8, 12 | 2 000 000 | caption: snapshot at t = 2·10⁶ |
+
+Fig9 needs checking: the article reads Γ_p at t = 1.4·10⁵, which is past the
+10⁵ horizon assumed here. Fig10's t_f = 287·10³ is stated but the rest of its
+row is not, so no table is generated for it.
