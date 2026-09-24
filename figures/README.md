@@ -70,11 +70,20 @@ The resubmission carries the figure PDFs that were actually sent
 The article's environment for each figure is what sets the width above: `figure*`
 for Fig1 and Fig6, `figure` for the rest.
 
-**Fig5 is stale.** The submitted figure writes the fastest growth rate as
-`s^m_rho` / `s^m_p` and places the legend above the axes; `fig_LSA.tex` here
-still uses `lambda^m` and an inset legend, which is where its extra 4.3 pt of
-height comes from. The data (`tau1.csv`, `tau5.csv`) is unaffected — it
-regenerates byte for byte. The .tex needs re-pulling from the article source.
+**Fig5 does not match the submitted figure, and the source that produced it is
+missing.** The submitted panel (b) writes the fastest growth rate as `s^m_rho`
+and `s^m_p` with the legend above the axes. Every copy of `fig_LSA.tex` that
+could be found — this one, the figure-only export, and two older project copies
+— instead uses `\lambda^m` with the legend inset at the bottom of the axes.
+That accounts for the 4.3 pt difference in height.
+
+Reproducing those two changes by hand brings the figure to within about 0.7 pt
+of the submitted PDF and looks right, but it is a reconstruction fitted to a
+bounding box, not the authoritative source, so it is deliberately not committed
+here. The real `fig_LSA.tex` needs to come from the article's own project.
+
+The data is unaffected: `tau1.csv` and `tau5.csv` still regenerate byte for byte
+from `make_fig_LSA.jl`, and `omegarho.csv` / `zrc_eq*.csv` are unchanged.
 
 **Figures 11, 12 and 13 are not here yet** — the phase panels at L=50, the
 extended lattice figure (submitted as two files, `Fig12ac` and `Fig12df`) and
