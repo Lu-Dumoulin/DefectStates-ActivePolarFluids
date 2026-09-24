@@ -26,7 +26,7 @@
 #                under Slurm, or 1 when running a single job by hand
 # ==============================================================================
 dir = get(ENV, "DATA_DIR", abspath(joinpath(@__DIR__, "..", "data", "L50")) * "/")
-localpath = get(ENV, "LOCAL_DATA_DIR", "Z:/L50/")
+localpath = get(ENV, "LOCAL_DATA_DIR", "")   # only printed; was "Z:/L50/" on the cluster
 idx = Base.parse(Int, get(ENV, "SIM_IDX", get(ENV, "SLURM_ARRAY_TASK_ID", "1")))
 @show fn = "$idx/"
 file = joinpath(dir, fn)

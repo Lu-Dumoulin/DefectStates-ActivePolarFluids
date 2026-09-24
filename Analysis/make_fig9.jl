@@ -103,8 +103,8 @@ return fig, fig2, fig3
 end
 
 function gamma_as_Ndefpm(stepp=30)
-    dir_df = "E:/AdptDt/"
-# dir_fig = "E:/AdptDt/"
+    # Reads the run set configured through DATA_DIR. This used to be pinned to
+    # "E:/AdptDt/", which silently ignored it.
     df2 = CSV.read(dir_df*"DF2-pm.csv", DataFrame)
     r = df2[:,:rho0]
     g4 = df2[:,:g4pm]

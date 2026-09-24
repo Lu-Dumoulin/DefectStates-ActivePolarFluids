@@ -268,7 +268,7 @@ function comp_correlation()
 end
 
 function profile(idx)
-    dir_ = "Z:/2defects/"
+    dir_ = dir_df                      # was pinned to "Z:/2defects/"
     df_ = CSV.read(dir_*"DF.csv", DataFrame)
     
     path = string("$idx/")

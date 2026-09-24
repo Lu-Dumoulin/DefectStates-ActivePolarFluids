@@ -131,8 +131,7 @@ end
 function plot_2defects_zoom(idx; dt = 1, sc=1)
     # set_theme!(theme_black())
     # IJulia.clear_output(true)
-    dir_df = "Z:/2defects/"
-    dir_fig = "D:/2defects_white/"
+    # was pinned to "Z:/2defects/" and "D:/2defects_white/"
     path = string("$idx/")
     dirf = dir_fig*path*"Density_zoom_b/"
     dirf2 = dir_fig*path*"Angle_zoom/"

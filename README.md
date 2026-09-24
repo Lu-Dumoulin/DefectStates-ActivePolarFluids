@@ -73,6 +73,7 @@ CFL condition on $\mathbf{v}$ and by `dtmin`.
 │   ├── InputParameters.jl # reads one DF.csv row, sets up grid and FFT plans
 │   ├── kernels.jl         # the CUDA kernels
 │   └── 2D.jl              # entry point: fields, time loop, snapshot writing
+├── test/                  # runtests.jl and its groups
 ├── params/                # DF_N.csv: the simulation inputs behind figure N
 │   └── README.md          # where each value comes from, and what is missing
 ├── figures/               # one directory per paper figure: tikz, data, panels
@@ -305,6 +306,37 @@ is that they now run end to end: they were written against run sets that are not
 published here, several expect intermediate tables (`DF2.csv`, `DF_analyse.csv`)
 produced by earlier passes, and none of it has been executed since the split,
 because no simulation output is available on the machine it was done on.
+
+## Tests
+
+```bash
+julia --project=. test/runtests.jl              # everything available
+julia --project=. test/runtests.jl params       # one group
+```
+
+What can be checked is bounded by what ships here: there is no simulation
+output and the solver needs a GPU, so the kernels are not exercised. What the
+suite does check:
+
+| Group | Checks |
+|---|---|
+| `params` | the tables carry the columns the solver reads, `a` is tied to the activity as Table I says, Table I's constants hold in every row, and `DF_9`/`DF_11` reproduce the tables the runs actually used |
+| `solver` | every source parses, the integration horizon resolves from the table and falls back to the archival values without one, and `AllInputParam.jl` regenerates `2D/DF.csv` byte for byte |
+| `analysis` | every script parses, there is one per figure it is claimed for, none shadows the configured run set, and the stability analysis regenerates Fig5's `tau1.csv` and `tau5.csv` byte for byte |
+| `figures` | every figure has a wrapper and a picture file, every image and table it references exists, the wrapped figures reproduce the article's text block and the self-contained ones are left alone, and each one compiles with no undefined control sequences |
+| `submitted` | every figure reproduces the PDF that was submitted |
+
+The last group needs a copy of the resubmission directory, and skips without
+one:
+
+```bash
+SUBMITTED_DIR=~/Documents/submittedFiles julia --project=. test/runtests.jl
+```
+
+`figures` and `submitted` also skip rather than fail when `pdflatex` or
+ghostscript is missing.
+
+---
 
 ## Relation to the code as it was run
 

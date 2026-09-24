@@ -56,8 +56,14 @@ const COMMON = (
     dtmin  = 0.01,     # App.: Delta t_max = 1e-2
 )
 
-# a' = 4 zeta_rho'/3, and 4/3 when zeta_rho = 0  (Table I footnote)
-ar_of(zr) = zr == 0 ? 4/3 : abs(zr)*4/3
+# a' = 4 zeta_rho'/3, and 4/3 when zeta_rho = 0  (Table I footnote).
+#
+# The association matters. AllInputParam.jl scaled a precomputed 4/3, giving
+# zr*(4/3); writing abs(zr)*4/3 instead parses as (zr*4)/3, which differs in
+# the last bit for zeta_rho = 10, 14 and 20. This matches the tables the runs
+# actually used. (2D/InputParameters.jl recomputes `ar` and ignores this
+# column, and does so the other way round - see params/README.md.)
+ar_of(zr) = zr == 0 ? 4/3 : abs(zr)*(4/3)
 
 """
     sweep(; L, rho0, tau, zetarho, seed=[1], t_fin, t_prin)

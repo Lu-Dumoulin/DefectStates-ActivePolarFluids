@@ -29,8 +29,10 @@ Nsim = length(trho0)*length(tkd)
 #     end
 # end
 
-dird1 = "E:/AdptDt/"
-dird2 = "D:/phasediag2/"
+# Two further run sets this file reads snapshots from, beyond the tables in
+# PDpaper/. Defaults keep the original names; override to point at your own.
+dird1 = get(ENV, "ADPTDT_DIR",    joinpath(dir_df, "AdptDt") * "/")
+dird2 = get(ENV, "PHASEDIAG_DIR", joinpath(dir_df, "phasediag2") * "/")
 
 function get_random_color(seed)
     Random.seed!(seed)
