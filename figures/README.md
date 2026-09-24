@@ -52,9 +52,33 @@ a document built from the paper's own preamble with the figure cropped by
 exactly, with no undefined control sequences.
 
 Figures 3, 7 and 10 are sized in absolute units rather than `\linewidth`, so
-they are unaffected by the text width and keep their own wrappers. Note that
-`Fig7/main.tex` currently renders about 925 pt wide, far past a printed column;
-it is presumably scaled on inclusion, which would also scale its text.
+they are unaffected by the text width and keep their own wrappers. Fig7 renders
+about 925 pt wide, far past a printed column — that is deliberate, and matches
+the submitted file exactly; the article scales it down on inclusion.
+
+### Checked against the submitted article
+
+The resubmission carries the figure PDFs that were actually sent
+(`Dumoulin_etal_FigN.pdf`). Comparing what this directory builds against them:
+
+| Figure | in the article | reproduces the submitted PDF |
+|---|---|---|
+| Fig2, Fig3, Fig4, Fig6, Fig7, Fig8, Fig9, Fig10 | | **exactly** |
+| Fig1 | `figure*`, `fig:schema` | within 0.6 % (2.7 pt of 480); visually identical |
+| Fig5 | `figure`, `fig:linstab` | **no — the source here is out of date**, see below |
+
+The article's environment for each figure is what sets the width above: `figure*`
+for Fig1 and Fig6, `figure` for the rest.
+
+**Fig5 is stale.** The submitted figure writes the fastest growth rate as
+`s^m_rho` / `s^m_p` and places the legend above the axes; `fig_LSA.tex` here
+still uses `lambda^m` and an inset legend, which is where its extra 4.3 pt of
+height comes from. The data (`tau1.csv`, `tau5.csv`) is unaffected — it
+regenerates byte for byte. The .tex needs re-pulling from the article source.
+
+**Figures 11, 12 and 13 are not here yet** — the phase panels at L=50, the
+extended lattice figure (submitted as two files, `Fig12ac` and `Fig12df`) and
+the ten-lattice figure.
 
 ---
 
