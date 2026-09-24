@@ -63,27 +63,19 @@ The resubmission carries the figure PDFs that were actually sent
 
 | Figure | in the article | reproduces the submitted PDF |
 |---|---|---|
-| Fig2, Fig3, Fig4, Fig6, Fig7, Fig8, Fig9, Fig10 | | **exactly** |
+| Fig2 – Fig10 | | **exactly** |
 | Fig1 | `figure*`, `fig:schema` | within 0.6 % (2.7 pt of 480); visually identical |
-| Fig5 | `figure`, `fig:linstab` | **no — the source here is out of date**, see below |
 
 The article's environment for each figure is what sets the width above: `figure*`
 for Fig1 and Fig6, `figure` for the rest.
 
-**Fig5 does not match the submitted figure, and the source that produced it is
-missing.** The submitted panel (b) writes the fastest growth rate as `s^m_rho`
-and `s^m_p` with the legend above the axes. Every copy of `fig_LSA.tex` that
-could be found — this one, the figure-only export, and two older project copies
-— instead uses `\lambda^m` with the legend inset at the bottom of the axes.
-That accounts for the 4.3 pt difference in height.
-
-Reproducing those two changes by hand brings the figure to within about 0.7 pt
-of the submitted PDF and looks right, but it is a reconstruction fitted to a
-bounding box, not the authoritative source, so it is deliberately not committed
-here. The real `fig_LSA.tex` needs to come from the article's own project.
-
-The data is unaffected: `tau1.csv` and `tau5.csv` still regenerate byte for byte
-from `make_fig_LSA.jl`, and `omegarho.csv` / `zrc_eq*.csv` are unchanged.
+**Where the figure body lives differs by figure.** Fig1, Fig2, Fig4, Fig6,
+Fig8 and Fig9 keep the picture in a `fig_*.tex` that `main.tex` wraps, and it is
+the wrapper that has to recreate the article's text block and font. Fig3, Fig5,
+Fig7 and Fig10 instead hold the picture inside `main.tex`, self-contained and
+sized in absolute units — Fig5, for instance, sets `\def\LW{246.0pt}` and never
+refers to `\linewidth`. Those four need no wrapper treatment and must not have
+`main.tex` regenerated, since that is the figure.
 
 **Figures 11, 12 and 13 are not here yet** — the phase panels at L=50, the
 extended lattice figure (submitted as two files, `Fig12ac` and `Fig12df`) and

@@ -1,30 +1,18 @@
-%=============================================================================
-%  Standalone wrapper -- fig_LSA
-%
-%      pdflatex main.tex
-%
-%  The paper places this figure in a \begin{figure} of
-%  \documentclass[prx,amsmath,amssymb,twocolumn,superscriptaddress]{revtex4-2},
-%  where \linewidth is 246.0pt. The figure is written in terms of \linewidth, so
-%  that length has to be reproduced here or the output is scaled differently.
-%
-%  The standalone class's `varwidth' option does NOT do this: with the `tikz'
-%  option the class crops to the picture and leaves \linewidth at its own
-%  default of 345.0pt. The lengths are therefore set explicitly below.
-%=============================================================================
-\documentclass[border=0pt,tikz,10pt]{standalone}
-% NOT lmodern: revtex4-2 prx typesets figures in Computer Modern (cmr).
+\documentclass[crop,tikz,10pt]{standalone}
+\usepackage{printlen}
+\usepackage{lmodern}
 \usepackage{graphicx}
 \usepackage{csvsimple}
 \usepackage{tikzscale}
 \usepackage{amsmath, esint}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-\usepackage{xcolor}
+% \usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
 \setcounter{secnumdepth}{3}
 %\usepackage[francais]{babel}
 \usepackage[english]{babel}
-% \usepackage{indentfirst}
+\usepackage{indentfirst}
 \selectlanguage{english}
 %\usepackage[utf8]{inputenc}
 %\usepackage[T1]{fontenc}
@@ -54,6 +42,8 @@ automata,
 arrows.meta,
 intersections
 ]
+% \usetikzlibrary{external}
+% \tikzexternalize[prefix=Tikzpdf/]
 \usepackage{scalefnt}
 \usepackage{caption}
 \usepackage{multirow}
@@ -73,40 +63,138 @@ intersections
 \usepackage{dirtytalk}
 \usepackage{float}
 \usepackage[export]{adjustbox}
+%\usepackage{textcomp}
+\paperheight=297mm
+\paperwidth=210mm
+% \usepackage[capbesideposition={right,top},facing=yes,capbesidesep=quad]{floatrow}
+\usepackage[rightcaption]{sidecap}
+\sidecaptionvpos{figure}{t}
+% \usepackage[top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
 \usepackage{pdfpages}
+%\pagestyle{empty}
 
-\definecolor{Gray}{rgb}{0.5, 0.5, 0.5}
-\definecolor{Blue}{rgb}{0.0, 0.0, 1.0}
-\definecolor{Olive}{rgb}{0.5, 0.5, 0.0}
-\definecolor{Maroon}{rgb}{0.5, 0.0, 0.0}
+% Abreviation
+\def \be {\begin{equation}}
+\def \ee {\end{equation}}
+\def \bc {\begin{center}}
+\def \ec {\end{center}}
+\def \bf {\begin{figure}[h!]}
+\def \ef {\end{figure}}
+\def \dd  {{\rm d}}
+\def \dD  {{\rm D}}
+\def \v {\mathbf}
+\def \pourmille {$\,^0\!/_{00}$}
+\def\Z{\mbox{Z\hspace{-.4em}Z}}
+\def \epsi {\varepsilon}
+\def \u {\underline}
+\def \dive {{\rm div}}
+\def \vect {{\rm vect}}
+\def \grad {\v{grad}}
+\def \vnab {\boldsymbol{\nabla}}
+\def \vg  {\boldsymbol}
+\def \e {{\hspace{.2em}\rm e}}
+\def \l {\left}
+\def \r {\right}
+\def \bee{\begin{equation*}}
+\def \eee{\end{equation*}}
+\def \ba {\begin{aligned}}
+\def \ea {\end{aligned}}
+% \def \bl{\begin{lstlisting}}
+% \def \el{\end{lstlisting}}
+\def \inf{\infty}
+\def \i{\ensuremath{^{-1}}}
+\def \ii{\ensuremath{^{-2}}}
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\erf}{erf}
+\DeclareMathOperator{\Tr}{Tr}
+\def\cpp{C\raisebox{0.48ex}{\scriptsize\textbf{++}}\,}
+\def \kT {\text{k}_\text{B}\text{T}}
+\def \kb {k_{\text B}}
+\def \ab {{\alpha\beta}}
+\def \abg {{\alpha\beta\gamma}}
+\def \Tr {\text{Tr}}
+% Nouvelles commandes
+\newcommand{\ex}[1] {\cdot10^{#1}}
+\newcommand {\vn}[1] {\mathbf{\widehat{#1}}}
+\newcommand{\mail}[1]{{\href{mailto:#1}{#1}}}
+\newcommand{\ftplink}[1]{{\href{ftp://#1}{#1}}}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\fder}[2]{\ensuremath{\dfrac{\delta #1}{\delta #2}}}
+\newcommand{\der}[2]{\ensuremath{\dfrac{\dd #1}{\dd #2}}}
+\newcommand{\Der}[2]{\ensuremath{\dfrac{\dD #1}{\dD #2}}}
+\newcommand{\dder}[2]{\ensuremath{\dfrac{\dd^2 #1}{\dd #2^2}}}
+\newcommand{\D}[2]{\ensuremath{\dfrac{\partial #1}{\partial #2}}}
+\newcommand{\DD}[2]{\ensuremath{\dfrac{\partial^2 #1}{\partial #2^2}}}
+\newcommand{\ket}[1]{\ensuremath{|#1\rangle}}
+\newcommand{\bra}[1]{\ensuremath{\langle#1|}}
+\newcommand{\pmat}[4]{\ensuremath{\begin{pmatrix} #1 & #2 \\ #3 & #4\end{pmatrix}}}
+\newcommand{\vv}[2]{\ensuremath{\begin{pmatrix}#1\\#2\end{pmatrix}}}
+\newcommand{\moy}[1]{\ensuremath{\left\langle#1\right\rangle}}
+\newcommand{\mmoy}[1]{\ensuremath{\langle\hspace{-0.05cm}\langle#1\rangle\hspace{-0.08cm}\rangle}}
+\newcommand{\kr}[3]{\ensuremath{\varepsilon_{#1 #2 #3}}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\Red}[1]{\textcolor{red}{#1}}
+\newcommand{\orange}[1]{\textcolor{orange}{#1}}
+\newcommand{\citep}[1]{(\cite{#1})}
+
+\renewcommand{\thesection}{\arabic{section}}
+
+% \definecolor{Gray}{rgb}{0.5, 0.5, 0.5}
+% \definecolor{Blue}{rgb}{0.0, 0.0, 1.0}
+% \definecolor{Olive}{rgb}{0.5, 0.5, 0.0}
+% \definecolor{Maroon}{rgb}{0.5, 0.0, 0.0}
 \definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
 \definecolor{ao}{rgb}{0.0, 0.5, 0.0}
 \definecolor{bleudefrance}{rgb}{0.19, 0.55, 0.91}
-\definecolor{actincolor}{HTML}{ffc311}
-\definecolor{nuccolor}{HTML}{0600ff}
-\definecolor{myosincolor}{HTML}{26a22b}
-\definecolor{cyan}{rgb}{0.0, 1.0, 1.0}
-\definecolor{RdPu1}{HTML}{feebe2}
-\definecolor{RdPu2}{HTML}{f768a1}
-\definecolor{RdPu3}{HTML}{7a0177}
+% \definecolor{actincolor}{HTML}{ffc311}
+% \definecolor{nuccolor}{HTML}{0600ff}
+% \definecolor{myosincolor}{HTML}{26a22b}
+% \definecolor{cyan}{rgb}{0.0, 1.0, 1.0}
 
-% The paper's preamble inputs abrv.tex; the figures use its shorthands
-% (\zr, \Dmu, ...). Without it they silently vanish from the output.
-\input{abrv}
-\input{some_command}
+\usepackage{ifthen}
+\def \LW {246.0pt}
 
-\setlength{\parindent}{0pt}
+\begin{document}
+\usepgfplotslibrary{fillbetween}
 
+\begin{tikzpicture}[scale={1}]
+\def \sizefig{0.5*\LW}
+\def \hor{1.0} % horizontal
+\def \vert{0.0} % vertical alignement
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.75] at (-0.16*\sizefig, 0.72*\sizefig) {(a)};
 
-% --- reproduce the paper's text block for this figure --------------------
-\setlength{\textwidth}{246.0pt}
-\setlength{\columnwidth}{246.0pt}
-\setlength{\linewidth}{246.0pt}
-\setlength{\hsize}{246.0pt}
+    \begin{axis}[width={\sizefig}, height={\sizefig}, xlabel={Density $\rho_0$},  xmin={0.3}, xmax={0.8}, ymin={0}, ymax={20}, legend columns=2, legend style={at={(1,1)},anchor=north east, /tikz/column 2/.style={column sep=5pt}}] 
 
-\begin{document}%
-% revtex4-2 sets 9pt/10.5pt inside figure environments; match it so text
-% nodes and axis labels come out at the paper's size.
-\fontsize{9}{10.5}\selectfont%
-\input{fig_LSA}%
+    \addplot[only marks, color=black, mark repeat=5, mark=diamond*, mark size=3] table [x=x, y=wnop, col sep=comma] {zrc_eq2.csv};
+ 
+    \addplot[no marks, color={black}, style={ultra thick}] table [x=x, y=wp, col sep=comma] {zrc_eq2.csv};
+
+\end{axis}
+\node[rotate=90, align=center] at (-0.16*\sizefig,0.25*\sizefig) {Critical active stress $\zeta_\rho^c$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.75] at (-0.215*\sizefig+\hor*\sizefig, 0.72*\sizefig-\vert*\sizefig) {(b)};
+\node[rotate=90, align=center] at (-0.215*\sizefig+\hor*\sizefig, 0.3*\sizefig-\vert*\sizefig) {Fastest growth rate};
+\begin{axis}[width={\sizefig}, height={\sizefig}, xlabel={Density $\rho_0$},  xmin={0.3}, xmax={0.825}, ymin={-0.6}, ymax={0.6}, legend columns=2, legend style={at={(axis cs:0.5625,0.61)},anchor=south, /tikz/column 2/.style={column sep=4pt}}, at={(\hor*\sizefig,-\vert*\sizefig)}] 
+
+    \addlegendimage{color=red, style={ultra thick}};
+    \addlegendentry{$s_\rho^\text{m}$};
+
+    \addlegendimage{color=blue, style={ultra thick}};
+    \addlegendentry{$s_p^\text{m}$}
+    \addplot[no marks, blue, ultra thick] {0.1*x*x};
+
+    \addplot[no marks, color=red, style={ultra thick}] table [x=r, y=y1, col sep=comma] {omegarho.csv};
+
+    \node[mark size=3pt, color=bleudefrance] at (axis cs:0.4,0.5) {\pgfuseplotmark{diamond*}};
+    \node[mark size=3pt, color=bleudefrance] at (axis cs:0.8,0.5) {\pgfuseplotmark{triangle*}};
+\end{axis}
+\printlength{\linewidth}
+\end{tikzpicture}
+% y1 -> tau 5 zr 4
+% y2 -> tau 5 zr6 
+% y3 -> 5/2 4
+% y4 -> 5/2 6
+% y5 -> 5/3 4
+% y6 -> 5/3 6
+
 \end{document}
