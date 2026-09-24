@@ -221,7 +221,7 @@ function Plot_per(idx; dt = 1, sc=1)
 end
 
 function plot_dens_angle(idx)
-    dir = "D:/Fig_paper/density_angle_$(idx)/"
+    dir = joinpath(dir_fig, "density_angle_$(idx)/")
     mkpath(dir)
     # ex = 200
     path = string("$idx/")
@@ -266,7 +266,7 @@ function plot_dens_angle(idx)
 end
 
 function plot_dens_and_angle(idx)
-    dir = "D:/Fig_paper/density_and_angle_tri_$(idx)/"
+    dir = joinpath(dir_fig, "density_and_angle_tri_$(idx)/")
     mkpath(dir)
     # ex = 200
     path = string("$idx/")

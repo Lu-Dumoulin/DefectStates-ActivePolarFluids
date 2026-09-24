@@ -1,14 +1,20 @@
 # =============================================================================
-#  Analysis and plotting for the "lattice" figure.
+#  Figure 12 - fig:lattice1extended
 #
-#  Run against the run set that figure uses:
-#      DATA_DIR=/path/to/runset/ julia --project=. Analysis/make_fig_lattice.jl
+#  Square and hexagonal lattices: density, Voronoi tessellation and the
+#  time evolution of the shape order.
+#
+#      DATA_DIR=/path/to/fig12-runs/ FIG_DIR=<repo>/figures/Fig12/ \
+#          julia --project=. Analysis/make_fig12.jl
+#
+#  Inputs : params/DF_12.csv (2 runs, t_fin 2e6)
+#  Outputs: density, Voronoi and shape-order panels for both lattices
 # =============================================================================
 
 include("MakePlots.jl")
 
 function figure_triple(idx, k=2)
-    mkpath("Z:/Fig_paper/triple_$idx_$k/")
+    mkpath(joinpath(dir_fig, "triple_$idx_$k/"))
     ex = 200
     path = string("$idx/")
     dird = dir_df*path*"Data/"
@@ -44,7 +50,7 @@ function figure_triple(idx, k=2)
     hidexdecorations!(ax1)
     colgap!(fig1.layout, 4)
     rowgap!(fig1.layout, 0)
-    save("Z:/Fig_paper/triple_$idx_$k/density.png", fig1)
+    save(joinpath(dir_fig, "triple_$idx_$k/density.png"), fig1)
     # fig1
     
     
@@ -67,7 +73,7 @@ function figure_triple(idx, k=2)
     colgap!(fig2.layout, 0)
     rowgap!(fig2.layout, -5)
     tightlimits!(ax)
-    save("Z:/Fig_paper/triple_$idx_$k/voronoi.png", fig2)
+    save(joinpath(dir_fig, "triple_$idx_$k/voronoi.png"), fig2)
     # fig2
     
     mean_gamma_t = zeros(num_files,5)
@@ -133,13 +139,13 @@ function figure_triple(idx, k=2)
     for i=2:6
         gam[!,"g$i"] = mean_gamma_t[2:num_files, i-1]
     end
-    CSV.write(joinpath("Z:/Fig_paper/triple_$idx_$k/","gamma.csv"), gam)
+    CSV.write(joinpath(joinpath(dir_fig, "triple_$idx_$k/"),"gamma.csv"), gam)
     return fig1, fig2, gam
     # return fig1, fig2
 end
 
 function figure_triple_pm(idx, k)
-    dir = "D:/Fig_paper/triple_pm_$(idx)_$k/"
+    dir = joinpath(dir_fig, "triple_pm_$(idx)_$k/")
     mkpath(dir)
     ex = 200
     path = string("$idx/")
@@ -228,7 +234,7 @@ function figure_triple_pm(idx, k)
     # colgap!(fig2.layout, 0)
     # rowgap!(fig2.layout, -5)
     # tightlimits!(ax)
-    # save("D:/Fig_paper/triple_pm_$k/voronoi.png", fig2)
+    # save(joinpath(dir_fig, "triple_pm_$k/voronoi.png"), fig2)
     # # fig2
     
 #     mean_gamma_t = zeros(num_files,5)
@@ -349,13 +355,13 @@ function figure_triple_pm(idx, k)
 #     for i=2:6
 #         gam[!,"g$i"] = mean_gamma_t[2:num_files, i-1]
 #     end
-#     CSV.write(joinpath("Z:/Fig_paper/triple_pm_$k/","gamma.csv"), gam)
+#     CSV.write(joinpath(joinpath(dir_fig, "triple_pm_$k/"),"gamma.csv"), gam)
 #     return fig1, fig2, gam
     return fig1#, fig2
 end
 
 function figure_triple_zoom(idx, k=2)
-    mkpath("Z:/Fig_paper/triple_zoom_$k/")
+    mkpath(joinpath(dir_fig, "triple_zoom_$k/"))
     ex = 200
     path = string("$idx/")
     dird = dir_df*path*"Data/"
@@ -398,7 +404,7 @@ function figure_triple_zoom(idx, k=2)
     hidexdecorations!(ax1)
     colgap!(fig1.layout, 4)
     rowgap!(fig1.layout, 0)
-    save("Z:/Fig_paper/triple_zoom_$k/density.png", fig1)
+    save(joinpath(dir_fig, "triple_zoom_$k/density.png"), fig1)
     # fig1
     
     
@@ -421,7 +427,7 @@ function figure_triple_zoom(idx, k=2)
     # colgap!(fig2.layout, 0)
     # rowgap!(fig2.layout, -5)
     # tightlimits!(ax)
-    # save("Z:/Fig_paper/triple_zoom_$k/voronoi.png", fig2)
+    # save(joinpath(dir_fig, "triple_zoom_$k/voronoi.png"), fig2)
     # # fig2
     
 #     mean_gamma_t = zeros(num_files,5)
@@ -487,13 +493,13 @@ function figure_triple_zoom(idx, k=2)
 #     for i=2:6
 #         gam[!,"g$i"] = mean_gamma_t[2:num_files, i-1]
 #     end
-#     CSV.write(joinpath("Z:/Fig_paper/triple_zoom_$k/","gamma.csv"), gam)
+#     CSV.write(joinpath(joinpath(dir_fig, "triple_zoom_$k/"),"gamma.csv"), gam)
     # return fig1, fig2, gam
     return fig1#, fig2
 end
 
 function figure_triple_zoom_pm(idx, k)
-    mkpath("Z:/Fig_paper/triple_zoom_pm_$k/")
+    mkpath(joinpath(dir_fig, "triple_zoom_pm_$k/"))
     ex = 200
     path = string("$idx/")
     dird = dir_df*path*"Data/"
@@ -536,7 +542,7 @@ function figure_triple_zoom_pm(idx, k)
     hidexdecorations!(ax1)
     colgap!(fig1.layout, 4)
     rowgap!(fig1.layout, 0)
-    save("Z:/Fig_paper/triple_zoom_pm_$k/density.png", fig1)
+    save(joinpath(dir_fig, "triple_zoom_pm_$k/density.png"), fig1)
     # fig1
     
     
@@ -588,7 +594,7 @@ function figure_triple_zoom_pm(idx, k)
     colgap!(fig2.layout, 0)
     rowgap!(fig2.layout, -5)
     tightlimits!(ax)
-    save("Z:/Fig_paper/triple_zoom_pm_$k/voronoi.png", fig2)
+    save(joinpath(dir_fig, "triple_zoom_pm_$k/voronoi.png"), fig2)
     # fig2
     
     mean_gamma_t = zeros(num_files,5)
@@ -709,21 +715,14 @@ function figure_triple_zoom_pm(idx, k)
     for i=2:6
         gam[!,"g$i"] = mean_gamma_t[2:num_files, i-1]
     end
-    CSV.write(joinpath("Z:/Fig_paper/triple_zoom_pm_$k/","gamma.csv"), gam)
+    CSV.write(joinpath(joinpath(dir_fig, "triple_zoom_pm_$k/"),"gamma.csv"), gam)
     return fig1, fig2, gam
     # return fig1, fig2
 end
 
 # --- entry point -------------------------------------------------------------
-# Runs when this file is executed directly. The calls below use the default
-# arguments the functions were written with; check them against the run set in
-# DATA_DIR before trusting the output.
 if abspath(PROGRAM_FILE) == @__FILE__
-    # every function here needs a simulation index — see below
-
-    # These need arguments (the simulation index, and which panel):
-    # figure_triple(idx)
-    # figure_triple_pm(idx, k)
-    # figure_triple_zoom(idx)
-    # figure_triple_zoom_pm(idx, k)
+    mkpath(joinpath(dir_fig, "Data_Fig_Tikz"))
+    figure_triple(1)
+    figure_triple(2)
 end

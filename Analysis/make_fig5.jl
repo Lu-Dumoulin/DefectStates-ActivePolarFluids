@@ -1,5 +1,9 @@
 # =============================================================================
-#  Linear stability analysis of the homogeneous state — the Fig5 curves.
+#  Figure 5 - fig:linstab. Linear stability of the homogeneous state.
+#
+#  Needs no DATA_DIR: this analyses the linearised equations, not the data.
+#  omegarho.csv and zrc_eq*.csv are NOT produced here - nothing in this
+#  repository writes them (see figures/README.md).
 #
 #      julia --project=. Analysis/make_fig_LSA.jl [outdir]
 #

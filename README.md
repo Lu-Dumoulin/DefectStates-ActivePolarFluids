@@ -81,7 +81,8 @@ CFL condition on $\mathbf{v}$ and by `dtmin`.
 │   ├── config.jl          # run set from DATA_DIR / FIG_DIR
 │   ├── core.jl            # defect detection, spectra, Voronoi, batch passes
 │   ├── MakePlots.jl       # generic panels from .jld, any run set
-│   ├── make_fig_*.jl      # one per figure: its analysis, then its plot
+│   ├── make_figN.jl       # one per figure N: its analysis, then its plot
+│   ├── not_in_paper.jl    # figures the revision removed
 │   ├── PhaseDiagram.jl    # the phase diagram (not split yet)
 │   └── talk_figures.jl    # slides for a talk, not paper figures
 ├── 1D/                    # reduced 1D models (revised version of the paper)
@@ -266,14 +267,14 @@ core.jl            defect detection, segmentation, structure factors,
    |               correlations, batch passes over a run set
 MakePlots.jl       generic panels from .jld: density, angle, velocity, order,
    |               defect overlays, Voronoi tessellations
-make_fig_*.jl      one per figure: the analysis that figure needs, then its plot
+make_figN.jl       one per figure N: the analysis it needs, then its plot
 ```
 
 All of them take the run set through the environment:
 
 ```bash
 DATA_DIR=/path/to/runset/ julia --project=. Analysis/MakePlots.jl
-DATA_DIR=/path/to/runset/ FIG_DIR=/path/to/figures/ julia --project=. Analysis/make_fig_phases.jl
+DATA_DIR=/path/to/runset/ FIG_DIR=$PWD/figures/Fig6/ julia --project=. Analysis/make_fig6.jl
 ```
 
 `DATA_DIR` is the directory holding `DF.csv` and one `<idx>/Data/` folder per
@@ -283,12 +284,15 @@ simulation — the layout [`2D/`](2D/) writes. `FIG_DIR` defaults to it.
 run it against any run set and it renders the standard panels for every
 simulation in it. It reproduces no particular figure.
 
-Each [`make_fig_*.jl`](Analysis/) does reproduce one, and is meant to be the
-entry point for someone who has run the simulations for that figure and wants
-the analysis behind it. Running one directly executes the calls at the bottom of
-the file with the arguments the functions were written with; the ones that need
-a simulation index are listed there as commented examples. Which script draws
-which figure is in [`figures/README.md`](figures/README.md).
+Each `make_figN.jl` reproduces figure N, and is the entry point for someone who
+has run that figure's simulations — from its table in [`params/`](params/) —
+and wants the analysis behind the panels. Running one executes the calls at the
+bottom of the file. Which script draws which figure, and the evidence for each
+pairing, is in [`figures/README.md`](figures/README.md).
+
+`Analysis/not_in_paper.jl` holds the flow-alignment, anisotropic-stress and
+saturation figures, which the earlier version of the article had and the
+submitted one does not.
 
 [`Analysis/PhaseDiagram.jl`](Analysis/PhaseDiagram.jl) has not been split yet
 and still carries hard-coded paths. [`Analysis/talk_figures.jl`](Analysis/talk_figures.jl)

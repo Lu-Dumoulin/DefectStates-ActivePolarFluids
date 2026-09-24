@@ -1,8 +1,16 @@
 # =============================================================================
-#  Analysis and plotting for the "schema" figure.
+#  Figure 1 - fig:schema
 #
-#  Run against the run set that figure uses:
-#      DATA_DIR=/path/to/runset/ julia --project=. Analysis/make_fig_schema.jl
+#  Schematic plus density snapshots at rho0 = 0.45, 0.6 and 0.75.
+#
+#      DATA_DIR=/path/to/fig1-runs/ FIG_DIR=<repo>/figures/Fig1/ \
+#          julia --project=. Analysis/make_fig1.jl
+#
+#  Inputs : params/DF_1.csv (3 runs, L=50)
+#  Outputs: phases_L50_3.png, the density panels (b-d)
+#
+#  Rows 2, 5 and 8 of the L=50 table are those three densities, which is
+#  make_plot_L50_3zoom's default tidx.
 # =============================================================================
 
 include("MakePlots.jl")
@@ -59,8 +67,8 @@ function make_plot_L50(tidx=Array(1:9); part = 1.0, Lz = 3, Lx = 3)
     colgap!(fig.layout, 1)
     rowgap!(fig.layout, 1)
     Colorbar(fig[:, end+1], colormap=:RdPu_8, colorrange=(rhomin[1],rhomax[1]), ticksvisible=false, size = 25, ticklabelsize=0) #, label= L"\rho", labelsize = 30, ticklabelsize=24)
-    isdir("D:/Fig_paper/") ? nothing : mkpath("D:/Fig_paper/")
-    save("D:/Fig_paper/phases_L50_3.png", fig)
+    mkpath(dir_fig)
+    save(joinpath(dir_fig, "phases_L50_3.png"), fig)
     return fig
 end
 
@@ -124,16 +132,13 @@ function make_plot_L50_3zoom(tidx=[2,5,8], zoom=3; part = 1.0, Lz = 2, Lx = 3)
     colgap!(fig.layout, 1)
     rowgap!(fig.layout, 1)
     Colorbar(fig[:, end+1], colormap=:RdPu_8, colorrange=(rhomin[1],rhomax[1]), ticksvisible=false, size = 25, ticklabelsize=0) #, label= L"\rho", labelsize = 30, ticklabelsize=24)
-    isdir("D:/Fig_paper/") ? nothing : mkpath("D:/Fig_paper/")
-    save("D:/Fig_paper/phases_L50_3zoom.png", fig)
+    mkpath(dir_fig)
+    save(joinpath(dir_fig, "phases_L50_3zoom.png"), fig)
     return fig
 end
 
 # --- entry point -------------------------------------------------------------
-# Runs when this file is executed directly. The calls below use the default
-# arguments the functions were written with; check them against the run set in
-# DATA_DIR before trusting the output.
 if abspath(PROGRAM_FILE) == @__FILE__
-    make_plot_L50()
-    make_plot_L50_3zoom()
+    mkpath(joinpath(dir_fig, "Data_Fig_Tikz"))
+    make_plot_L50([2, 5, 8]; Lz = 1, Lx = 3)
 end

@@ -1,8 +1,15 @@
 # =============================================================================
-#  Analysis and plotting for the "phases" figure.
+#  Figure 6 - fig:states
 #
-#  Run against the run set that figure uses:
-#      DATA_DIR=/path/to/runset/ julia --project=. Analysis/make_fig_phases.jl
+#  Asymptotic states at different target densities.
+#
+#      DATA_DIR=/path/to/fig6-runs/ FIG_DIR=<repo>/figures/Fig6/ \
+#          julia --project=. Analysis/make_fig6.jl
+#
+#  Inputs : the L=10 runs at tau=5, zeta_rho=4
+#  Outputs: the density/polarity snapshot grid and the zoomed panels
+#
+#  No DF_6.csv yet - the article does not say which rho0 values are shown.
 # =============================================================================
 
 include("MakePlots.jl")
@@ -59,8 +66,8 @@ function make_full_heatmap_idx(tkd=[0.2], tr0=[0.4,0.5,0.6,0.65,0.7,0.75,0.8,1.2
     colgap!(fig.layout, 1)
     rowgap!(fig.layout, 1)
     Colorbar(fig[:, end+1], colormap=:RdPu_8, colorrange=(rhomin[1],rhomax[1]), ticksvisible=false, size = 25, ticklabelsize=0) #, label= L"\rho", labelsize = 30, ticklabelsize=24)
-    isdir("D:/Fig_paper/") ? nothing : mkpath("D:/Fig_paper/")
-    save("D:/Fig_paper/phases_$(tkd[1])_$(tr0[1])_$(tzr[1])_v2.png", fig)
+    mkpath(dir_fig)
+    save(joinpath(dir_fig, "phases_$(tkd[1])_$(tr0[1])_$(tzr[1])_v2.png"), fig)
     return fig
 end
 
@@ -117,16 +124,14 @@ function make_zoom_heatmap_idx(tkd=[0.2], tr0=[0.4,0.7, 0.75,0.8], tzr=[4]; part
     # Colorbar(fig[:, end+1], colormap=:viridis, colorrange=(rhomin[1],rhomax[1]), ticksvisible=true, size = 25, ticklabelsize=0) #, label= L"\rho", labelsize = 30, ticklabelsize=24)
     colgap!(fig.layout, 1)
     rowgap!(fig.layout, 0.1)
-    isdir("D:/Fig_paper/") ? nothing : mkpath("D:/Fig_paper/")
-    save("D:/Fig_paper/phases_zoom_$(tkd[1])_$(tr0[1])_$(tzr[1])_v2.png", fig)
+    mkpath(dir_fig)
+    save(joinpath(dir_fig, "phases_zoom_$(tkd[1])_$(tr0[1])_$(tzr[1])_v2.png"), fig)
     return fig
 end
 
 # --- entry point -------------------------------------------------------------
-# Runs when this file is executed directly. The calls below use the default
-# arguments the functions were written with; check them against the run set in
-# DATA_DIR before trusting the output.
 if abspath(PROGRAM_FILE) == @__FILE__
+    mkpath(joinpath(dir_fig, "Data_Fig_Tikz"))
     make_full_heatmap_idx()
     make_zoom_heatmap_idx()
 end

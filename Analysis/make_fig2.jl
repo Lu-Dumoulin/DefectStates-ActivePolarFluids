@@ -1,8 +1,17 @@
 # =============================================================================
-#  Analysis and plotting for the "2defects" figure.
+#  Figure 2 - fig:stab_defects
 #
-#  Run against the run set that figure uses:
-#      DATA_DIR=/path/to/runset/ julia --project=. Analysis/make_fig_2defects.jl
+#  Defect pair: number of defects over time, density and velocity maps,
+#  and the critical annihilation distance.
+#
+#      DATA_DIR=/path/to/fig2-runs/ FIG_DIR=<repo>/figures/Fig2/ \
+#          julia --project=. Analysis/make_fig2.jl
+#
+#  Inputs : the two-defect runs (t_fin 30000/500, and 1000/20 for panel c)
+#  Outputs: the defect-pair panels and the critical-distance heatmap
+#
+#  No DF_2.csv yet - the article does not give the tau list for panel (a)
+#  nor the rho0/zeta grid for panel (c). See params/README.md.
 # =============================================================================
 
 include("MakePlots.jl")
@@ -45,7 +54,7 @@ function heatmap_dist_2defects(kk)
     a.title = kk == 1 ? L"\tau = 1" : L"\tau = 0.5"
     a.titlesize = 30
     Colorbar(f[:,2], label= L"d", labelsize = 30, ticklabelsize=24, limits=(minimum(noNaND),maximum(noNaND)))
-    save("Z:/Fig_paper/dist_kd=$kk.png", f)
+    save(joinpath(dir_fig, "dist_kd=$kk.png"), f)
     
     dens = map(x->isnan(x) ? 0 : 1/(x*x), D/10.08)
     md = 500#maximum(dens)
@@ -59,7 +68,7 @@ function heatmap_dist_2defects(kk)
     a.title = kk == 1 ? L"\tau = 1" : L"\tau = 0.5"
     a.titlesize = 30
     Colorbar(f[:,2], label= L"N^u", labelsize = 30, ticklabelsize=24, limits=(0,md))#maximum(dens)))
-    save("Z:/Fig_paper/upper_kd=$kk.png", f)
+    save(joinpath(dir_fig, "upper_kd=$kk.png"), f)
 end
 
 function heatmap_dist_2defects_b(rr)
@@ -79,7 +88,7 @@ function heatmap_dist_2defects_b(rr)
     a.titlesize = 30
     a.xscale = Makie.pseudolog10
     Colorbar(f[:,2], label= L"d", labelsize = 30, ticklabelsize=24, limits=(minimum(noNaND),maximum(noNaND)))
-    save("Z:/Fig_paper/dist_r0=$rr.png", f)
+    save(joinpath(dir_fig, "dist_r0=$rr.png"), f)
     
     dens = map(x->isnan(x) ? 0 : 1/(x*x), D/10.08)
     md = maximum(dens)
@@ -98,7 +107,7 @@ function heatmap_dist_2defects_b(rr)
         text!(a, "$(round(Int, dens[i]))", position = (k[i], z[i]), color = :black, align = (:center, :center))
     end
     Colorbar(f[:,2], label= L"N^u", labelsize = 30, ticklabelsize=24, limits=(0,md), scale = Makie.pseudolog10, ticks=[0,50,100,200,400,800,1600])#maximum(dens)))
-    save("Z:/Fig_paper/upper_r0=$rr.png", f)
+    save(joinpath(dir_fig, "upper_r0=$rr.png"), f)
 end
 
 function velocity_defects(idx)
@@ -316,15 +325,7 @@ function plot_2defects_zoom(idx; dt = 1, sc=1)
 end
 
 # --- entry point -------------------------------------------------------------
-# Runs when this file is executed directly. The calls below use the default
-# arguments the functions were written with; check them against the run set in
-# DATA_DIR before trusting the output.
 if abspath(PROGRAM_FILE) == @__FILE__
+    mkpath(joinpath(dir_fig, "Data_Fig_Tikz"))
     dist_2defects()
-
-    # These need arguments (the simulation index, and which panel):
-    # heatmap_dist_2defects(kk)
-    # heatmap_dist_2defects_b(rr)
-    # velocity_defects(idx)
-    # plot_2defects_zoom(idx)
 end

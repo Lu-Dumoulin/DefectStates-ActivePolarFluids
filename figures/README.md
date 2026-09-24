@@ -63,70 +63,83 @@ one-column template** — the output stops matching the article.
 
 ## Where each figure comes from
 
-| Figure | Article label | Drawn by |
-|---|---|---|
-| **Fig1** | `fig:schema` | [`make_fig_schema.jl`](../Analysis/make_fig_schema.jl) — `make_plot_L50()` renders `phases_L50_3.png` |
-| **Fig2** | `fig:stab_defects` | [`make_fig_2defects.jl`](../Analysis/make_fig_2defects.jl) |
-| **Fig3** | `fig:singleDefect` | [`1D/models.pluto.jl`](../1D/models.pluto.jl) — **fully reproducible here**; the data is byte-identical to [`1D/figdata/`](../1D/figdata) |
-| **Fig4** | `fig:Ndefects` | [`make_fig_ndef.jl`](../Analysis/make_fig_ndef.jl) |
-| **Fig5** | `fig:linstab` | [`make_fig_LSA.jl`](../Analysis/make_fig_LSA.jl) — `tau1.csv` and `tau5.csv` **regenerate byte for byte** |
-| **Fig6** | `fig:states` | [`make_fig_phases.jl`](../Analysis/make_fig_phases.jl) |
-| **Fig7** | `fig:phasediagram` | [`PhaseDiagram.jl`](../Analysis/PhaseDiagram.jl) — `df_tikz_phase_diagram()`; tables ship in [`Analysis/PDpaper/`](../Analysis/PDpaper) |
-| **Fig8** | `fig:lattice1` | [`make_fig_lattice.jl`](../Analysis/make_fig_lattice.jl) |
-| **Fig9** | `fig:gamma_rho` | [`make_fig_gamma_rho.jl`](../Analysis/make_fig_gamma_rho.jl) |
-| **Fig10** | `fig:tauc` | [`PhaseDiagram.jl`](../Analysis/PhaseDiagram.jl) — `make_csv_exp_plot(t)` |
+One script per figure, named for it. Each takes the run set through `DATA_DIR`
+and writes into `FIG_DIR`:
 
-Most of these need simulation output that is not published here; see the
-caveats in the top-level [README](../README.md#analysis).
+```bash
+DATA_DIR=/path/to/fig9-runs/ FIG_DIR=$PWD/figures/Fig9/ \
+    julia --project=. Analysis/make_fig9.jl
+```
+
+| Figure | Script | Established by |
+|---|---|---|
+| **1** | [`make_fig1.jl`](../Analysis/make_fig1.jl) | `make_plot_L50` writes `phases_L50_3.png`; rows 2, 5, 8 of the L=50 table are ρ₀ = 0.45, 0.60, 0.75, the caption's three densities |
+| **2** | [`make_fig2.jl`](../Analysis/make_fig2.jl) | the two-defect routines; the figure ships a pre-built PDF rather than data |
+| **3** | [`1D/models.pluto.jl`](../1D/models.pluto.jl) | its export cells; data byte-identical to [`1D/figdata/`](../1D/figdata) |
+| **4** | [`make_fig4.jl`](../Analysis/make_fig4.jl) | `make_heatmap`'s six `tkd` values give 12×14×6 = 1008 rows, exactly `Ndef.csv` |
+| **5** | [`make_fig5.jl`](../Analysis/make_fig5.jl) | regenerates `tau1.csv` and `tau5.csv` byte for byte |
+| **6** | [`make_fig6.jl`](../Analysis/make_fig6.jl) | `make_full_heatmap_idx` / `make_zoom_heatmap_idx` |
+| **7** | [`make_fig7.jl`](../Analysis/make_fig7.jl) | `df_tikz_phase_diagram` writes `DF_tikz_norm_adjusted.csv` |
+| **8** | [`make_fig8.jl`](../Analysis/make_fig8.jl) | `plot_dens_and_angle` writes `density.png` and `angle.png` |
+| **9** | [`make_fig9.jl`](../Analysis/make_fig9.jl) | `gamma_as_Ndefpm` writes `g34_rho-pm.csv`; see below for panel (b) |
+| **10** | [`make_fig10.jl`](../Analysis/make_fig10.jl) | `make_csv_exp_plot` writes `DF_tikz_exp_<t>.csv` |
+| **11** | [`make_fig11.jl`](../Analysis/make_fig11.jl) | the same routine as figure 1, over more of the L=50 series |
+| **12** | [`make_fig12.jl`](../Analysis/make_fig12.jl) | `figure_triple` writes the density, Voronoi and shape-order panels |
+| **13** | — | **not identified**; see below |
+
+Two things the mapping turned up.
+
+**Figure 9(b) comes from commented-out code.** `gamma_as_Ndefpm` writes panel
+(a) live, and its final block — building `x = Ndefects` — is commented out. The
+committed `g34_densdef.csv` is that block's output with `x` divided by the area
+of the *padded* domain, (1008 × 0.01)² = 101.6064: the ratio between
+`g34_Ndef-pm.csv` and `g34_densdef.csv` is exactly that on every row. The live
+filter `Ndefects > 150` is the caption's "defect density larger than 1.5".
+
+**Three scripts draw figures the revision removed.** The earlier version had
+flow-alignment, anisotropic-stress and saturation figures; the submitted one
+does not. They are parked in
+[`Analysis/not_in_paper.jl`](../Analysis/not_in_paper.jl) rather than mixed in
+with the figure scripts.
 
 ## Still to do
 
-**Two of Fig5's data files are unaccounted for.** `make_fig_LSA.jl` regenerates
-`tau1.csv` and `tau5.csv` byte for byte, but nothing here produces
-`omegarho.csv` (six growth-rate curves against ρ₀ over 0.3–0.8) or
-`zrc_eq.csv` / `zrc_eq2.csv` (critical-activity curves in `yp`/`zp`/`wp` and
-`ynop`/`znop`/`wnop` variants, apparently with and without polarity).
-[`LSA.jl`](../Analysis/LSA.jl) defines the 2×2 coefficients they would come
-from but computes no eigenvalues, produces no variant curves, and writes no
-files.
+**Figure 13 has no identified generator.** Nothing in `Analysis/` obviously
+draws the ten-lattice panel, and its standalone project holds only the built
+PDF.
 
-**Figures 11, 12 and 13 are not here** — the phase panels at L=50, the extended
-lattice figure (submitted as two files, `Fig12ac` and `Fig12df`) and the
-ten-lattice figure. Their standalone projects exist alongside the others.
+**Five data files have no generator in the repository.** `df_zrc.csv` and
+`zrc_plus.csv` (Fig4's critical-activity dots, which the caption obtains
+analytically), `omegarho.csv` and `zrc_eq{,2}.csv` (Fig5), and `DF_tikz.csv`
+(Fig7, where the script writes `DF_tikz_norm_adjusted.csv` instead). The first
+four are analytic rather than measured, so they likely come from the same kind
+of calculation as [`LSA.jl`](../Analysis/LSA.jl).
+
+**The scripts have not been run.** No simulation output is published with this
+repository, so the drivers are wired from the evidence above rather than
+executed. Treat the argument lists as a starting point.
+
+**Snapshot counts are not fixed.** Runs were configured to `t_fin` but some
+stop earlier (see [`params/README.md`](../params/README.md)), so anything that
+indexes snapshots positionally will not read the same time point in a
+reproduction as it did originally.
 
 ## Running the analysis
 
-Each script takes its run set from the environment:
+Each figure script takes its run set from `DATA_DIR` and writes into `FIG_DIR`:
 
 ```bash
-DATA_DIR=/path/to/runset/ FIG_DIR=/path/to/figures/ julia --project=. Analysis/make_fig_schema.jl
+DATA_DIR=/path/to/runset/ FIG_DIR=$PWD/figures/Fig9/ \
+    julia --project=. Analysis/make_fig9.jl
 ```
 
-The per-figure scripts available so far, and the figures they belong to:
+Figures 5, 7 and 10 need no simulation output: figure 5 is computed from the
+linearised equations, and the phase-diagram tables ship in
+[`Analysis/PDpaper/`](../Analysis/PDpaper), so `DATA_DIR` is only needed there
+to rebuild them from your own snapshots.
 
-| Script | Draws |
-|---|---|
-| `make_fig_schema.jl` | the schematic / L50 phase panels — **Fig1** |
-| `make_fig_phases.jl` | the phase overview heatmaps |
-| `make_fig_lattice.jl` | the square and hexagonal lattice triples |
-| `make_fig_ndef.jl` | defect counts vs density and activity |
-| `make_fig_gamma_rho.jl` | the shape order Γ against ρ₀ |
-| `make_fig_nu.jl` | the flow-alignment (ν₁) panels |
-| `make_fig_aniso.jl` | the anisotropic-stress panels |
-| `make_fig_2defects.jl` | the two-defect figures |
-| `make_fig_saturation.jl` | the saturation figures |
-| `PhaseDiagram.jl` | the phase diagram and exponent fits — **Fig7**, **Fig10** |
-| `make_fig_LSA.jl` | the linear-stability curves — **Fig5** |
+[`Analysis/MakePlots.jl`](../Analysis/MakePlots.jl) stands apart from the
+figure scripts: it renders the standard density, angle, velocity and order
+panels for any run set and reproduces no particular figure.
 
-These are named by content, not by figure number, because the revised
-numbering is not settled; only Fig1, Fig3, Fig5, Fig7 and Fig10 are known. They
-will be renamed `make_figN.jl` once it is, to line up with the per-figure
-`DF_N.csv` parameter tables.
-
-The phase-diagram tables ship in [`Analysis/PDpaper/`](../Analysis/PDpaper),
-so `PhaseDiagram.jl` finds them without any setup; `DATA_DIR` overrides that
-when you want to rebuild them from your own snapshots.
-
-`Analysis/MakePlots.jl` is separate from all of these: it renders the standard
-panels for any run set and reproduces no particular figure. See the caveats in
-the top-level [README](../README.md#analysis).
+See the caveats in the top-level [README](../README.md#analysis).
