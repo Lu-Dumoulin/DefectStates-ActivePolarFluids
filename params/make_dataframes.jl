@@ -28,17 +28,16 @@ const OUT = @__DIR__
 
 # --- Integration horizon, per figure ----------------------------------------
 #  t_check is 1 everywhere: Delta t is retuned once per unit of simulated time.
-#  t_fin and t_prin are per figure. PROVISIONAL below - taken from what the
-#  article states about run lengths - and to be replaced with the values the
-#  runs actually used.
+#  t_fin and t_prin are per figure, read from the InputParameters.jl of the run
+#  set each figure came from, on the cluster under Code/.
 const T_CHECK = 1
 const HORIZON = Dict(          # figure => (t_fin, t_prin)
-     1 => (150_000, 1_000),    # L=50 series, as the cluster runs were set
-     4 => (100_000, 1_000),    # article: "a total simulated time of 1e5"
-     8 => (2_000_000, 1_000),  # caption: snapshot at t = 2e6
-     9 => (100_000, 1_000),    # Gamma_p is read at t = 1.4e5 - CHECK
-    11 => (150_000, 1_000),    # L=50 series
-    12 => (2_000_000, 1_000),  # same solutions as Fig8
+     1 => (150_000,   1_000),  # Code/FFT_2D_P_L50
+     4 => (200_000,   1_000),  # Code/FFT_2D_P_AdptDt, the 1680-row sweep
+     8 => (2_000_000, 10_000), # Code/FFT_2D_P_7D, the seven-day lattice runs
+     9 => (200_000,   1_000),  # Code/FFT_2D_P_AdptDt
+    11 => (150_000,   1_000),  # Code/FFT_2D_P_L50
+    12 => (2_000_000, 10_000), # Code/FFT_2D_P_7D
 )
 
 # --- Table I: common to every run -------------------------------------------

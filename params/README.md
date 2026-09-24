@@ -83,17 +83,20 @@ behaves exactly as before.
 
 `t_check` is 1 everywhere: Δt is retuned once per unit of simulated time.
 
-**`t_fin` and `t_prin` are provisional.** They are what the article says about
-run lengths, not what the runs were configured with, and are set in one place —
-the `HORIZON` table at the top of `make_dataframes.jl` — so they can be
-corrected in one edit followed by a regeneration.
+`t_fin` and `t_prin` are read from the `InputParameters.jl` of the run set each
+figure came from, on the cluster under `Code/`:
 
-| Figure | t_fin | from |
-|---|---|---|
-| 1, 11 | 150 000 | the L=50 cluster runs |
-| 4, 9 | 100 000 | "a total simulated time of 10⁵" |
-| 8, 12 | 2 000 000 | caption: snapshot at t = 2·10⁶ |
+| Figure | t_fin | t_prin | run set |
+|---|---|---|---|
+| 1, 11 | 150 000 | 1 000 | `FFT_2D_P_L50` |
+| 4, 9 | 200 000 | 1 000 | `FFT_2D_P_AdptDt` — its `DF.csv` is the same 1680-row sweep |
+| 8, 12 | 2 000 000 | 10 000 | `FFT_2D_P_7D`, the seven-day lattice runs |
 
-Fig9 needs checking: the article reads Γ_p at t = 1.4·10⁵, which is past the
-10⁵ horizon assumed here. Fig10's t_f = 287·10³ is stated but the rest of its
-row is not, so no table is generated for it.
+Note `t_prin` is 10 000 rather than 1 000 for the lattice figures: the long runs
+snapshot ten times less often.
+
+Horizons for figures whose tables are not yet generated, from the same source:
+Fig2 ran at `t_fin` = 30 000 with `t_prin` = 500 (`FFT_2D_P_2defects`), with a
+second, much shorter set at 1 000 / 20 for the critical-distance measurement
+(`FFT_2D_P_2defects2`); Fig7 and Fig10 ran at 300 000 / 1 000
+(`FFT_2D_P_phasediag2`), which is consistent with Fig10's stated t_f = 287·10³.
