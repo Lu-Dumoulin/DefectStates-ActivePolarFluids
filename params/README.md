@@ -95,6 +95,15 @@ figure came from, on the cluster under `Code/`:
 Note `t_prin` is 10 000 rather than 1 000 for the lattice figures: the long runs
 snapshot ten times less often.
 
+**`t_fin` is the configured cap, not the length of every run, and it does not
+contradict the article.** The sweeps were set to 200 000, while the article
+quotes a typical simulated time of 10⁵. Both are right: the cluster sometimes
+went down mid-run, and runs that had already reached a steady state were not
+restarted, so a number of them stop somewhere between 10⁵ and the cap. 10⁵ is
+what every run is guaranteed to have reached; 200 000 is what to configure to
+reproduce them. Expect a reproduction to run longer than some of the original
+solutions did, and do not treat the difference as an error in either place.
+
 Horizons for figures whose tables are not yet generated, from the same source:
 Fig2 ran at `t_fin` = 30 000 with `t_prin` = 500 (`FFT_2D_P_2defects`), with a
 second, much shorter set at 1 000 / 20 for the critical-distance measurement
