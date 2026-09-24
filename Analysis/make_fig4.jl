@@ -12,10 +12,12 @@
 #  make_heatmap's tkd is the six renewal rates, i.e. tau = 0.1, 0.2, 1, 5, 10
 #  and 100; 12 x 14 x 6 = 1008 is exactly the row count of figures/Fig4/Ndef.csv.
 #
-#  Not reproduced here: df_zrc.csv and zrc_plus.csv, the critical-activity
-#  curves drawn as white dots. Those are analytic - the caption solves
-#  Eq. (zetaRhoDeltaMuC) with a = 4 zeta_c/3 - and no code in this repository
-#  writes them. See figures/README.md.
+#  Not reproduced here: zrc_plus.csv (and the superseded df_zrc.csv), the
+#  critical-activity curves drawn as white dots. They come from the linear
+#  stability analysis - the same quantity as figure 5(a) - solving
+#  Eq. (zetaRhoDeltaMuC) self-consistently with a = 4 zeta_c/3. See
+#  make_fig5.jl and LSA.jl; the exact routine is not in this repository, and
+#  figures/README.md records what is known about it.
 # =============================================================================
 
 include("MakePlots.jl")

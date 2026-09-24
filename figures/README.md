@@ -108,12 +108,27 @@ with the figure scripts.
 draws the ten-lattice panel, and its standalone project holds only the built
 PDF.
 
-**Five data files have no generator in the repository.** `df_zrc.csv` and
-`zrc_plus.csv` (Fig4's critical-activity dots, which the caption obtains
-analytically), `omegarho.csv` and `zrc_eq{,2}.csv` (Fig5), and `DF_tikz.csv`
-(Fig7, where the script writes `DF_tikz_norm_adjusted.csv` instead). The first
-four are analytic rather than measured, so they likely come from the same kind
-of calculation as [`LSA.jl`](../Analysis/LSA.jl).
+**The critical-activity curves come from the linear stability analysis** —
+Fig4's white dots (`zrc_plus.csv`, and the superseded `df_zrc.csv`) and Fig5's
+`zrc_eq{,2}.csv` are the same quantity, ζ_ρ^c, solved self-consistently with
+a = 4ζ_ρ^c/3. The routine that writes them is not in this repository, and it
+could not be reconstructed: reading `zrc_plus.csv` in the panel coordinates its
+`fig_ndef.tex` uses, no arrangement of the equation reproduces the committed
+numbers — the closest of eight variants is ~7 % out.
+
+**That search turned up a discrepancy worth checking.** The article's
+Eq. (zetaRhoDeltaMuC) reads
+
+    zeta_c = A(chi=0)/(3 rho0) + ( sqrt(A(chi=0) gamma / (3 rho0^3)) + sqrt(2/(3 rho0^3 tau)) )^2
+
+while `ζc_simp` in [`LSA.jl`](../Analysis/LSA.jl), which reproduces Fig5's
+`tau1.csv` and `tau5.csv` byte for byte, differs from it in three places: it
+keeps the χ term in `A` instead of setting χ = 0, divides by `3 rho0^2` rather
+than `3 rho0^3`, and **subtracts** the second root rather than adding it. One
+of the two is not what the other describes.
+
+**`omegarho.csv` and `DF_tikz.csv` also have no generator here** — the latter
+because `make_fig7.jl` writes `DF_tikz_norm_adjusted.csv` instead.
 
 **The scripts have not been run.** No simulation output is published with this
 repository, so the drivers are wired from the evidence above rather than
