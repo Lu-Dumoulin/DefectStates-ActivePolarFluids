@@ -45,8 +45,13 @@ include("../Utilities/using.jl")
 using_pkg("FFTW, Distributions, DelimitedFiles, CSV, DataFrames, Dates, Printf, JLD, CUDA, Random")
 
 # One row of the parameter table = one simulation. See README for the columns.
+# DF_FILE selects a different table - the per-figure ones in params/ - and is
+# resolved relative to this directory when given as a relative path.
 dir_df = @__DIR__
-df = CSV.read(joinpath(dir_df,"DF.csv"), DataFrame)[idx,:]
+df_file = get(ENV, "DF_FILE", "DF.csv")
+df_path = isabspath(df_file) ? df_file : joinpath(dir_df, df_file)
+isfile(df_path) || error("No parameter table at $df_path (set DF_FILE)")
+df = CSV.read(df_path, DataFrame)[idx,:]
 
 Tf = Float64
 

@@ -73,6 +73,8 @@ CFL condition on $\mathbf{v}$ and by `dtmin`.
 │   ├── InputParameters.jl # reads one DF.csv row, sets up grid and FFT plans
 │   ├── kernels.jl         # the CUDA kernels
 │   └── 2D.jl              # entry point: fields, time loop, snapshot writing
+├── params/                # DF_N.csv: the simulation inputs behind figure N
+│   └── README.md          # where each value comes from, and what is missing
 ├── figures/               # one directory per paper figure: tikz, data, panels
 │   └── README.md          # which code generates which figure
 ├── Analysis/              # analysis and figure scripts (see caveats below)
