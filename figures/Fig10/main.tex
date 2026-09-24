@@ -157,26 +157,5 @@ intersections
 
 \begin{document}
 \usepgfplotslibrary{fillbetween}
-
-\begin{tikzpicture}[scale={1}, domain=0:50]%50]
-
-\begin{axis} [width=\LW, xlabel={Time $t$ (in $10^3$ time unit)}, ylabel={$\hat C\left(\rho(t_f-t),\rho(t_f)\right)$}, legend style={at={(axis cs:53,0.83)},anchor=south east}]
-
-    \addlegendimage{only marks, color=black}
-    \addlegendentry{Data};
-    \addlegendimage{no marks, dashed, color={black}, thick};
-    \addlegendentry{Exponential fit};
- 
-    \addplot[only marks, mark options={draw=Blue!27!white, fill=Blue!27!white}] table[x=x,y=y1, col sep = comma] {DF_tikz_exp_3_50.csv};
-    \addplot[no marks, dashed, color={Blue!27!white}, thick] {exp(-x/27.41)};
-    \addplot[only marks, mark options={draw=Blue!72!white, fill=Blue!72!white}] table[x=x,y=y2, col sep = comma] {DF_tikz_exp_3_50.csv};
-    \addplot[no marks, dashed, color={Blue!72!white}, thick] {exp(-x/71.75)};
-    \addplot[only marks, mark options={draw=Blue!9!white, fill=Blue!9!white}] table[x=x,y=y3, col sep = comma] {DF_tikz_exp_3_50.csv};
-    \addplot[no marks, dashed, color={Blue!9!white}, thick] {exp(-x/8.82)};
-
-    % \addlegendentry{Data};    
-    % \addlegendimage{no marks, color=black, style={ultra thick}};
-\end{axis}
-\end{tikzpicture}
-
+\input{fig_tauc}%
 \end{document}

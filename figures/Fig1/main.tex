@@ -1,19 +1,5 @@
-%=============================================================================
-%  Standalone wrapper -- fig_schema_L50
-%
-%      pdflatex main.tex
-%
-%  The paper places this figure in a \begin{figure*} of
-%  \documentclass[prx,amsmath,amssymb,twocolumn,superscriptaddress]{revtex4-2},
-%  where \linewidth is 510.0pt. The figure is written in terms of \linewidth, so
-%  that length has to be reproduced here or the output is scaled differently.
-%
-%  The standalone class's `varwidth' option does NOT do this: with the `tikz'
-%  option the class crops to the picture and leaves \linewidth at its own
-%  default of 345.0pt. The lengths are therefore set explicitly below.
-%=============================================================================
-\documentclass[border=0pt,tikz,10pt]{standalone}
-% NOT lmodern: revtex4-2 prx typesets figures in Computer Modern (cmr).
+\documentclass[border=0pt,tikz,10pt,varwidth=180mm]{standalone}
+\usepackage{lmodern}
 \usepackage{graphicx}
 \usepackage{csvsimple}
 \usepackage{tikzscale}
@@ -90,23 +76,11 @@ intersections
 \definecolor{RdPu2}{HTML}{f768a1}
 \definecolor{RdPu3}{HTML}{7a0177}
 
-% The paper's preamble inputs abrv.tex; the figures use its shorthands
-% (\zr, \Dmu, ...). Without it they silently vanish from the output.
-\input{abrv}
 \input{some_command}
 
 \setlength{\parindent}{0pt}
-
-
-% --- reproduce the paper's text block for this figure --------------------
-\setlength{\textwidth}{510.0pt}
-\setlength{\columnwidth}{510.0pt}
-\setlength{\linewidth}{510.0pt}
-\setlength{\hsize}{510.0pt}
+\def\lx{0.5*\linewidth}
 
 \begin{document}%
-% revtex4-2 sets 9pt/10.5pt inside figure environments; match it so text
-% nodes and axis labels come out at the paper's size.
-\fontsize{9}{10.5}\selectfont%
 \input{fig_schema_L50}%
 \end{document}

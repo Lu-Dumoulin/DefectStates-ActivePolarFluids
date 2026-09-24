@@ -1,0 +1,39 @@
+\begin{tikzpicture}[scale={1}]
+\def \sizefig{0.5*\LW}
+\def \hor{1.0} % horizontal
+\def \vert{0.0} % vertical alignement
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.75] at (-0.16*\sizefig, 0.72*\sizefig) {(a)};
+
+    \begin{axis}[width={\sizefig}, height={\sizefig}, xlabel={Density $\rho_0$},  xmin={0.3}, xmax={0.8}, ymin={0}, ymax={20}, legend columns=2, legend style={at={(1,1)},anchor=north east, /tikz/column 2/.style={column sep=5pt}}] 
+
+    \addplot[only marks, color=black, mark repeat=5, mark=diamond*, mark size=3] table [x=x, y=wnop, col sep=comma] {zrc_eq2.csv};
+ 
+    \addplot[no marks, color={black}, style={ultra thick}] table [x=x, y=wp, col sep=comma] {zrc_eq2.csv};
+
+\end{axis}
+\node[rotate=90, align=center] at (-0.16*\sizefig,0.25*\sizefig) {Critical active stress $\zeta_\rho^c$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.75] at (-0.215*\sizefig+\hor*\sizefig, 0.72*\sizefig-\vert*\sizefig) {(b)};
+\node[rotate=90, align=center] at (-0.215*\sizefig+\hor*\sizefig, 0.3*\sizefig-\vert*\sizefig) {Fastest growth rate};
+\begin{axis}[width={\sizefig}, height={\sizefig}, xlabel={Density $\rho_0$},  xmin={0.3}, xmax={0.825}, ymin={-0.6}, ymax={0.6}, legend columns=2, legend style={at={(axis cs:0.5625,0.61)},anchor=south, /tikz/column 2/.style={column sep=4pt}}, at={(\hor*\sizefig,-\vert*\sizefig)}] 
+
+    \addlegendimage{color=red, style={ultra thick}};
+    \addlegendentry{$s_\rho^\text{m}$};
+
+    \addlegendimage{color=blue, style={ultra thick}};
+    \addlegendentry{$s_p^\text{m}$}
+    \addplot[no marks, blue, ultra thick] {0.1*x*x};
+
+    \addplot[no marks, color=red, style={ultra thick}] table [x=r, y=y1, col sep=comma] {omegarho.csv};
+
+    \node[mark size=3pt, color=bleudefrance] at (axis cs:0.4,0.5) {\pgfuseplotmark{diamond*}};
+    \node[mark size=3pt, color=bleudefrance] at (axis cs:0.8,0.5) {\pgfuseplotmark{triangle*}};
+\end{axis}
+\printlength{\linewidth}
+\end{tikzpicture}
+
+% y1 -> tau 5 zr 4
+% y2 -> tau 5 zr6 
+% y3 -> 5/2 4
+% y4 -> 5/2 6
+% y5 -> 5/3 4
+% y6 -> 5/3 6

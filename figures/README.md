@@ -26,97 +26,73 @@ would silently overwrite one with another.
 ./build_all.sh Fig6     # just one
 ```
 
-Each `FigN/main.tex` is a standalone wrapper producing `main.pdf` at the size
-the figure has in the article. Getting that right takes three things, because
-the figures are written in terms of `\linewidth` and inherit the article's font:
+Every figure has the same layout: `main.tex` is the wrapper, and the picture
+itself lives in a `fig_*.tex` beside it, with its data and images. Building a
+wrapper produces `main.pdf`.
 
-| | one-column (`figure`) | two-column (`figure*`) |
+**All ten reproduce the figure PDFs that were submitted, exactly** — verified by
+comparing bounding boxes against `Dumoulin_etal_FigN.pdf` in the resubmission.
+
+The wrappers are *not* interchangeable, because the submitted figures were not
+all produced the same way:
+
+| | figures | how the wrapper is set up |
 |---|---|---|
-| `\linewidth` | 246.0 pt | 510.0 pt |
-| figures | 2, 4, 5, 8, 9 | 1, 6 |
+| Built **inside the article**, externalised by TikZ | 2, 4, 6, 8, 9 | must recreate the article's text block and font |
+| Built as a **standalone project** and included as a PDF | 1, 3, 5, 7, 10 | keeps that project's own preamble |
 
-1. **The text width is set explicitly.** The standalone class's `varwidth`
-   option looks like it would do this but does not: with the `tikz` option the
-   class crops to the picture and leaves `\linewidth` at its own default of
-   345.0 pt. `\textwidth`, `\columnwidth`, `\linewidth` and `\hsize` are
-   therefore assigned directly.
-2. **The font is 9 pt Computer Modern on a 10.5 pt baseline** — what revtex4-2
-   uses *inside* a figure, not the 10 pt document size, and not Latin Modern.
-   Loading `lmodern` or leaving the size at 10 pt changes every text node.
-3. **`abrv.tex` is loaded**, because the figures use its shorthands (`\zr`,
-   `\Dmu`, …). Without it those labels silently disappear.
+For the first group the figure is written in terms of `\linewidth` and inherits
+the article's font, so the wrapper reproduces both:
 
-Verified by compiling each figure twice — once through its wrapper, once inside
-a document built from the paper's own preamble with the figure cropped by
-`preview` — and comparing bounding boxes. Figures 1, 2, 4, 5, 6, 8 and 9 agree
-exactly, with no undefined control sequences.
+- **Text width set explicitly** — `\textwidth`, `\columnwidth`, `\linewidth`
+  and `\hsize` to 246.0 pt for a one-column `figure` (2, 4, 8, 9) or 510.0 pt
+  for a two-column `figure*` (6). The standalone class's `varwidth` option does
+  not do this: with the `tikz` option the class crops to the picture and leaves
+  `\linewidth` at its own default of 345.0 pt.
+- **9 pt Computer Modern on a 10.5 pt baseline** — what revtex4-2 uses *inside*
+  a figure, not the 10 pt document size, and not Latin Modern.
+- **`abrv.tex` loaded**, since the figures use its shorthands (`\zr`, `\Dmu`,
+  …). Without it those labels silently disappear.
 
-Figures 3, 7 and 10 are sized in absolute units rather than `\linewidth`, so
-they are unaffected by the text width and keep their own wrappers. Fig7 renders
-about 925 pt wide, far past a printed column — that is deliberate, and matches
-the submitted file exactly; the article scales it down on inclusion.
-
-### Checked against the submitted article
-
-The resubmission carries the figure PDFs that were actually sent
-(`Dumoulin_etal_FigN.pdf`). Comparing what this directory builds against them:
-
-| Figure | in the article | reproduces the submitted PDF |
-|---|---|---|
-| Fig2 – Fig10 | | **exactly** |
-| Fig1 | `figure*`, `fig:schema` | within 0.6 % (2.7 pt of 480); visually identical |
-
-The article's environment for each figure is what sets the width above: `figure*`
-for Fig1 and Fig6, `figure` for the rest.
-
-**Where the figure body lives differs by figure.** Fig1, Fig2, Fig4, Fig6,
-Fig8 and Fig9 keep the picture in a `fig_*.tex` that `main.tex` wraps, and it is
-the wrapper that has to recreate the article's text block and font. Fig3, Fig5,
-Fig7 and Fig10 instead hold the picture inside `main.tex`, self-contained and
-sized in absolute units — Fig5, for instance, sets `\def\LW{246.0pt}` and never
-refers to `\linewidth`. Those four need no wrapper treatment and must not have
-`main.tex` regenerated, since that is the figure.
-
-**Figures 11, 12 and 13 are not here yet** — the phase panels at L=50, the
-extended lattice figure (submitted as two files, `Fig12ac` and `Fig12df`) and
-the ten-lattice figure.
-
----
+The second group never went through the article's text block at all, so none of
+that applies: each keeps the preamble it was built with, and changing it changes
+the figure. Fig1 renders at `varwidth=180mm` with Latin Modern at 10 pt, and
+Fig5 sets `\def\LW{246.0pt}` and sizes everything from that without ever
+referring to `\linewidth`. **Do not regenerate these wrappers from the
+one-column template** — the output stops matching the article.
 
 ## Where each figure comes from
 
-| Figure | Plots | Generated by | Status |
-|---|---|---|---|
-| **Fig1** | `phases_L50_3.png`, `fig_schema_L50.tex` | [`Analysis/make_fig_schema.jl`](../Analysis/make_fig_schema.jl) — `make_plot_L50()` | code present; needs the L50 snapshots |
-| **Fig3** | `figdata/polar_*.csv`, `fig_profile.tex` | [`1D/models.pluto.jl`](../1D/models.pluto.jl) — the profile and τ-sweep export cells | **fully reproducible from this repository**; the committed data is byte-identical to [`1D/figdata/`](../1D/figdata) |
-| **Fig5** | `fig_LSA.*`, `omegarho.csv`, `tau1.csv`, `tau5.csv`, `zrc_eq*.csv` | [`Analysis/make_fig_LSA.jl`](../Analysis/make_fig_LSA.jl), from [`LSA.jl`](../Analysis/LSA.jl) | `tau1.csv` and `tau5.csv` **regenerate byte for byte**; `omegarho.csv` and `zrc_eq*.csv` still unaccounted for |
-| **Fig7** | `DF_tikz*.csv`, `DF_analyse*.csv` | [`Analysis/PhaseDiagram.jl`](../Analysis/PhaseDiagram.jl) — `df_tikz_phase_diagram()` writes `DF_tikz_norm_adjusted.csv`; `DF_analyse.csv` is written further up the same file | code present; needs the phase-diagram sweep tables |
-| **Fig10** | `DF_tikz_exp*.csv`, `data.txt` | [`Analysis/PhaseDiagram.jl`](../Analysis/PhaseDiagram.jl) — `make_csv_exp_plot(t)` and `make_csv_exp_plot_3(t)` | code present |
+| Figure | Article label | Drawn by |
+|---|---|---|
+| **Fig1** | `fig:schema` | [`make_fig_schema.jl`](../Analysis/make_fig_schema.jl) — `make_plot_L50()` renders `phases_L50_3.png` |
+| **Fig2** | `fig:stab_defects` | [`make_fig_2defects.jl`](../Analysis/make_fig_2defects.jl) |
+| **Fig3** | `fig:singleDefect` | [`1D/models.pluto.jl`](../1D/models.pluto.jl) — **fully reproducible here**; the data is byte-identical to [`1D/figdata/`](../1D/figdata) |
+| **Fig4** | `fig:Ndefects` | [`make_fig_ndef.jl`](../Analysis/make_fig_ndef.jl) |
+| **Fig5** | `fig:linstab` | [`make_fig_LSA.jl`](../Analysis/make_fig_LSA.jl) — `tau1.csv` and `tau5.csv` **regenerate byte for byte** |
+| **Fig6** | `fig:states` | [`make_fig_phases.jl`](../Analysis/make_fig_phases.jl) |
+| **Fig7** | `fig:phasediagram` | [`PhaseDiagram.jl`](../Analysis/PhaseDiagram.jl) — `df_tikz_phase_diagram()`; tables ship in [`Analysis/PDpaper/`](../Analysis/PDpaper) |
+| **Fig8** | `fig:lattice1` | [`make_fig_lattice.jl`](../Analysis/make_fig_lattice.jl) |
+| **Fig9** | `fig:gamma_rho` | [`make_fig_gamma_rho.jl`](../Analysis/make_fig_gamma_rho.jl) |
+| **Fig10** | `fig:tauc` | [`PhaseDiagram.jl`](../Analysis/PhaseDiagram.jl) — `make_csv_exp_plot(t)` |
+
+Most of these need simulation output that is not published here; see the
+caveats in the top-level [README](../README.md#analysis).
 
 ## Still to do
 
-**Fig5 (linear stability analysis).** Partly solved. `LSA.jl` turned out to be
-the source: its closed-form `ζc_simp` and its numerical threshold reproduce
-`tau5.csv` (turnover `kd = 0.2`, i.e. τ = 5) and `tau1.csv` (`kd = 1.0`)
-exactly. `make_fig_LSA.jl` wraps it — same expressions, with `kd` an argument
-rather than a constant — and regenerates both files byte for byte:
-
-```bash
-julia --project=. Analysis/make_fig_LSA.jl        # no DATA_DIR needed
-```
-
-Still open: `omegarho.csv` (six growth-rate curves against ρ₀ over 0.3–0.8) and
+**Two of Fig5's data files are unaccounted for.** `make_fig_LSA.jl` regenerates
+`tau1.csv` and `tau5.csv` byte for byte, but nothing here produces
+`omegarho.csv` (six growth-rate curves against ρ₀ over 0.3–0.8) or
 `zrc_eq.csv` / `zrc_eq2.csv` (critical-activity curves in `yp`/`zp`/`wp` and
-`ynop`/`znop`/`wnop` variants, apparently with and without polarity). `LSA.jl`
-defines the 2×2 coefficients `a`, `b`, `c`, `d` these would come from, but does
-not compute eigenvalues or the variant curves, and writes no files of its own.
+`ynop`/`znop`/`wnop` variants, apparently with and without polarity).
+[`LSA.jl`](../Analysis/LSA.jl) defines the 2×2 coefficients they would come
+from but computes no eigenvalues, produces no variant curves, and writes no
+files.
 
-**Figures not yet here.** Only Fig1, Fig3, Fig5, Fig7 and Fig10 have been
-collected. The paper's figure set also includes the two-defect, lattice,
-defect-count, Γ(ρ), anisotropy and ν₁ panels; the functions that draw them are
-in `Analysis/Analysis.jl` (`figure_triple*`, `plot_2defects_zoom`,
-`Ndefects_as_rho0`, `gamma_as_Ndef`, `make_plot_aniso*`, `make_full_heatmap_nu*`),
-but the figure sources and data have not been pulled across yet.
+**Figures 11, 12 and 13 are not here** — the phase panels at L=50, the extended
+lattice figure (submitted as two files, `Fig12ac` and `Fig12df`) and the
+ten-lattice figure. Their standalone projects exist alongside the others.
 
 ## Running the analysis
 
