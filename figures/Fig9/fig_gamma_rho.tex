@@ -1,0 +1,46 @@
+\begin{tikzpicture}
+\node[rotate = 90, align=center] at (-0.1*\linewidth, 0.16*\linewidth) {$\left\langle\Gamma_p - \Gamma_p^0\right\rangle$};
+\begin{axis}[
+width={0.5\linewidth}, height={0.5\linewidth},
+% xmin = 0, xmax = 30,
+% ymin = 45, ymax =65,
+xlabel= {Density $\rho_0$},
+% ylabel={$\left\langle\langle|\Gamma_p|\rangle - \Gamma_p^0\right\rangle_{\rho_0}$},
+error bars/y dir=both,
+error bars/y explicit,
+legend style={at={(0,1)},anchor=south west, legend columns =-1}
+]
+\addplot[black, only marks, mark size=2pt]
+table[col sep=comma, x=x, y=gq, y error=gq_sd] {g34_rho-pm.csv};
+\addplot[blue, only marks, mark size=2pt]
+table[col sep=comma, x=x, y=gh, y error=gh_sd] {g34_rho-pm.csv};
+% \legend{{$p = 4$},{$p = 6$}}
+\end{axis}
+\node[rotate = 90, align=center] at (0.37*\linewidth, 0.16*\linewidth) {$\Gamma_p - \Gamma_p^0$};
+% \begin{axis}[width={0.5\linewidth}, height={0.5\linewidth}, xlabel={Number of defects},
+% % ylabel={$\langle|\Gamma_p|\rangle - \Gamma_p^0$}, 
+% ytick={-0.4,0,0.4},
+% xmin={5}, xmax={400}, ymin={-0.5}, ymax={0.5}, at={(0.45\linewidth,0)}]
+%     \addplot [only marks, color = {black}, mark size=0.5pt] table [x=x,y=y1, col sep=comma] {g34_Ndef-pm.csv};
+%     \addplot [only marks, color = {blue}, mark size=0.5pt] table [x=x,y=y2, col sep=comma] {g34_Ndef-pm.csv};
+%     % \legend{{$p = 4$},{$p = 6$}}
+% \end{axis}
+\begin{axis}[width={0.5\linewidth}, height={0.5\linewidth}, xlabel={Density of defects},
+    % ylabel={$\langle|\Gamma_p|\rangle - \Gamma_p^0$}, 
+    ytick={-0.4,0,0.4},
+    xmin={0.02}, xmax={3.7}, ymin={-0.5}, ymax={0.5}, at={(0.45\linewidth,0)}]
+        \addplot [only marks, color = {black}, mark size=0.5pt] table [x=x,y=y1, col sep=comma] {g34_densdef.csv};
+        \addplot [only marks, color = {blue}, mark size=0.5pt] table [x=x,y=y2, col sep=comma] {g34_densdef.csv};
+        % \legend{{$p = 4$},{$p = 6$}}
+    \end{axis}
+
+\filldraw[color=black] (0.35*\linewidth-0.1*\linewidth, 0.35*\linewidth) circle (0.1);
+\node at (0.35*\linewidth-0.1*\linewidth, 0.35*\linewidth)[right] {$p=4$};
+\filldraw[color=blue] (0.35*\linewidth+0.1*\linewidth, 0.35*\linewidth) circle (0.1);
+\node at (0.35*\linewidth+0.1*\linewidth, 0.35*\linewidth)[right] {$p=6$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.75] at (0.03*\linewidth, 0.29*\linewidth) {(a)};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.75] at (0.48*\linewidth, 0.29*\linewidth) {(b)};
+\end{tikzpicture}
+
+%, error bars/error mark options={gray, rotate=90}
+% ylabel={$\langle|\gamma_p|\rangle - \gamma_p^0$}, grid={both}, legend style={at={(1,1)},anchor=north east}

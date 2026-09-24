@@ -1,11 +1,11 @@
 %=============================================================================
-%  Standalone wrapper -- fig_schema_L50
+%  Standalone wrapper -- fig_ndef
 %
 %      pdflatex main.tex
 %
-%  The paper places this figure in a \begin{figure*} of
+%  The paper places this figure in a \begin{figure} of
 %  \documentclass[prx,amsmath,amssymb,twocolumn,superscriptaddress]{revtex4-2},
-%  where \linewidth is 510.0pt. The figure is written in terms of \linewidth, so
+%  where \linewidth is 246.0pt. The figure is written in terms of \linewidth, so
 %  that length has to be reproduced here or the output is scaled differently.
 %
 %  The standalone class's `varwidth' option does NOT do this: with the `tikz'
@@ -99,14 +99,14 @@ intersections
 
 
 % --- reproduce the paper's text block for this figure --------------------
-\setlength{\textwidth}{510.0pt}
-\setlength{\columnwidth}{510.0pt}
-\setlength{\linewidth}{510.0pt}
-\setlength{\hsize}{510.0pt}
+\setlength{\textwidth}{246.0pt}
+\setlength{\columnwidth}{246.0pt}
+\setlength{\linewidth}{246.0pt}
+\setlength{\hsize}{246.0pt}
 
 \begin{document}%
 % revtex4-2 sets 9pt/10.5pt inside figure environments; match it so text
 % nodes and axis labels come out at the paper's size.
 \fontsize{9}{10.5}\selectfont%
-\input{fig_schema_L50}%
+\input{fig_ndef}%
 \end{document}

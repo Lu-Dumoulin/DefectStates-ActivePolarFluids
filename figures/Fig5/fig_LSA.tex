@@ -16,15 +16,15 @@
     % \addlegendimage{no marks, color=black, style={ultra thick}};
     % \addlegendentry{$\mathbf{p}_0=\mathbf{e}_x + \delta\mathbf{p}$};
 
-    % \addplot[only marks, color=blue, mark repeat=5, mark=diamond*, mark size=3] table [x=x, y=y, col sep=comma] {Fig/Fig_LSA/tau1.csv};
-    % \addplot+[only marks, color=red, mark repeat=5, mark=diamond*, mark size=3] table [x=x, y=y, col sep=comma] {Fig/Fig_LSA/tau5.csv};
-    % \addplot[no marks, color={blue}, style={ultra thick}] table [x=x, y=yy, col sep=comma] {Fig/Fig_LSA/tau1.csv};
-    % \addplot[no marks, color={red}, style={ultra thick}] table [x=x, y=yy, col sep=comma] {Fig/Fig_LSA/tau5.csv};
+    % \addplot[only marks, color=blue, mark repeat=5, mark=diamond*, mark size=3] table [x=x, y=y, col sep=comma] {tau1.csv};
+    % \addplot+[only marks, color=red, mark repeat=5, mark=diamond*, mark size=3] table [x=x, y=y, col sep=comma] {tau5.csv};
+    % \addplot[no marks, color={blue}, style={ultra thick}] table [x=x, y=yy, col sep=comma] {tau1.csv};
+    % \addplot[no marks, color={red}, style={ultra thick}] table [x=x, y=yy, col sep=comma] {tau5.csv};
 
-    \addplot[only marks, color=black, mark repeat=5, mark=diamond*, mark size=3] table [x=x, y=wnop, col sep=comma] {Fig/Fig_LSA/zrc_eq2.csv};
-    % \addplot+[only marks, color=red, mark repeat=5, mark=diamond*, mark size=3] table [x=x, y=znop, col sep=comma] {Fig/Fig_LSA/zrc_eq2.csv};
-    \addplot[no marks, color={black}, style={ultra thick}] table [x=x, y=wp, col sep=comma] {Fig/Fig_LSA/zrc_eq2.csv};
-    % \addplot[no marks, color={red}, style={ultra thick}] table [x=x, y=zp, col sep=comma] {Fig/Fig_LSA/zrc_eq2.csv};
+    \addplot[only marks, color=black, mark repeat=5, mark=diamond*, mark size=3] table [x=x, y=wnop, col sep=comma] {zrc_eq2.csv};
+    % \addplot+[only marks, color=red, mark repeat=5, mark=diamond*, mark size=3] table [x=x, y=znop, col sep=comma] {zrc_eq2.csv};
+    \addplot[no marks, color={black}, style={ultra thick}] table [x=x, y=wp, col sep=comma] {zrc_eq2.csv};
+    % \addplot[no marks, color={red}, style={ultra thick}] table [x=x, y=zp, col sep=comma] {zrc_eq2.csv};
 
     % \addplot[no marks, color={black}, dotted] coordinates {(0,4) (1,4)};
     % \addplot[no marks, color={black}, dotted, thick] {0*x+4};
@@ -52,12 +52,12 @@
     % \addlegendentry{$\tau=5$};
     \addplot[no marks, blue, ultra thick] {0.1*x*x};
 
-    \addplot[no marks, color=red, style={ultra thick}] table [x=r, y=y1, col sep=comma] {Fig/Fig_LSA/omegarho.csv};
-    % \addplot[no marks, color=red, style={ultra thick}] table [x=r, y=y2, col sep=comma] {Fig/Fig_LSA/omegarho.csv};
-    % \addplot[no marks, color=yecolor, dashed, style={ultra thick}] table [x=r, y=y3, col sep=comma] {Fig/Fig_LSA/omegarho.csv};
-    % \addplot[no marks, color=red, dashed, style={ultra thick}] table [x=r, y=y4, col sep=comma] {Fig/Fig_LSA/omegarho.csv};
-    % \addplot[no marks, color={yecolor}, dashed, style={ultra thick}] table [x=r, y=y5, col sep=comma] {Fig/Fig_LSA/omegarho.csv};
-    % \addplot[no marks, color={red}, dashed, style={ultra thick}] table [x=r, y=y6, col sep=comma] {Fig/Fig_LSA/omegarho.csv};
+    \addplot[no marks, color=red, style={ultra thick}] table [x=r, y=y1, col sep=comma] {omegarho.csv};
+    % \addplot[no marks, color=red, style={ultra thick}] table [x=r, y=y2, col sep=comma] {omegarho.csv};
+    % \addplot[no marks, color=yecolor, dashed, style={ultra thick}] table [x=r, y=y3, col sep=comma] {omegarho.csv};
+    % \addplot[no marks, color=red, dashed, style={ultra thick}] table [x=r, y=y4, col sep=comma] {omegarho.csv};
+    % \addplot[no marks, color={yecolor}, dashed, style={ultra thick}] table [x=r, y=y5, col sep=comma] {omegarho.csv};
+    % \addplot[no marks, color={red}, dashed, style={ultra thick}] table [x=r, y=y6, col sep=comma] {omegarho.csv};
     \node[mark size=3pt, color=bleudefrance] at (axis cs:0.4,0.5) {\pgfuseplotmark{diamond*}};
     \node[mark size=3pt, color=bleudefrance] at (axis cs:0.8,0.5) {\pgfuseplotmark{triangle*}};
 \end{axis}

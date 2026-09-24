@@ -17,6 +17,9 @@ data/
 *.fdb_latexmk
 *.synctex.gz
 *.toc
+*.log
+figures/*/main.pdf
+figures/*/build.log
 
 # Slurm logs
 *.out

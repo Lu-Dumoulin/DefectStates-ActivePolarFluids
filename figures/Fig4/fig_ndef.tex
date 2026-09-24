@@ -1,0 +1,113 @@
+\begin{tikzpicture}[scale=0.055]
+\footnotesize
+\def\scal{3}
+\def\spac{1}
+\def\Lx{12}
+\def\Ly{14}
+\csvreader[head to column names]{Ndef.csv}{}{
+
+    \ifnum \colz < 4
+        \pgfmathtruncatemacro{\posx}{((\colx-1)+(\colz-1)*(\Lx+\spac))*\scal}
+        \pgfmathtruncatemacro{\posy}{((\coly-1))*\scal}
+    \else
+        \pgfmathtruncatemacro{\posx}{((\colx-1)+(\colz-4)*(\Lx+\spac))*\scal}
+        \pgfmathtruncatemacro{\posy}{((\coly-1)+(\Ly+\spac))*\scal}
+    \fi
+    
+    \pgfmathtruncatemacro{\NN}{\colN}
+    \pgfmathtruncatemacro{\Ncolor}{(\colN+1.0)/363*100}
+    \ifnum \NN<0
+        \filldraw [fill=black, draw=black] (\posx, \posy) rectangle (\posx+\scal, \posy+\scal);
+    \else
+        \ifnum \Ncolor<50
+            \pgfmathtruncatemacro{\Ncolorb}{\Ncolor*2}
+            \filldraw [fill=red!\Ncolorb!black, draw=red!\Ncolorb!black] (\posx, \posy) rectangle ++(\scal, \scal);
+        \else
+            \pgfmathtruncatemacro{\Ncolorb}{(\Ncolor-50)*2}
+            \filldraw [color=yellow!\Ncolorb!red] (\posx, \posy) rectangle ++(\scal, \scal);
+        \fi
+    \fi
+}
+
+    \pgfmathtruncatemacro{\posx}{(1-1)*\scal}
+    \pgfmathtruncatemacro{\posy}{((4-1)+(\Ly+\spac))*\scal}
+    \node[mark size=3.5pt, bleudefrance] at (\posx+\scal/2,\posy+\scal/2) {\pgfuseplotmark{diamond*}};
+    
+    \pgfmathtruncatemacro{\posx}{(5-1)*\scal}
+    \node[mark size=3.5pt, bleudefrance] at (\posx+\scal/2,\posy+\scal/2) {\pgfuseplotmark{triangle*}};
+    
+    \pgfmathtruncatemacro{\posx}{(9-1)*\scal}
+    \node[mark size=3.5pt, bleudefrance] at (\posx+\scal/2,\posy+\scal/2) {\pgfuseplotmark{*}};
+
+\foreach \kk [count = \k] in {0.1,0.2,1,5,10,100}{% x-axis, \rho_0 and \tau
+    \ifnum \k<4
+        \pgfmathtruncatemacro{\posy}{0}
+        \foreach \i [count = \n] in {0.4, 0.8, 1.2} {%
+            \pgfmathtruncatemacro{\posx}{((\n-1)*4+(\k-1)*(\Lx+\spac))*\scal+1}
+            \draw (\posx,\posy) node[below] {\i};
+            \draw (\posx,\posy) -- ++(0,-0.5);
+        }
+        \pgfmathtruncatemacro{\posx}{(6+2 +(\k-1)*(\Lx+\spac))*\scal}
+        \pgfmathtruncatemacro{\posy}{(\Ly-1)*\scal}
+        \node[text=white] at (\posx, \posy) {$\tau = \kk$};
+        \pgfmathtruncatemacro{\posx}{(6 +(\k-1)*(\Lx+\spac))*\scal}
+    \else
+        \pgfmathtruncatemacro{\posy}{(\Ly*2+\spac)*\scal}
+        \pgfmathtruncatemacro{\posx}{(6+2 +(\k-4)*(\Lx+\spac))*\scal}
+        \pgfmathtruncatemacro{\posy}{(\Ly*2-1+\spac)*\scal}
+        \node[text=white] at (\posx, \posy) {$\tau = \kk$};
+    \fi
+}
+\foreach \zzr [count = \k] in {0,2,8,12,16,20}{% y-axis, \zeta_\rho
+    \pgfmathtruncatemacro{\posy}{\zzr<3 ? \zzr*\scal+1 : (2 + (\zzr-2)/2)*\scal+1}
+    \node at (0, \posy)[left] {\zzr}; 
+    \draw (-0.5, \posy) -- ++(0.5,0); 
+    
+    \pgfmathtruncatemacro{\posy}{\zzr<3 ? (\zzr+ \Ly+\spac+0.5)*\scal : (2 + (\zzr-2)/2+ \Ly+\spac)*\scal+1}
+    \node at (0, \posy)[left] {\zzr}; 
+    \draw (-0.5, \posy) -- ++(0.5,0);
+
+}
+\pgfmathtruncatemacro{\posx}{(3*(12+\spac))*\scal} % Colorbar
+\pgfmathtruncatemacro{\posy}{(\Ly*2+\spac)*\scal}
+\shade[bottom color=black, top color=yellow!100!red, middle color=red] (\posx,0) rectangle ++(1*\scal,\posy);
+\pgfmathtruncatemacro{\posy}{9*\scal}
+\node[rotate = 90, align=center] at (\posx+7*\scal, \Ly*\scal) {Density of defects};
+\node[rotate = 90, align=center] at (-8-\scal, \Ly*\scal) {Activity $\zr$};
+\node[align=center] at (1.5*\Lx*\scal+1*\spac*\scal, -4*\scal) {Density $\rho_0$};
+
+\foreach \kk [count=\k] in {0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0}{%
+    \pgfmathtruncatemacro{\posy}{(\kk/3.62)*(\Ly+\spac)*2*\scal}
+    \node at (\posx+\scal, \posy)[right] {\kk};
+}
+
+
+% \csvreader[head to column names]{df_zrc.csv}{}{
+\csvreader[head to column names]{zrc_plus.csv}{}{
+    \pgfmathparse{\ya > 1 ? int(1):int(0)}
+    \ifnum\pgfmathresult>0
+        \pgfmathsetmacro{\posx}{(\x+(3-1)*(\Lx+\spac))*\scal}
+        \pgfmathsetmacro{\posy}{(\ya + 1/2)*\scal}
+        \node[white] at (\posx,\posy) {$\cdot$};
+    \fi
+    \pgfmathparse{\yb > 1 ? int(1):int(0)}
+    \ifnum\pgfmathresult>0
+        \pgfmathsetmacro{\posx}{(\x+(4-4)*(\Lx+\spac) )*\scal}
+        \pgfmathsetmacro{\posy}{(\yb+(\Ly+\spac)+1/2)*\scal}
+        \node[white] at (\posx,\posy) {$\cdot$};
+    \fi
+    \pgfmathparse{\yc > 1 ? int(1):int(0)}
+    \ifnum\pgfmathresult>0
+        \pgfmathsetmacro{\posx}{(\x+(5-4)*(\Lx+\spac))*\scal}
+        \pgfmathsetmacro{\posy}{(\yc+(\Ly+\spac)+1/2)*\scal}
+        \node[white] at (\posx,\posy) {$\cdot$};
+    \fi
+    \pgfmathparse{\yd > 1 ? int(1):int(0)}
+    \ifnum\pgfmathresult>0
+        \pgfmathsetmacro{\posx}{(\x+(6-4)*(\Lx+\spac) )*\scal}
+        \pgfmathsetmacro{\posy}{(\yd+(\Ly+\spac)+1/2)*\scal}
+        \node[white] at (\posx,\posy) {$\cdot$};        
+    \fi
+}
+
+\end{tikzpicture}

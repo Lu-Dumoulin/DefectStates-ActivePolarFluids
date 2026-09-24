@@ -1,0 +1,46 @@
+\begin{tikzpicture}
+\def\lx{0.95}
+\def\offx{0.05*\linewidth}
+\def\cx{0.5*\linewidth-\offx}
+\node[inner sep=0pt, anchor=south west, align=left] (heat) at (-\offx,0) {\includegraphics[width=\lx\linewidth]{phases_0.2_0.4_4_v2.png}};
+
+\node at (0.965*\lx*\linewidth,0.02*\linewidth) {$\rho_{min}$};
+\node at (0.965*\lx*\linewidth,0.92*\linewidth) {$\rho_{max}$};
+\node at (0.965*\lx*\linewidth,0.5*\linewidth) {$\rho$};
+
+\node[inner sep=0pt, anchor=south west] at (0.575*\linewidth, 0.01*\linewidth) {\includegraphics[width=0.3\linewidth]{phases_zoom_0.2_0.4_4_v2.png}};
+
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, align=center, anchor=south west] at (-0.8*\offx, 0.9*\linewidth) {$\rho_0 = 0.4$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, align=center, anchor=south west] at (0.27*\linewidth, 0.9*\linewidth) {$\rho_0 = 0.5$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, align=center, anchor=south west] at (0.58*\linewidth, 0.9*\linewidth) {$\rho_0 = 0.6$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, align=center, anchor=south west] at (-0.8*\offx, 0.59*\linewidth) {$\rho_0 = 0.65$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, align=center, anchor=south west] at (0.27*\linewidth, 0.59*\linewidth) {$\rho_0 = 0.7$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, align=center, anchor=south west] at (0.58*\linewidth, 0.59*\linewidth) {$\rho_0 = 0.75$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, align=center, anchor=south west] at (-0.8*\offx, 0.28*\linewidth) {$\rho_0 = 0.8$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, align=center, anchor=south west] at (0.27*\linewidth, 0.28*\linewidth) {$\rho_0 = 1.2$};
+
+\draw[color=white, ultra thick, anchor=south west] (-0.8*\offx,0.628*\linewidth) rectangle ++ (1.4,1.4);
+\draw[color=white, ultra thick, anchor=south west] (0.267*\linewidth,0.32*\linewidth) rectangle ++ (1.4,1.4);
+\draw[color=white, ultra thick, anchor=south west] (0.573*\linewidth,0.32*\linewidth) rectangle ++ (1.4,1.4);
+\draw[color=white, ultra thick, anchor=south west] (-0.8*\offx,0.01*\linewidth) rectangle ++ (1.4,1.4);
+
+\node[text = black, rectangle, rounded corners=1pt, fill=white, opacity=0.8, anchor=south west] at (-0.8*\offx+1,0.628*\linewidth+1) {\textbf{A}};
+\node[text = black, rectangle, rounded corners=1pt, fill=white, opacity=0.8, anchor=south west] at (0.267*\linewidth+1,0.32*\linewidth+1) {\textbf{B}};
+\node[text = black, rectangle, rounded corners=1pt, fill=white, opacity=0.8, anchor=south west] at (0.573*\linewidth+1,0.32*\linewidth+1) {\textbf{C}};
+\node[text = black, rectangle, rounded corners=1pt, fill=white, opacity=0.8, anchor=south west] at (-0.8*\offx+1,0.01*\linewidth+1) {\textbf{D}};
+
+\node[text = black, rectangle, rounded corners=1pt, fill=white, opacity=0.8, anchor=south west] at (0.585*\linewidth,0.163*\linewidth) {\textbf{A}};
+\node[text = black, rectangle, rounded corners=1pt, fill=white, opacity=0.8, anchor=south west] at (0.728*\linewidth,0.163*\linewidth) {\textbf{B}};
+\node[text = black, rectangle, rounded corners=1pt, fill=white, opacity=0.8, anchor=south west] at (0.585*\linewidth,0.018*\linewidth) {\textbf{C}};
+\node[text = black, rectangle, rounded corners=1pt, fill=white, opacity=0.8, anchor=south west] at (0.728*\linewidth,0.018*\linewidth) {\textbf{D}};
+
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, anchor=south east] at (0.26*\linewidth, 0.628*\linewidth) {$\begin{aligned} \rho_{max} \approx 0.90\\ \rho_{min} \approx 0.35\end{aligned}$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, anchor=south east] at (0.568*\linewidth, 0.628*\linewidth) {$\begin{aligned} \rho_{max} \approx 0.93\\ \rho_{min} \approx 0.41\end{aligned}$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, anchor=south east] at (0.875*\linewidth, 0.628*\linewidth) {$\begin{aligned} \rho_{max} \approx 0.86\\ \rho_{min} \approx 0.44\end{aligned}$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, anchor=south east] at (0.26*\linewidth, 0.32*\linewidth) {$\begin{aligned} \rho_{max} \approx 0.83\\ \rho_{min} \approx 0.47\end{aligned}$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, anchor=south east] at (0.568*\linewidth, 0.32*\linewidth) {$\begin{aligned} \rho_{max} \approx 0.81\\ \rho_{min} \approx 0.48\end{aligned}$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, anchor=south east] at (0.875*\linewidth, 0.32*\linewidth) {$\begin{aligned} \rho_{max} \approx 0.78\\ \rho_{min} \approx 0.59\end{aligned}$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, anchor=south east] at (0.26*\linewidth, 0.01*\linewidth) {$\begin{aligned} \rho_{max} \approx 0.81\\ \rho_{min} \approx 0.72\end{aligned}$};
+\node[text = black, rectangle, rounded corners=3pt, fill=white, opacity=0.85, anchor=south east] at (0.568*\linewidth, 0.01*\linewidth) {$\begin{aligned} \rho_{max} = \rho_0\\ \rho_{min} =\rho_0 \end{aligned}$};
+
+\end{tikzpicture}
