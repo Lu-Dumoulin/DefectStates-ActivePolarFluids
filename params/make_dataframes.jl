@@ -34,6 +34,7 @@ const T_CHECK = 1
 const HORIZON = Dict(          # figure => (t_fin, t_prin)
      1 => (150_000,   1_000),  # the L=50 series
      4 => (200_000,   1_000),  # the 1680-row sweep
+     6 => (200_000,   1_000),  # the L=10 detailed-density runs
      8 => (2_000_000, 10_000), # the seven-day lattice runs
      9 => (200_000,   1_000),  # the 1680-row sweep
     11 => (150_000,   1_000),  # the L=50 series
@@ -112,6 +113,15 @@ lattice.fn = 1:nrow(lattice)
 write_df(8,  copy(lattice), "L=10, (0.7,tau=1,zeta=10) and (1.3,tau=0.2,zeta=1)")
 write_df(12, copy(lattice), "same two solutions as Fig8")
 
+# Fig6 - fig:states. The asymptotic states at L=10, tau=5, zeta_rho=4, over a
+# density list that is deliberately not the 0.1 grid used elsewhere: it carries
+# 0.65 and 0.75. Consistent with the Fig11 caption, which notes that rho0 = 0.45
+# and 0.55 appear there but not here.
+write_df(6, sweep(L=10, rho0=[0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 1.2],
+                  tau=[5], zetarho=[4],
+                  t_fin=HORIZON[6][1], t_prin=HORIZON[6][2]),
+         "L=10, 8 rho0 values, tau=5, zeta=4")
+
 # Fig9 - fig:gamma_rho. The full sweep; matches Analysis/PDpaper/DF.csv.
 write_df(9, sweep(L=10, rho0=0.4:0.1:1.5,
                   tau=[0.1,0.2,0.5,1,1.25,1/0.6,2.5,5,10,100],
@@ -125,6 +135,6 @@ write_df(11, sweep(L=50, rho0=0.4:0.05:1.0, tau=[5], zetarho=[4],
          "L=50, rho0 = 0.40:0.05:1.00, tau=5, zeta=4")
 
 println("\nNot generated - see README.md:")
-println("  Fig2, Fig6, Fig7, Fig10, Fig13  (parameters not fully given in the article)")
+println("  Fig2, Fig7, Fig10, Fig13  (parameters not fully given in the article)")
 println("  Fig3  (1D model, parameters are notebook inputs, not a DF row)")
 println("  Fig5  (linear stability analysis; no simulation)")

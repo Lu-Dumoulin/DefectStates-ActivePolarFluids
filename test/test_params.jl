@@ -7,7 +7,7 @@ using Test, CSV, DataFrames
 
     @testset "the expected tables are present" begin
         # Arrange
-        expected = ["DF_1.csv", "DF_4.csv", "DF_8.csv", "DF_9.csv", "DF_11.csv", "DF_12.csv"]
+        expected = ["DF_1.csv", "DF_4.csv", "DF_6.csv", "DF_8.csv", "DF_9.csv", "DF_11.csv", "DF_12.csv"]
 
         # Act / Assert
         @test sort(expected) == tables
@@ -146,6 +146,24 @@ using Test, CSV, DataFrames
         @test all(df.L .== 50)
         @test all(df.kd .≈ 1/5)        # tau = 5
         @test all(df.zetarho .== 4)
+    end
+
+    @testset "Fig6 is the density list the caption implies" begin
+        # Arrange
+        df = CSV.read(repo("params", "DF_6.csv"), DataFrame)
+
+        # Act / Assert
+        @test sort(df.rho0) == [0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 1.2]
+        @test all(df.L .== 10)
+        @test all(df.kd .≈ 1/5)          # tau = 5
+        @test all(df.zetarho .== 4)
+
+        # Fig11's caption says rho0 = 0.45 and 0.55 appear there but not here
+        @test 0.45 ∉ df.rho0
+        @test 0.55 ∉ df.rho0
+        f11 = CSV.read(repo("params", "DF_11.csv"), DataFrame)
+        @test 0.45 ∈ f11.rho0
+        @test 0.55 ∈ f11.rho0
     end
 
     @testset "Fig8 and Fig12 describe the same two solutions" begin

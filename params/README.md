@@ -31,6 +31,7 @@ then supplies what that figure varies.
 |---|---|---|
 | `DF_1.csv` | 3 | L=50, ρ₀ ∈ {0.45, 0.6, 0.75}, τ=5, ζ_ρ=4 |
 | `DF_4.csv` | 1008 | L=10, 12 ρ₀ × 14 ζ_ρ × 6 τ |
+| `DF_6.csv` | 8 | L=10, ρ₀ ∈ {0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 1.2}, τ=5, ζ_ρ=4 |
 | `DF_8.csv` | 2 | L=10, (ρ₀=0.7, τ=1, ζ_ρ=10) and (ρ₀=1.3, τ=0.2, ζ_ρ=1) |
 | `DF_9.csv` | 1680 | L=10, 12 ρ₀ × 14 ζ_ρ × 10 τ |
 | `DF_11.csv` | 13 | L=50, ρ₀ = 0.40 : 0.05 : 1.00, τ=5, ζ_ρ=4 |
@@ -47,14 +48,14 @@ three grids instead. `DF_4.csv` has 1008 rows, exactly the row count of
 ### Missing from the article
 
 These would need a sentence in the manuscript before the table can be written.
+Figure 6's density list is one the article does not give either — it is
+recorded in `make_dataframes.jl` from the author rather than from the text, and
+is worth adding to the caption.
 
 - **Fig2** — panel (a) is "for different values of τ" without saying which, and
   panel (c) sweeps ρ₀ and ζ_ρ without giving either range. Panels (b,d) are
   fully specified (ρ₀=0.6, τ=1, ζ_ρ=12, L=10), and (a) states ρ₀=1, ζ_ρ=4,
   L=10, 50 runs per τ — so only the τ list and the (c) grid are missing.
-- **Fig6** — "different target densities ρ₀", but not which. τ=5, ζ_ρ=4, L=10
-  are given. The Fig11 caption says ρ₀ = 0.45 and 0.55 are *not* among them,
-  which bounds but does not determine the set.
 - **Fig7** — neither the τ and ρ₀ grids nor ζ_ρ are stated. The committed
   `DF_tikz.csv` has 120 rows on a 10 × 12 index grid, consistent with the ten τ
   and twelve ρ₀ used elsewhere; ζ_ρ is unrecoverable from the figure data.
@@ -107,6 +108,7 @@ figure came from:
 |---|---|---|---|
 | 1, 11 | 150 000 | 1 000 | the L=50 series |
 | 4, 9 | 200 000 | 1 000 | the 1680-row sweep |
+| 6 | 200 000 | 1 000 | the L=10 detailed-density runs |
 | 8, 12 | 2 000 000 | 10 000 | the seven-day lattice runs |
 
 Note `t_prin` is 10 000 rather than 1 000 for the lattice figures: the long runs

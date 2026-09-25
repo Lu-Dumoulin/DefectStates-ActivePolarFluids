@@ -75,7 +75,7 @@ not a pipeline. The methods are described in the article's appendices.
 | **3** | steady state of a single defect | **reproducible**: [`1D/models.pluto.jl`](../1D/models.pluto.jl); its data is byte-identical to [`1D/figdata/`](../1D/figdata) |
 | **4** | defect density over the (ρ₀, ζ_ρ) plane at six renewal times | [`params/DF_4.csv`](../params/DF_4.csv), 1008 runs; the white dots are the critical activity from the stability analysis |
 | **5** | linear stability of the homogeneous state | **reproducible**: [`LSA/linear_stability.jl`](../LSA/linear_stability.jl) regenerates `tau1.csv` and `tau5.csv` byte for byte, with no simulation output |
-| **6** | asymptotic states at different target densities | L=10 runs at τ=5, ζ_ρ=4 |
+| **6** | asymptotic states at different target densities | [`params/DF_6.csv`](../params/DF_6.csv), eight L=10 runs at τ=5, ζ_ρ=4 |
 | **7** | state classification over τ and ρ₀, with defect density, persistence time and low-density areas | the phase-diagram runs |
 | **8** | square and hexagonal defect lattices | [`params/DF_8.csv`](../params/DF_8.csv), two runs to t = 2·10⁶ |
 | **9** | shape function against target density and against defect density | [`params/DF_9.csv`](../params/DF_9.csv), 1680 runs |
