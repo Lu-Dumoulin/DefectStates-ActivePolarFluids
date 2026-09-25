@@ -53,16 +53,20 @@ three grids instead. `DF_4.csv` has 1008 rows, exactly the row count of
 
 Those panels are two-defect runs: a pair of oppositely charged defects placed a
 set distance apart, rather than the noisy uniform state everything else starts
-from. Reproducing them needs two things this repository does not have.
+from.
 
-The initial condition is one. `2D/2D.jl` starts every run from a small random
-perturbation; seeding a defect pair needs a different initialiser, which is not
-part of the published solver.
+The solver can now do this. `kernel_ini_P!` in [`2D/kernels.jl`](../2D/kernels.jl)
+seeds the pair, and it is selected by giving the table a `D` column — the
+separation in units of the domain width. Without that column the run starts
+from noise, which is what every table here does and what every published
+large-domain solution did.
 
-The separation is the other. Those runs sweep an initial defect distance `D`
-alongside ρ₀ and ζ_ρ, and `D` is not a column of this schema. Panel (b,d) is a
-single solution at ρ₀ = 0.6, τ = 1, ζ_ρ = 12; panel (c) sweeps ρ₀ ∈ {0.6, 0.8,
-1.0, 1.2} against ζ_ρ ∈ {1, 4, 8, 12} at τ = 1, over twelve separations.
+No table is generated for these panels, because the separation is not given.
+Panel (b,d) is a single solution at ρ₀ = 0.6, τ = 1, ζ_ρ = 12 at an unstated
+`D`. Panel (c) sweeps ρ₀ ∈ {0.6, 0.8, 1.0, 1.2} against ζ_ρ ∈ {1, 4, 8, 12} at
+τ = 1, and measures the critical distance by scanning `D` upward within a
+single run rather than by taking it from the table — so reproducing it needs
+that scan, not just a row per separation.
 
 ### Not a simulation table
 

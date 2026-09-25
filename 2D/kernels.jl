@@ -49,6 +49,27 @@ function kernel_comp_diff_factor(factordx, factordz, factorΔ, kx, kz, kx2, kz2,
 end
 
 """
+    kernel_ini_P!(P, Nx, Ny, d)
+
+Seed a pair of oppositely charged +/-1 defects a distance `d` apart, in units
+of the domain width, centred on the box: the polarity winds once around each
+core. Used for the two-defect runs; the published large-domain runs start from
+noise instead and never call this.
+"""
+function kernel_ini_P!(P, Nx, Ny, d)
+    i, j = thread_indices()
+    @inbounds begin
+        c_def = i>floor(Int, Nx*0.5) ? -1 : 1
+        ic = c_def == -1 ? floor(Int, Nx*(0.5+d/2)) : floor(Int, Nx*(0.5-d/2))
+        jc = floor(Int, Ny*0.5)
+        θ = atan(j-jc,i-ic)
+        P[i,j,1] =  c_def == 1 ? cos(θ) : -cos(θ)
+        P[i,j,2] = sin(θ)
+    end
+    return nothing
+end
+
+"""
     kernel_comp_μhσ!(σ, μ, h, ρ_, Dρ, P, DP, ar, ap, kp, ζρ, ζp, ζp2, Δμ, ν1, ν2, ρ0)
 
 Chemical potential `μ = δF/δρ`, molecular field `h = -δF/δP` and stress `σ`,

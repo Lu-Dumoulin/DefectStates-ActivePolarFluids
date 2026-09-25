@@ -115,6 +115,12 @@ $\mathbf{P} = 0.002\,\eta'$, with $\eta,\eta'$ uniform in $[-0.5,0.5]$ from
 `Random.seed!(seed)` — so runs are reproducible bit-for-bit on the same GPU and
 CUDA version.
 
+A table may instead carry a `D` column, the separation between a seeded pair of
+oppositely charged defects in units of the domain width. The polarity is then
+initialised with that pair rather than with noise, for the two-defect runs. No
+table here has that column, and every published large-domain solution started
+from noise.
+
 `t_fin`, `t_prin` and `t_check` (integration horizon, snapshot interval and
 adaptive-step interval) are set at the bottom of `InputParameters.jl`, not in
 `DF.csv`. The paper runs used `t_fin = 150000`, `t_prin = 1000` against a 12 h

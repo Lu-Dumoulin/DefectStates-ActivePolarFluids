@@ -58,13 +58,23 @@ function main()
         # the GPU's own RNG stream. The draw order (ρ then P) is part of that.
         Random.seed!(sd)
         ρ_noise = CuArray(rand(Float64, Nx, Nz))
-        P_noise = CuArray(rand(Float64, Nx, Nz, 2))
 
         # Start from the homogeneous isotropic state perturbed by 0.1%:
-        # ρ = ρ0(1 + 0.002η) and P = 0.002η', η, η' uniform in [-0.5, 0.5].
-        # Defects are not seeded — they emerge from this noise.
+        # ρ = ρ0(1 + 0.002η), η uniform in [-0.5, 0.5].
         ρ = (1.0 .+ NOISE_AMPLITUDE .* (ρ_noise .- 0.5)) .* ρ0
-        P = (P_noise .- 0.5) .* NOISE_AMPLITUDE
+
+        # The polarity either carries the same perturbation, with defects left
+        # to emerge from it - which is what every published large-domain run
+        # did - or is seeded with a defect pair a distance D apart, for the
+        # two-defect runs. The draw order is unchanged in the noise case.
+        P = if seed_defect_pair
+            Pd = CUDA.ones(Float64, Nx, Nz, 2)
+            @cuda threads = block_dim blocks = grid_dim kernel_ini_P!(Pd, Nx, Nz, D)
+            Pd
+        else
+            P_noise = CuArray(rand(Float64, Nx, Nz, 2))
+            (P_noise .- 0.5) .* NOISE_AMPLITUDE
+        end
 
         # Working fields
         v = CUDA.zeros(Float64, Nx, Nz, 2)

@@ -123,6 +123,12 @@ const ar::Float64 = Tf(df[:ar])
 const M::Float64 = Tf(df[:M])/ar        # mobility; D = M·ar so this fixes D
 const sd = Int(df[:seed])               # RNG seed for the initial noise
 
+# Initial defect separation, in units of the domain width. Present only in
+# tables for the two-defect runs; without it the run starts from noise, which
+# is what every published large-domain solution did.
+const D::Float64 = hasproperty(df, :D) ? Tf(df[:D]) : NaN
+const seed_defect_pair::Bool = !isnan(D)
+
 # --- Integration horizon -----------------------------------------------------
 # Taken from the parameter table when it provides them, since the horizon
 # differs by figure (see params/README.md). Tables without these columns - the

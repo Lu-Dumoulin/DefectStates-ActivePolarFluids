@@ -76,6 +76,46 @@ using Test, CSV, DataFrames
         end
     end
 
+    @testset "the defect-pair start is opt-in and off by default" begin
+        # Arrange
+        ini  = read(repo("2D", "kernels.jl"), String)
+        inp  = read(repo("2D", "InputParameters.jl"), String)
+        main = read(repo("2D", "2D.jl"), String)
+
+        # Act / Assert: the initialiser is present, and selected by a D column
+        @test occursin("function kernel_ini_P!", ini)
+        @test occursin("hasproperty(df, :D)", inp)
+        @test occursin("seed_defect_pair", main)
+
+        # no table shipped here has one, so every published run takes the
+        # noise path, exactly as before
+        for t in filter(f -> startswith(f, "DF_"), readdir(repo("params")))
+            cols = split(first(eachline(repo("params", t))), ",")
+            @test "D" ∉ cols
+        end
+        @test "D" ∉ split(first(eachline(repo("2D", "DF.csv"))), ",")
+    end
+
+    @testset "interleaving the field construction leaves the RNG stream alone" begin
+        # 2D.jl now builds rho between the two draws rather than after both.
+        # The draws themselves must be unchanged.
+        using Random
+        Nx, Nz, ρ0, A = 32, 32, 0.65, 0.002
+
+        Random.seed!(7)
+        a1 = rand(Float64, Nx, Nz); a2 = rand(Float64, Nx, Nz, 2)
+        ρa = (1.0 .+ A .* (a1 .- 0.5)) .* ρ0; Pa = (a2 .- 0.5) .* A
+
+        Random.seed!(7)
+        b1 = rand(Float64, Nx, Nz)
+        ρb = (1.0 .+ A .* (b1 .- 0.5)) .* ρ0
+        b2 = rand(Float64, Nx, Nz, 2); Pb = (b2 .- 0.5) .* A
+
+        bits(x) = reinterpret(UInt64, vec(x))
+        @test bits(ρa) == bits(ρb)
+        @test bits(Pa) == bits(Pb)
+    end
+
     @testset "the sweep regenerates the archival table byte for byte" begin
         # Arrange: run AllInputParam.jl in a copy so DF.csv is never clobbered
         mktempdir() do tmp
