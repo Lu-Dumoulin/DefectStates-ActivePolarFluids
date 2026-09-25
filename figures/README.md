@@ -71,18 +71,18 @@ not a pipeline. The methods are described in the article's appendices.
 | Figure | Shows | Obtained from |
 |---|---|---|
 | **1** | schematic, and density snapshots at ρ₀ = 0.45, 0.6, 0.75 | three L=50 runs, [`params/DF_1.csv`](../params/DF_1.csv) |
-| **2** | defect pair: count against time, density and velocity maps, critical annihilation distance | two-defect runs |
+| **2** | defect pair: count against time, density and velocity maps, critical annihilation distance | panel (a) from [`params/DF_2.csv`](../params/DF_2.csv); (b–d) are two-defect runs needing an initial condition the solver here does not provide |
 | **3** | steady state of a single defect | **reproducible**: [`1D/models.pluto.jl`](../1D/models.pluto.jl); its data is byte-identical to [`1D/figdata/`](../1D/figdata) |
 | **4** | defect density over the (ρ₀, ζ_ρ) plane at six renewal times | [`params/DF_4.csv`](../params/DF_4.csv), 1008 runs; the white dots are the critical activity from the stability analysis |
 | **5** | linear stability of the homogeneous state | **reproducible**: [`LSA/linear_stability.jl`](../LSA/linear_stability.jl) regenerates `tau1.csv` and `tau5.csv` byte for byte, with no simulation output |
 | **6** | asymptotic states at different target densities | [`params/DF_6.csv`](../params/DF_6.csv), eight L=10 runs at τ=5, ζ_ρ=4 |
-| **7** | state classification over τ and ρ₀, with defect density, persistence time and low-density areas | the phase-diagram runs |
+| **7** | state classification over τ and ρ₀, with defect density, persistence time and low-density areas | [`params/DF_7.csv`](../params/DF_7.csv), 120 runs at ζ_ρ=4 |
 | **8** | square and hexagonal defect lattices | [`params/DF_8.csv`](../params/DF_8.csv), two runs to t = 2·10⁶ |
 | **9** | shape function against target density and against defect density | [`params/DF_9.csv`](../params/DF_9.csv), 1680 runs |
-| **10** | density correlation against time, with exponential fits | the phase-diagram runs |
+| **10** | density correlation against time, with exponential fits | [`params/DF_10.csv`](../params/DF_10.csv), three of figure 7's solutions |
 | **11** | density snapshots at L=50 across the density range | [`params/DF_11.csv`](../params/DF_11.csv) |
 | **12** | the lattices of figure 8 with Voronoi tessellation and shape order | [`params/DF_12.csv`](../params/DF_12.csv) |
-| **13** | the same two parameter sets from different initial conditions | two run sets, five initial conditions each |
+| **13** | the same two parameter sets from different initial conditions | [`params/DF_13.csv`](../params/DF_13.csv), figure 8's two solutions × five seeds |
 
 Defect density is counted per unit area of the padded domain, (1008 × 0.01)² =
 101.6064, not of the nominal L = 10. The figure 9 threshold "defect density
@@ -90,7 +90,7 @@ larger than 1.5" is a count of 150.
 
 ## Still to do
 
-**Figure 13** and several data files have no generator here: `omegarho.csv` and
+**Several data files have no generator here:** `omegarho.csv` and
 `zrc_eq{,2}.csv` (figure 5), `zrc_plus.csv` (figure 4's critical-activity dots,
 which come from the same stability analysis), and `DF_tikz.csv` (figure 7).
 

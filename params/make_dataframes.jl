@@ -34,7 +34,11 @@ const T_CHECK = 1
 const HORIZON = Dict(          # figure => (t_fin, t_prin)
      1 => (150_000,   1_000),  # the L=50 series
      4 => (200_000,   1_000),  # the 1680-row sweep
+     2 => (150_000,   1_000),  # the saturation runs behind panel (a)
      6 => (200_000,   1_000),  # the L=10 detailed-density runs
+     7 => (300_000,   1_000),  # the phase-diagram runs
+    10 => (300_000,   1_000),  # the phase-diagram runs; t_f = 287e3 fits inside
+    13 => (2_000_000, 10_000), # the five-seed lattice runs
      8 => (2_000_000, 10_000), # the seven-day lattice runs
      9 => (200_000,   1_000),  # the 1680-row sweep
     11 => (150_000,   1_000),  # the L=50 series
@@ -113,14 +117,48 @@ lattice.fn = 1:nrow(lattice)
 write_df(8,  copy(lattice), "L=10, (0.7,tau=1,zeta=10) and (1.3,tau=0.2,zeta=1)")
 write_df(12, copy(lattice), "same two solutions as Fig8")
 
-# Fig6 - fig:states. The asymptotic states at L=10, tau=5, zeta_rho=4, over a
-# density list that is deliberately not the 0.1 grid used elsewhere: it carries
-# 0.65 and 0.75. Consistent with the Fig11 caption, which notes that rho0 = 0.45
-# and 0.55 appear there but not here.
+# Fig6 - fig:states. The asymptotic states at L=10, tau=5, zeta_rho=4. The
+# densities are the ones labelled on the panels themselves, in
+# figures/Fig6/fig_phases.tex, and a test checks the two against each other.
+# Note the list is deliberately not the 0.1 grid used elsewhere - it carries
+# 0.65 and 0.75 - so this is its own run set, not a slice of the big sweep.
 write_df(6, sweep(L=10, rho0=[0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 1.2],
                   tau=[5], zetarho=[4],
                   t_fin=HORIZON[6][1], t_prin=HORIZON[6][2]),
          "L=10, 8 rho0 values, tau=5, zeta=4")
+
+# Fig2 - fig:stab_defects, panel (a) only. Defect count against time at
+# rho0 = 1, zeta_rho = 4, L = 10, for three renewal times, averaged over 50
+# initial conditions each. Panels (b-d) are two-defect runs and need an initial
+# condition this solver does not provide - see README.md.
+write_df(2, sweep(L=10, rho0=[1.0], tau=[10, 1, 0.2], zetarho=[4], seed=1:50,
+                  t_fin=HORIZON[2][1], t_prin=HORIZON[2][2]),
+         "L=10, rho0=1, zeta=4, 3 tau x 50 seeds")
+
+# Fig7 - fig:phasediagram. The renewal plane at fixed activity: the same grid
+# figure 9 sweeps, restricted to zeta_rho = 4. 12 x 10 = 120, which is the row
+# count of figures/Fig7/DF_tikz.csv.
+write_df(7, sweep(L=10, rho0=0.4:0.1:1.5,
+                  tau=[0.1,0.2,0.5,1,1.25,1/0.6,2.5,5,10,100], zetarho=[4],
+                  t_fin=HORIZON[7][1], t_prin=HORIZON[7][2]),
+         "L=10, 12 rho0 x 10 tau, zeta=4")
+
+# Fig10 - fig:tauc. Three of figure 7's solutions, followed for the
+# correlation function.
+tauc = sweep(L=10, rho0=[0.7], tau=[1],   zetarho=[4], t_fin=HORIZON[10][1], t_prin=HORIZON[10][2])
+append!(tauc, sweep(L=10, rho0=[1.2], tau=[0.5], zetarho=[4], t_fin=HORIZON[10][1], t_prin=HORIZON[10][2]))
+append!(tauc, sweep(L=10, rho0=[0.7], tau=[5],   zetarho=[4], t_fin=HORIZON[10][1], t_prin=HORIZON[10][2]))
+tauc.fn = 1:nrow(tauc)
+write_df(10, tauc, "L=10, zeta=4, (0.7,tau=1) (1.2,tau=0.5) (0.7,tau=5)")
+
+# Fig13 - fig:10lattices. Figure 8's two solutions from five initial
+# conditions each.
+tenlat = sweep(L=10, rho0=[0.7], tau=[1],   zetarho=[10], seed=1:5,
+               t_fin=HORIZON[13][1], t_prin=HORIZON[13][2])
+append!(tenlat, sweep(L=10, rho0=[1.3], tau=[0.2], zetarho=[1], seed=1:5,
+                      t_fin=HORIZON[13][1], t_prin=HORIZON[13][2]))
+tenlat.fn = 1:nrow(tenlat)
+write_df(13, tenlat, "L=10, two solutions x 5 seeds")
 
 # Fig9 - fig:gamma_rho. The full sweep; matches Analysis/PDpaper/DF.csv.
 write_df(9, sweep(L=10, rho0=0.4:0.1:1.5,
@@ -135,6 +173,6 @@ write_df(11, sweep(L=50, rho0=0.4:0.05:1.0, tau=[5], zetarho=[4],
          "L=50, rho0 = 0.40:0.05:1.00, tau=5, zeta=4")
 
 println("\nNot generated - see README.md:")
-println("  Fig2, Fig7, Fig10, Fig13  (parameters not fully given in the article)")
+println("  Fig2 panels (b-d)  (two-defect initial condition, see README.md)")
 println("  Fig3  (1D model, parameters are notebook inputs, not a DF row)")
 println("  Fig5  (linear stability analysis; no simulation)")

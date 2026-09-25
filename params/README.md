@@ -30,12 +30,16 @@ then supplies what that figure varies.
 | File | Rows | Figure varies |
 |---|---|---|
 | `DF_1.csv` | 3 | L=50, ρ₀ ∈ {0.45, 0.6, 0.75}, τ=5, ζ_ρ=4 |
+| `DF_2.csv` | 150 | L=10, ρ₀=1, ζ_ρ=4, τ ∈ {10, 1, 0.2}, 50 initial conditions each — **panel (a) only** |
 | `DF_4.csv` | 1008 | L=10, 12 ρ₀ × 14 ζ_ρ × 6 τ |
 | `DF_6.csv` | 8 | L=10, ρ₀ ∈ {0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 1.2}, τ=5, ζ_ρ=4 |
 | `DF_8.csv` | 2 | L=10, (ρ₀=0.7, τ=1, ζ_ρ=10) and (ρ₀=1.3, τ=0.2, ζ_ρ=1) |
+| `DF_7.csv` | 120 | L=10, 12 ρ₀ × 10 τ, ζ_ρ=4 |
 | `DF_9.csv` | 1680 | L=10, 12 ρ₀ × 14 ζ_ρ × 10 τ |
+| `DF_10.csv` | 3 | L=10, ζ_ρ=4, (ρ₀=0.7, τ=1), (1.2, 0.5), (0.7, 5) |
 | `DF_11.csv` | 13 | L=50, ρ₀ = 0.40 : 0.05 : 1.00, τ=5, ζ_ρ=4 |
 | `DF_12.csv` | 2 | the same two solutions as Fig8 |
+| `DF_13.csv` | 10 | Fig8's two solutions from five initial conditions each |
 
 `DF_11.csv` reproduces [`2D/DF.csv`](../2D/DF.csv) exactly. `DF_9.csv` was
 checked against the table the sweep actually used and matched all 1680
@@ -45,24 +49,20 @@ three grids instead. `DF_4.csv` has 1008 rows, exactly the row count of
 
 ## Not generated, and why
 
-### Missing from the article
+### Figure 2, panels (b) to (d)
 
-These would need a sentence in the manuscript before the table can be written.
-Figure 6's density list is one the article does not give either — it is
-recorded in `make_dataframes.jl` from the author rather than from the text, and
-is worth adding to the caption.
+Those panels are two-defect runs: a pair of oppositely charged defects placed a
+set distance apart, rather than the noisy uniform state everything else starts
+from. Reproducing them needs two things this repository does not have.
 
-- **Fig2** — panel (a) is "for different values of τ" without saying which, and
-  panel (c) sweeps ρ₀ and ζ_ρ without giving either range. Panels (b,d) are
-  fully specified (ρ₀=0.6, τ=1, ζ_ρ=12, L=10), and (a) states ρ₀=1, ζ_ρ=4,
-  L=10, 50 runs per τ — so only the τ list and the (c) grid are missing.
-- **Fig7** — neither the τ and ρ₀ grids nor ζ_ρ are stated. The committed
-  `DF_tikz.csv` has 120 rows on a 10 × 12 index grid, consistent with the ten τ
-  and twelve ρ₀ used elsewhere; ζ_ρ is unrecoverable from the figure data.
-- **Fig10** — the three solutions give ρ₀ and τ but not ζ_ρ, and no system size.
-- **Fig13** — "two different sets of parameters", unnamed. They are plausibly
-  Fig8's two, but the caption does not say so, and the five initial conditions
-  are not identified by seed.
+The initial condition is one. `2D/2D.jl` starts every run from a small random
+perturbation; seeding a defect pair needs a different initialiser, which is not
+part of the published solver.
+
+The separation is the other. Those runs sweep an initial defect distance `D`
+alongside ρ₀ and ζ_ρ, and `D` is not a column of this schema. Panel (b,d) is a
+single solution at ρ₀ = 0.6, τ = 1, ζ_ρ = 12; panel (c) sweeps ρ₀ ∈ {0.6, 0.8,
+1.0, 1.2} against ζ_ρ ∈ {1, 4, 8, 12} at τ = 1, over twelve separations.
 
 ### Not a simulation table
 
@@ -109,7 +109,9 @@ figure came from:
 | 1, 11 | 150 000 | 1 000 | the L=50 series |
 | 4, 9 | 200 000 | 1 000 | the 1680-row sweep |
 | 6 | 200 000 | 1 000 | the L=10 detailed-density runs |
-| 8, 12 | 2 000 000 | 10 000 | the seven-day lattice runs |
+| 8, 12, 13 | 2 000 000 | 10 000 | the seven-day lattice runs |
+| 2 | 150 000 | 1 000 | the saturation runs |
+| 7, 10 | 300 000 | 1 000 | the phase-diagram runs; Fig10's t_f = 287·10³ fits inside |
 
 Note `t_prin` is 10 000 rather than 1 000 for the lattice figures: the long runs
 snapshot ten times less often.
@@ -123,8 +125,6 @@ what every run is guaranteed to have reached; 200 000 is what to configure to
 reproduce them. Expect a reproduction to run longer than some of the original
 solutions did, and do not treat the difference as an error in either place.
 
-Horizons for figures whose tables are not yet generated, from the same source:
-Fig2's two-defect runs used `t_fin` = 30 000 with `t_prin` = 500, alongside a
-much shorter set at 1 000 / 20 for the critical-distance measurement; the
-phase-diagram runs behind Fig7 and Fig10 used 300 000 / 1 000, consistent with
-Fig10's stated t_f = 287·10³.
+Figure 2's two-defect runs, which have no table here, used `t_fin` = 30 000
+with `t_prin` = 500, alongside a much shorter set at 1 000 / 20 for the
+critical-distance measurement.

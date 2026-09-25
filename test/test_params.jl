@@ -7,7 +7,9 @@ using Test, CSV, DataFrames
 
     @testset "the expected tables are present" begin
         # Arrange
-        expected = ["DF_1.csv", "DF_4.csv", "DF_6.csv", "DF_8.csv", "DF_9.csv", "DF_11.csv", "DF_12.csv"]
+        expected = ["DF_1.csv", "DF_2.csv", "DF_4.csv", "DF_6.csv", "DF_7.csv",
+                    "DF_8.csv", "DF_9.csv", "DF_10.csv", "DF_11.csv", "DF_12.csv",
+                    "DF_13.csv"]
 
         # Act / Assert
         @test sort(expected) == tables
@@ -152,7 +154,17 @@ using Test, CSV, DataFrames
         # Arrange
         df = CSV.read(repo("params", "DF_6.csv"), DataFrame)
 
+        # the panels carry their own labels; the table must agree with them
+        labelled = Float64[]
+        for line in eachline(repo("figures", "Fig6", "fig_phases.tex"))
+            startswith(lstrip(line), "%") && continue
+            for m in eachmatch(r"\\rho_0 = ([0-9.]+)", line)
+                push!(labelled, parse(Float64, m.captures[1]))
+            end
+        end
+
         # Act / Assert
+        @test sort(unique(labelled)) == sort(df.rho0)
         @test sort(df.rho0) == [0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 1.2]
         @test all(df.L .== 10)
         @test all(df.kd .≈ 1/5)          # tau = 5
@@ -164,6 +176,53 @@ using Test, CSV, DataFrames
         f11 = CSV.read(repo("params", "DF_11.csv"), DataFrame)
         @test 0.45 ∈ f11.rho0
         @test 0.55 ∈ f11.rho0
+    end
+
+    @testset "Fig2(a) averages 50 initial conditions per renewal time" begin
+        df = CSV.read(repo("params", "DF_2.csv"), DataFrame)
+        @test nrow(df) == 150
+        @test sort(unique(df.seed)) == collect(1.0:50.0)
+        @test sort(unique(round.(df.kd, digits=10))) == [0.1, 1.0, 5.0]   # tau = 10, 1, 0.2
+        @test all(df.rho0 .== 1.0)
+        @test all(df.zetarho .== 4)
+        @test all(df.L .== 10)
+    end
+
+    @testset "Fig7 is Fig9's grid at one activity" begin
+        f7 = CSV.read(repo("params", "DF_7.csv"), DataFrame)
+        f9 = CSV.read(repo("params", "DF_9.csv"), DataFrame)
+        tikz = CSV.read(repo("figures", "Fig7", "DF_tikz.csv"), DataFrame)
+
+        @test nrow(f7) == 120 == nrow(tikz)
+        @test all(f7.zetarho .== 4)
+        @test sort(unique(f7.rho0)) == sort(unique(f9.rho0))
+        @test sort(unique(f7.kd))   == sort(unique(f9.kd))
+    end
+
+    @testset "Fig10's three solutions lie inside Fig7's grid" begin
+        f10 = CSV.read(repo("params", "DF_10.csv"), DataFrame)
+        f7  = CSV.read(repo("params", "DF_7.csv"), DataFrame)
+
+        @test nrow(f10) == 3
+        @test all(f10.zetarho .== 4)
+        @test all(f10.L .== 10)
+        for r in eachrow(f10)
+            @test any(x -> x.rho0 == r.rho0 && x.kd ≈ r.kd, eachrow(f7))
+        end
+        # the caption follows the correlation to t_f = 287e3
+        @test all(f10.t_fin .>= 287_000)
+    end
+
+    @testset "Fig13 is Fig8's two solutions from five initial conditions" begin
+        f13 = CSV.read(repo("params", "DF_13.csv"), DataFrame)
+        f8  = CSV.read(repo("params", "DF_8.csv"), DataFrame)
+
+        @test nrow(f13) == 10
+        @test sort(unique(f13.seed)) == collect(1.0:5.0)
+        # same two parameter sets as figure 8
+        sets(df) = sort(unique([(r.rho0, round(r.kd, digits=10), r.zetarho) for r in eachrow(df)]))
+        @test sets(f13) == sets(f8)
+        @test all(f13.t_fin .== 2_000_000)
     end
 
     @testset "Fig8 and Fig12 describe the same two solutions" begin
