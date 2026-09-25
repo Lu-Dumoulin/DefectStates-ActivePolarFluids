@@ -82,7 +82,8 @@ CFL condition on $\mathbf{v}$ and by `dtmin`.
 │   ├── config.jl          # run set from DATA_DIR / FIG_DIR
 │   ├── core.jl            # defect detection, spectra, Voronoi, batch passes
 │   ├── MakePlots.jl       # generic panels from .jld, any run set
-│   ├── make_figN.jl       # one per figure N: its analysis, then its plot
+│   ├── figure_routines.jl # the per-figure work (reference, not runnable)
+│   ├── linear_stability.jl# figure 5's data; runs without simulation output
 │   ├── not_in_paper.jl    # figures the revision removed
 │   ├── PhaseDiagram.jl    # the phase diagram (not split yet)
 │   └── talk_figures.jl    # slides for a talk, not paper figures
@@ -257,55 +258,39 @@ point the `\input` at that copy, or strip the line.
 
 ## Analysis
 
-Split into a shared layer, a generic plotting script, and one script per figure.
-Each layer `include`s the one below it, so running any figure script pulls in
-everything it needs:
-
 ```
-config.jl          paths from the environment, loads DF.csv
+config.jl            paths from the environment, loads DF.csv
    |
-core.jl            defect detection, segmentation, structure factors,
-   |               correlations, batch passes over a run set
-MakePlots.jl       generic panels from .jld: density, angle, velocity, order,
-   |               defect overlays, Voronoi tessellations
-make_figN.jl       one per figure N: the analysis it needs, then its plot
+core.jl              defect detection, segmentation, structure factors,
+   |                 correlations, batch passes over a run set
+MakePlots.jl         density, angle, velocity and order panels from .jld
+   |
+figure_routines.jl   the per-figure work built on those
 ```
 
-All of them take the run set through the environment:
+plus [`PhaseDiagram.jl`](Analysis/PhaseDiagram.jl) for the state classification
+and [`linear_stability.jl`](Analysis/linear_stability.jl) for the stability
+analysis.
+
+**Most of this does not run, and is not meant to.** The figures were drawn from
+simulation output that is not published here — a single snapshot is about a
+gigabyte and a run set reaches terabytes. It is included because the article's
+appendix describes how the measured quantities were obtained, and this is that
+code: defect counting, the shape function, the low-density area statistics.
+[`figures/README.md`](figures/README.md) records which routine drew which panel.
+
+Two things do run, neither needing simulation output:
 
 ```bash
-DATA_DIR=/path/to/runset/ julia --project=. Analysis/MakePlots.jl
-DATA_DIR=/path/to/runset/ FIG_DIR=$PWD/figures/Fig6/ julia --project=. Analysis/make_fig6.jl
+julia --project=. Analysis/linear_stability.jl    # figure 5's data, byte for byte
 ```
 
-`DATA_DIR` is the directory holding `DF.csv` and one `<idx>/Data/` folder per
-simulation — the layout [`2D/`](2D/) writes. `FIG_DIR` defaults to it.
-
-[`Analysis/MakePlots.jl`](Analysis/MakePlots.jl) is deliberately figure-agnostic:
-run it against any run set and it renders the standard panels for every
-simulation in it. It reproduces no particular figure.
-
-Each `make_figN.jl` reproduces figure N, and is the entry point for someone who
-has run that figure's simulations — from its table in [`params/`](params/) —
-and wants the analysis behind the panels. Running one executes the calls at the
-bottom of the file. Which script draws which figure, and the evidence for each
-pairing, is in [`figures/README.md`](figures/README.md).
+and the figure 3 notebook in [`1D/`](1D/). The simulations themselves are
+reproducible from [`2D/`](2D/) and the tables in [`params/`](params/).
 
 `Analysis/not_in_paper.jl` holds the flow-alignment, anisotropic-stress and
 saturation figures, which the earlier version of the article had and the
-submitted one does not.
-
-[`Analysis/PhaseDiagram.jl`](Analysis/PhaseDiagram.jl) has not been split yet
-and still carries hard-coded paths. [`Analysis/talk_figures.jl`](Analysis/talk_figures.jl)
-holds slides for a talk, not paper figures.
-
-**Caveats.** The function bodies are unchanged from the single `Analysis.jl`
-they came from — the split moved them verbatim and this was checked by
-comparing every extracted body against the original. What that does *not* mean
-is that they now run end to end: they were written against run sets that are not
-published here, several expect intermediate tables (`DF2.csv`, `DF_analyse.csv`)
-produced by earlier passes, and none of it has been executed since the split,
-because no simulation output is available on the machine it was done on.
+submitted one does not. `talk_figures.jl` holds slides.
 
 ## Tests
 

@@ -43,5 +43,5 @@ end
 "The figures the article contains, and where each one's picture lives."
 const PAPER_FIGURES = 1:13
 
-"Figures drawn by an Analysis script (3 is the 1D notebook; 13 is unidentified)."
-const SCRIPTED_FIGURES = [1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+"Figures reproducible from this repository alone, without simulation output."
+const REPRODUCIBLE_FIGURES = [3, 5]

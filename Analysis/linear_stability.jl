@@ -1,11 +1,7 @@
 # =============================================================================
-#  Figure 5 - fig:linstab. Linear stability of the homogeneous state.
+#  Linear stability of the homogeneous state.
 #
-#  Needs no DATA_DIR: this analyses the linearised equations, not the data.
-#  omegarho.csv and zrc_eq*.csv are NOT produced here - nothing in this
-#  repository writes them (see figures/README.md).
-#
-#      julia --project=. Analysis/make_fig_LSA.jl [outdir]
+#      julia --project=. Analysis/linear_stability.jl [outdir]
 #
 #  Writes tau1.csv and tau5.csv (default: figures/Fig5/), each holding, per
 #  homeostatic density rho0:
@@ -17,13 +13,16 @@
 #  tau5 is the turnover time tau = 5 used for the published runs (kd = 0.2);
 #  tau1 is tau = 1 (kd = 1.0).
 #
-#  Needs no simulation output — this is analysis of the linearised equations,
-#  not of the data, so it runs anywhere with no DATA_DIR.
+#  This needs no simulation output - it analyses the linearised equations, not
+#  the data - so it runs anywhere, and reproduces the committed figure 5 data
+#  byte for byte.
 #
-#  The expressions are carried over unchanged from LSA.jl; the only difference
-#  is that kd is an argument here instead of a global constant, so both
-#  turnover times come from one routine. Verified to reproduce the committed
-#  tau1.csv and tau5.csv byte for byte.
+#  The expressions come from LSA.jl unchanged; the only difference is that kd
+#  is an argument here rather than a global, so both turnover times come from
+#  one routine.
+#
+#  Not produced here: omegarho.csv and zrc_eq{,2}.csv. Nothing in this
+#  repository writes them; see figures/README.md.
 # =============================================================================
 
 const ar = 4.0*4/3

@@ -63,29 +63,28 @@ one-column template** — the output stops matching the article.
 
 ## Where each figure comes from
 
-One script per figure, named for it. Each takes the run set through `DATA_DIR`
-and writes into `FIG_DIR`:
+The panels were drawn from simulation output that is not published here, so
+this is a record of which routine produced which figure rather than a pipeline
+you can run. The routines are in
+[`Analysis/figure_routines.jl`](../Analysis/figure_routines.jl); the
+measurement primitives they build on are in
+[`Analysis/core.jl`](../Analysis/core.jl).
 
-```bash
-DATA_DIR=/path/to/fig9-runs/ FIG_DIR=$PWD/figures/Fig9/ \
-    julia --project=. Analysis/make_fig9.jl
-```
-
-| Figure | Script | Established by |
+| Figure | Routine | Established by |
 |---|---|---|
-| **1** | [`make_fig1.jl`](../Analysis/make_fig1.jl) | `make_plot_L50` writes `phases_L50_3.png`; rows 2, 5, 8 of the L=50 table are ρ₀ = 0.45, 0.60, 0.75, the caption's three densities |
-| **2** | [`make_fig2.jl`](../Analysis/make_fig2.jl) | the two-defect routines; the figure ships a pre-built PDF rather than data |
-| **3** | [`1D/models.pluto.jl`](../1D/models.pluto.jl) | its export cells; data byte-identical to [`1D/figdata/`](../1D/figdata) |
-| **4** | [`make_fig4.jl`](../Analysis/make_fig4.jl) | `make_heatmap`'s six `tkd` values give 12×14×6 = 1008 rows, exactly `Ndef.csv` |
-| **5** | [`make_fig5.jl`](../Analysis/make_fig5.jl) | regenerates `tau1.csv` and `tau5.csv` byte for byte |
-| **6** | [`make_fig6.jl`](../Analysis/make_fig6.jl) | `make_full_heatmap_idx` / `make_zoom_heatmap_idx` |
-| **7** | [`make_fig7.jl`](../Analysis/make_fig7.jl) | `df_tikz_phase_diagram` writes `DF_tikz_norm_adjusted.csv` |
-| **8** | [`make_fig8.jl`](../Analysis/make_fig8.jl) | `plot_dens_and_angle` writes `density.png` and `angle.png` |
-| **9** | [`make_fig9.jl`](../Analysis/make_fig9.jl) | `gamma_as_Ndefpm` writes `g34_rho-pm.csv`; see below for panel (b) |
-| **10** | [`make_fig10.jl`](../Analysis/make_fig10.jl) | `make_csv_exp_plot` writes `DF_tikz_exp_<t>.csv` |
-| **11** | [`make_fig11.jl`](../Analysis/make_fig11.jl) | the same routine as figure 1, over more of the L=50 series |
-| **12** | [`make_fig12.jl`](../Analysis/make_fig12.jl) | `figure_triple` writes the density, Voronoi and shape-order panels |
-| **13** | — | **not identified**; see below |
+| **1** | `make_plot_L50` | writes `phases_L50_3.png`; rows 2, 5, 8 of the L=50 table are ρ₀ = 0.45, 0.60, 0.75, the caption's three densities |
+| **2** | `dist_2defects`, `plot_2defects_zoom` | the two-defect routines; the figure ships a pre-built PDF rather than data |
+| **3** | [`1D/models.pluto.jl`](../1D/models.pluto.jl) | **reproducible from this repository**; its data is byte-identical to [`1D/figdata/`](../1D/figdata) |
+| **4** | `make_heatmap` | its six `tkd` values give 12×14×6 = 1008 rows, exactly `Ndef.csv` |
+| **5** | [`Analysis/linear_stability.jl`](../Analysis/linear_stability.jl) | **reproducible**; regenerates `tau1.csv` and `tau5.csv` byte for byte, with no simulation output |
+| **6** | `make_full_heatmap_idx`, `make_zoom_heatmap_idx` | the snapshot grid and the zoomed panels |
+| **7** | `df_tikz_phase_diagram` in [`PhaseDiagram.jl`](../Analysis/PhaseDiagram.jl) | writes `DF_tikz_norm_adjusted.csv` |
+| **8** | `plot_dens_and_angle` in [`MakePlots.jl`](../Analysis/MakePlots.jl) | writes `density.png` and `angle.png` |
+| **9** | `gamma_as_Ndefpm` | writes `g34_rho-pm.csv`; see below for panel (b) |
+| **10** | `make_csv_exp_plot` in [`PhaseDiagram.jl`](../Analysis/PhaseDiagram.jl) | writes `DF_tikz_exp_<t>.csv` |
+| **11** | `make_plot_L50`, over more of the L=50 series | the caption notes ρ₀ = 0.45 and 0.55 appear here but not in figure 6 |
+| **12** | `figure_triple` | the density, Voronoi and shape-order panels |
+| **13** | — | **not identified** |
 
 Two things the mapping turned up.
 
@@ -96,11 +95,10 @@ of the *padded* domain, (1008 × 0.01)² = 101.6064: the ratio between
 `g34_Ndef-pm.csv` and `g34_densdef.csv` is exactly that on every row. The live
 filter `Ndefects > 150` is the caption's "defect density larger than 1.5".
 
-**Three scripts draw figures the revision removed.** The earlier version had
+**Three routines drew figures the revision removed.** The earlier version had
 flow-alignment, anisotropic-stress and saturation figures; the submitted one
-does not. They are parked in
-[`Analysis/not_in_paper.jl`](../Analysis/not_in_paper.jl) rather than mixed in
-with the figure scripts.
+does not. They are in
+[`Analysis/not_in_paper.jl`](../Analysis/not_in_paper.jl).
 
 ## Still to do
 
@@ -139,22 +137,17 @@ stop earlier (see [`params/README.md`](../params/README.md)), so anything that
 indexes snapshots positionally will not read the same time point in a
 reproduction as it did originally.
 
-## Running the analysis
+## What can actually be run
 
-Each figure script takes its run set from `DATA_DIR` and writes into `FIG_DIR`:
+Two things, both without any simulation output:
 
 ```bash
-DATA_DIR=/path/to/runset/ FIG_DIR=$PWD/figures/Fig9/ \
-    julia --project=. Analysis/make_fig9.jl
+julia --project=. Analysis/linear_stability.jl     # figure 5's data
 ```
 
-Figures 5, 7 and 10 need no simulation output: figure 5 is computed from the
-linearised equations, and the phase-diagram tables ship in
-[`Analysis/PDpaper/`](../Analysis/PDpaper), so `DATA_DIR` is only needed there
-to rebuild them from your own snapshots.
+and the figure 3 notebook in [`1D/`](../1D). Everything else in `Analysis/` is
+reference material — see the note at the top of
+[`figure_routines.jl`](../Analysis/figure_routines.jl).
 
-[`Analysis/MakePlots.jl`](../Analysis/MakePlots.jl) stands apart from the
-figure scripts: it renders the standard density, angle, velocity and order
-panels for any run set and reproduces no particular figure.
-
-See the caveats in the top-level [README](../README.md#analysis).
+The simulations themselves are reproducible: [`2D/`](../2D) with the parameter
+tables in [`params/`](../params).

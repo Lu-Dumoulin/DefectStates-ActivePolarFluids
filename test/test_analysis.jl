@@ -10,19 +10,23 @@ using Test
         end
     end
 
-    @testset "there is a script for every figure one is claimed for" begin
-        for n in SCRIPTED_FIGURES
-            @test isfile(repo("Analysis", "make_fig$(n).jl"))
+    @testset "the analysis layers are present" begin
+        for f in ("config.jl", "core.jl", "MakePlots.jl", "PhaseDiagram.jl",
+                  "LSA.jl", "linear_stability.jl", "figure_routines.jl")
+            @test isfile(repo("Analysis", f))
         end
     end
 
-    @testset "figures without a script are the documented two" begin
-        # Arrange: 3 is the 1D notebook, 13 has no identified generator
-        missing_scripts = [n for n in PAPER_FIGURES
-                           if !isfile(repo("Analysis", "make_fig$(n).jl"))]
+    @testset "nothing promises to rebuild a figure" begin
+        # The figures were drawn from output that is not published, so no
+        # script should advertise itself as a per-figure entry point.
+        @test isempty(filter(f -> occursin(r"^make_fig\d+\.jl$", f),
+                             readdir(repo("Analysis"))))
+    end
 
-        # Act / Assert
-        @test sort(missing_scripts) == [3, 13]
+    @testset "figure_routines says plainly that it does not run" begin
+        head = join(Iterators.take(eachline(repo("Analysis", "figure_routines.jl")), 20), "\n")
+        @test occursin("not runnable", head)
     end
 
     @testset "no Windows drive paths survive on the paper path" begin
@@ -37,10 +41,10 @@ using Test
         end
     end
 
-    @testset "no figure script shadows the configured run set" begin
+    @testset "no routine shadows the configured run set" begin
         # A `dir_df = "..."` inside a function silently ignores DATA_DIR.
-        for n in SCRIPTED_FIGURES
-            live = join([split(l, "#")[1] for l in eachline(repo("Analysis", "make_fig$(n).jl"))], "\n")
+        for f in ("figure_routines.jl", "core.jl", "MakePlots.jl", "PhaseDiagram.jl")
+            live = join([split(l, "#")[1] for l in eachline(repo("Analysis", f))], "\n")
             @test !occursin(r"dir_df\s*=\s*\"", live)
             @test !occursin(r"dir_fig\s*=\s*\"", live)
         end
@@ -82,7 +86,7 @@ using Test
         mktempdir() do out
             # Act
             run(pipeline(`$(Base.julia_cmd()) --startup-file=no
-                          $(repo("Analysis","make_fig5.jl")) $out`,
+                          $(repo("Analysis","linear_stability.jl")) $out`,
                          stdout=devnull, stderr=devnull))
 
             # Assert
@@ -111,9 +115,8 @@ using Test
     @testset "talk and dropped-figure code is kept out of the figure scripts" begin
         @test isfile(repo("Analysis", "talk_figures.jl"))
         @test isfile(repo("Analysis", "not_in_paper.jl"))
-        for n in SCRIPTED_FIGURES
-            src = read(repo("Analysis", "make_fig$(n).jl"), String)
-            @test !occursin("_sout", src)
+        for f in ("figure_routines.jl", "core.jl", "MakePlots.jl")
+            @test !occursin("_sout", read(repo("Analysis", f), String))
         end
     end
 end
