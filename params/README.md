@@ -73,6 +73,34 @@ These would need a sentence in the manuscript before the table can be written.
 - **Fig5** is linear stability analysis, computed from the equations rather than
   from simulation output. See [`Analysis/make_fig_LSA.jl`](../Analysis/make_fig_LSA.jl).
 
+## The `ar` column is informational
+
+`ar` is the compressibility coefficient a', which Table I ties to the activity:
+a' = 4ζ_ρ'/3, or 4/3 when ζ_ρ = 0. Two things about it are worth knowing.
+
+**The solver does not read it.** `2D/InputParameters.jl` recomputes `ar` from
+`zetarho` and ignores the column. Editing `ar` in a table therefore changes
+nothing.
+
+**It does not hold the value the solver uses**, in the tables shipped here or
+in the ones the runs used. The arithmetic is associated differently in the two
+places:
+
+| | expression | ζ_ρ = 10 |
+|---|---|---|
+| `AllInputParam.jl`, and these tables | `zr * (4/3)` | 13.333333333333332 |
+| `2D/InputParameters.jl`, and so every run | `(zr * 4) / 3` | 13.333333333333334 |
+
+They differ in the last bit, for ζ_ρ = 10, 14 and 20 of the fourteen values
+swept. The tables here follow the first convention so that they reproduce the
+historical tables exactly; the runs used the second.
+
+Neither is being changed. Making the solver read the column, or match its
+associativity, would shift `ar` by an ulp and with it every subsequent step —
+and a reproduction would stop matching the published results. The discrepancy
+is harmless precisely because the column is unused, and it is recorded here so
+that nobody later "corrects" one to the other.
+
 ## The integration horizon
 
 `t_fin`, `t_prin` and `t_check` are columns of these tables, so a figure's run

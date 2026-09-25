@@ -37,6 +37,23 @@ using Test, CSV, DataFrames
         end
     end
 
+    @testset "the ar column follows the tables, and the solver overrides it" begin
+        # Two conventions differ in the last bit for zeta_rho = 10, 14 and 20:
+        # these tables carry zr*(4/3), as AllInputParam.jl wrote; the solver
+        # computes (zr*4)/3 and ignores the column. See params/README.md.
+        df = CSV.read(repo("params", "DF_9.csv"), DataFrame)
+
+        for r in eachrow(df)
+            @test r.ar == (r.zetarho == 0 ? 4/3 : abs(r.zetarho)*(4/3))
+        end
+
+        # the divergence is real, and the solver still recomputes rather than reads
+        @test abs(10.0)*(4/3) != abs(10.0)*4/3
+        src = read(repo("2D", "InputParameters.jl"), String)
+        @test occursin("const ar::Float64 = ζρ==0 ? 4/3 : abs(ζρ)*4/3", src)
+        @test !occursin("df[:ar]", join([split(l,"#")[1] for l in split(src,"\n")], "\n"))
+    end
+
     @testset "Table I constants hold in every row" begin
         # Arrange
         fixed = Dict(:ap => 0.1, :nu1 => 0.0, :gamma => 1.0, :kp => 1e-4,
