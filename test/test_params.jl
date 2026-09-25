@@ -37,21 +37,20 @@ using Test, CSV, DataFrames
         end
     end
 
-    @testset "the ar column follows the tables, and the solver overrides it" begin
-        # Two conventions differ in the last bit for zeta_rho = 10, 14 and 20:
-        # these tables carry zr*(4/3), as AllInputParam.jl wrote; the solver
-        # computes (zr*4)/3 and ignores the column. See params/README.md.
-        df = CSV.read(repo("params", "DF_9.csv"), DataFrame)
-
-        for r in eachrow(df)
-            @test r.ar == (r.zetarho == 0 ? 4/3 : abs(r.zetarho)*(4/3))
+    @testset "the ar column holds the value the run uses" begin
+        # The sweep, the per-figure tables and the solver all associate it the
+        # same way now, so the column is not merely informational: the solver
+        # reads it. See params/README.md.
+        for t in tables
+            df = CSV.read(repo("params", t), DataFrame)
+            for r in eachrow(df)
+                @test r.ar == (r.zetarho == 0 ? 4/3 : abs(r.zetarho)*4/3)
+            end
         end
 
-        # the divergence is real, and the solver still recomputes rather than reads
-        @test abs(10.0)*(4/3) != abs(10.0)*4/3
         src = read(repo("2D", "InputParameters.jl"), String)
-        @test occursin("const ar::Float64 = ζρ==0 ? 4/3 : abs(ζρ)*4/3", src)
-        @test !occursin("df[:ar]", join([split(l,"#")[1] for l in split(src,"\n")], "\n"))
+        @test occursin("const ar::Float64 = Tf(df[:ar])", src)
+        @test !occursin("abs(ζρ)*4/3", src)     # no longer recomputed
     end
 
     @testset "Table I constants hold in every row" begin
@@ -88,7 +87,9 @@ using Test, CSV, DataFrames
 
     # --- the two tables that can be checked against ones actually used --------
 
-    physical(df) = sort([(r.rho0, r.kd, r.zetarho, r.ar) for r in eachrow(df)])
+    # ar is derived from zetarho, and Analysis/PDpaper/DF.csv predates the fix
+    # that made the column match what the solver uses, so compare the inputs.
+    physical(df) = sort([(r.rho0, r.kd, r.zetarho) for r in eachrow(df)])
 
     @testset "DF_9 reproduces the sweep the phase-diagram runs used" begin
         # Arrange

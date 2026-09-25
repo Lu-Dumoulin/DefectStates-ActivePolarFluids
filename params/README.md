@@ -73,33 +73,28 @@ These would need a sentence in the manuscript before the table can be written.
 - **Fig5** is linear stability analysis, computed from the equations rather than
   from simulation output. See [`Analysis/make_fig_LSA.jl`](../Analysis/make_fig_LSA.jl).
 
-## The `ar` column is informational
+## The `ar` column
 
 `ar` is the compressibility coefficient a', which Table I ties to the activity:
-a' = 4ζ_ρ'/3, or 4/3 when ζ_ρ = 0. Two things about it are worth knowing.
+a' = 4ζ_ρ'/3, or 4/3 when ζ_ρ = 0. The solver reads it from the table.
 
-**The solver does not read it.** `2D/InputParameters.jl` recomputes `ar` from
-`zetarho` and ignores the column. Editing `ar` in a table therefore changes
-nothing.
+It used not to. `2D/InputParameters.jl` recomputed it and ignored the column,
+and the two were associated differently — `AllInputParam.jl` scaled a
+precomputed 4/3, giving `zr*(4/3)`, while the solver computed `(zr*4)/3`. Those
+differ in the last bit for ζ_ρ = 10, 14 and 20, so the column never held the
+value the run used, and editing it had no effect.
 
-**It does not hold the value the solver uses**, in the tables shipped here or
-in the ones the runs used. The arithmetic is associated differently in the two
-places:
+All three now associate it the same way, as `(zr*4)/3`: the sweep writes it,
+these tables carry it, and the solver reads it. The change moved no run — the
+value every simulation used is what the solver computed, which is exactly what
+the column now holds. The archival `2D/DF.csv` is unaffected and still
+regenerates byte for byte, because it sweeps only ζ_ρ = 4, where the two
+associations agree.
 
-| | expression | ζ_ρ = 10 |
-|---|---|---|
-| `AllInputParam.jl`, and these tables | `zr * (4/3)` | 13.333333333333332 |
-| `2D/InputParameters.jl`, and so every run | `(zr * 4) / 3` | 13.333333333333334 |
-
-They differ in the last bit, for ζ_ρ = 10, 14 and 20 of the fourteen values
-swept. The tables here follow the first convention so that they reproduce the
-historical tables exactly; the runs used the second.
-
-Neither is being changed. Making the solver read the column, or match its
-associativity, would shift `ar` by an ulp and with it every subsequent step —
-and a reproduction would stop matching the published results. The discrepancy
-is harmless precisely because the column is unused, and it is recorded here so
-that nobody later "corrects" one to the other.
+One consequence to know about: `Analysis/PDpaper/DF.csv` predates this and its
+`ar` column still carries `zr*(4/3)`. It is an analysis input, never fed to the
+solver, so nothing reads that column — but it is why the tests compare the
+sweeps on ρ₀, τ and ζ_ρ rather than on `ar`.
 
 ## The integration horizon
 

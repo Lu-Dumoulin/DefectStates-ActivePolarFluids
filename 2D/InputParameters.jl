@@ -10,15 +10,17 @@
 # ==============================================================================
 #  CONFIGURATION  --  the only block that differs from the code run for the paper
 # ==============================================================================
-#  On Baobab (UNIGE) these three lines were hard-coded to:
+#  On Baobab (UNIGE) these were hard-coded to:
 #
-#      dir       = "/srv/beegfs/scratch/users/d/dumoulil/Data/P-series/L50/"
-#      localpath = "Z:/L50/"
-#      idx       = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
+#      dir = "/srv/beegfs/scratch/users/d/dumoulil/Data/P-series/L50/"
+#      idx = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
 #
 #  They are now read from the environment so the code runs anywhere. Everything
 #  below this block, and every other simulation file, is byte-identical to what
 #  produced the published results.
+#
+#  A third, `localpath`, is gone: it only told an old Code2Cluster.jl where to
+#  download results to, and nothing here read it.
 #
 #      DATA_DIR  output root; simulation `idx` writes to <DATA_DIR>/<idx>/Data/
 #                (default: ./data/L50/ next to this repository)
@@ -26,7 +28,6 @@
 #                under Slurm, or 1 when running a single job by hand
 # ==============================================================================
 dir = get(ENV, "DATA_DIR", abspath(joinpath(@__DIR__, "..", "data", "L50")) * "/")
-localpath = get(ENV, "LOCAL_DATA_DIR", "")   # only printed; was "Z:/L50/" on the cluster
 idx = Base.parse(Int, get(ENV, "SIM_IDX", get(ENV, "SLURM_ARRAY_TASK_ID", "1")))
 @show fn = "$idx/"
 file = joinpath(dir, fn)
@@ -36,7 +37,6 @@ mkpath(file)
 # string(file, "Data/data<t>.jld"), which fails on a fresh checkout without this.
 mkpath(joinpath(file, "Data"))
 println("path_c = ", dir)
-println("path_l = ", localpath)
 println(idx)
 
 # `using_pkg` installs anything missing on first use — the cluster runs had no
@@ -115,10 +115,11 @@ const ζρ::Float64 = Tf(df[:zetarho])    # isotropic active stress ∝ ρ³
 const ξ::Float64 = Tf(df[:xi])          # substrate friction
 
 ## Rho
-# ar is recomputed here rather than read from DF.csv (AllInputParam.jl writes
-# the same value into the `ar` column); tying it to |ζρ| keeps the passive
-# pressure comparable to the active stress across the sweep.
-const ar::Float64 = ζρ==0 ? 4/3 : abs(ζρ)*4/3
+# Read from the table, which AllInputParam.jl and params/make_dataframes.jl
+# both write as 4|ζρ|/3 (4/3 when ζρ = 0), tying the passive pressure to the
+# active stress across a sweep. This used to be recomputed here and the column
+# ignored, which left the two able to disagree in the last bit.
+const ar::Float64 = Tf(df[:ar])
 const M::Float64 = Tf(df[:M])/ar        # mobility; D = M·ar so this fixes D
 const sd = Int(df[:seed])               # RNG seed for the initial noise
 

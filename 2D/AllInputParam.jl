@@ -72,7 +72,8 @@ df = generate_dataframe(listname, listtab; fn="NO");
 for i=1:nrow(df)
     kd = df[i, :kd]
     zr = df[i, :zetarho]
-    df[i, :ar] = zr == 0.0 ? 4.0/3.0 : abs(zr)*df[i, :ar]
+    # Associated as InputParameters.jl does, so the column is the value used.
+    df[i, :ar] = zr == 0.0 ? 4.0/3.0 : abs(zr)*4/3
     df[i, :zetarho] = (zr>0) & (df[i,:kd]==0) ? 0.0 : zr
 end
 unique!(df)

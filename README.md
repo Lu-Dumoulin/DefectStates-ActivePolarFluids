@@ -343,17 +343,24 @@ ghostscript is missing.
 The simulation files are byte-identical to the cluster copies, with three
 exceptions, each marked in place:
 
-1. **`InputParameters.jl`** — the three hard-coded cluster paths (`dir`,
-   `localpath`, `idx` from `SLURM_ARRAY_TASK_ID`) now read from environment
-   variables with defaults. The original values are kept as comments.
+1. **`InputParameters.jl`** — the hard-coded cluster paths (`dir`, and `idx`
+   from `SLURM_ARRAY_TASK_ID`) now read from environment variables with
+   defaults. The original values are kept as comments. A third, `localpath`,
+   is removed: it only told an old `Code2Cluster.jl` where to download results
+   to, and nothing in the solver read it.
 2. **`InputParameters.jl`** — added `mkpath(joinpath(file, "Data"))`. The
    original code never created this directory; on the cluster it already existed
    from earlier runs, so a fresh checkout would have failed on the first
    snapshot write.
 `AllInputParam.jl` and `InputParameters.jl` are otherwise only commented and
-stripped of commented-out dead code; both were checked by parsing the original
-and the annotated version and comparing syntax trees. `AllInputParam.jl` still
-regenerates the committed `DF.csv` byte-for-byte.
+stripped of commented-out dead code, with one deliberate change: `ar` is now
+written and read the same way in both, rather than written one way and silently
+recomputed the other. The two associations differ in the last bit for
+ζ_ρ = 10, 14 and 20, so the column never held the value the run used. No run
+moves — the value every simulation used is the one the solver computed, which
+is what the column now carries — and `AllInputParam.jl` still regenerates the
+committed `DF.csv` byte-for-byte, since that table sweeps only ζ_ρ = 4 where
+the two agree. See [`params/README.md`](params/README.md).
 
 `kernels.jl` and `2D.jl` have additionally been tidied and de-allocated. The
 intent is that results stay bit-for-bit identical, so every change was chosen to
