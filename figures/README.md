@@ -71,7 +71,7 @@ not a pipeline. The methods are described in the article's appendices.
 | Figure | Shows | Obtained from |
 |---|---|---|
 | **1** | schematic, and density snapshots at ρ₀ = 0.45, 0.6, 0.75 | three L=50 runs, [`params/DF_1.csv`](../params/DF_1.csv) |
-| **2** | defect pair: count against time, density and velocity maps, critical annihilation distance | panel (a) from [`params/DF_2.csv`](../params/DF_2.csv); (b–d) are two-defect runs needing an initial condition the solver here does not provide |
+| **2** | defect pair: count against time, density and velocity maps, critical annihilation distance | panel (a) from [`params/DF_2.csv`](../params/DF_2.csv); (b–d) seed a defect pair, and (c) scans the separation rather than sweeping a table — see [`params/README.md`](../params/README.md) |
 | **3** | steady state of a single defect | **reproducible**: [`1D/models.pluto.jl`](../1D/models.pluto.jl); its data is byte-identical to [`1D/figdata/`](../1D/figdata) |
 | **4** | defect density over the (ρ₀, ζ_ρ) plane at six renewal times | [`params/DF_4.csv`](../params/DF_4.csv), 1008 runs; the white dots are the critical activity from the stability analysis |
 | **5** | linear stability of the homogeneous state | **reproducible**: [`LSA/linear_stability.jl`](../LSA/linear_stability.jl) regenerates `tau1.csv` and `tau5.csv` byte for byte, with no simulation output |

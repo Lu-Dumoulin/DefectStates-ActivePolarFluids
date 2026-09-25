@@ -61,12 +61,29 @@ separation in units of the domain width. Without that column the run starts
 from noise, which is what every table here does and what every published
 large-domain solution did.
 
-No table is generated for these panels, because the separation is not given.
-Panel (b,d) is a single solution at ρ₀ = 0.6, τ = 1, ζ_ρ = 12 at an unstated
-`D`. Panel (c) sweeps ρ₀ ∈ {0.6, 0.8, 1.0, 1.2} against ζ_ρ ∈ {1, 4, 8, 12} at
-τ = 1, and measures the critical distance by scanning `D` upward within a
-single run rather than by taking it from the table — so reproducing it needs
-that scan, not just a row per separation.
+No table is generated for these panels.
+
+Panel (b,d) is a single solution at ρ₀ = 0.6, τ = 1, ζ_ρ = 12; the separation
+it was run at is not stated anywhere.
+
+Panel (c) is not a parameter sweep at all, so no table could express it. It
+measures the **critical separation** — the smallest initial distance at which
+an oppositely charged pair survives instead of annihilating — and finds it by
+scanning within a single job:
+
+1. seed a pair at d = 0.01 and integrate;
+2. if they annihilate, retry at d + 0.01;
+3. the first d at which they survive to the horizon is the critical distance.
+
+Annihilation is detected two ways: the polarity magnitude rising above 0.995
+everywhere, meaning no defect core is left anywhere in the domain, or the
+tracked separation between the two cores collapsing. The scan runs over ρ₀ ∈
+{0.6, 0.8, 1.0, 1.2} against ζ_ρ ∈ {1, 4, 8, 12} at τ = 1.
+
+Reproducing it therefore needs a driver, not a table: the scan, and those two
+annihilation tests. `2D/2D.jl` has neither — the polarity test is present in
+the code the published runs used, but commented out. Only the initial
+condition, `kernel_ini_P!`, is here.
 
 ### Not a simulation table
 
