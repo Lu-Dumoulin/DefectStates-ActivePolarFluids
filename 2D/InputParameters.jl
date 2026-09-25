@@ -129,6 +129,10 @@ const sd = Int(df[:seed])               # RNG seed for the initial noise
 const D::Float64 = hasproperty(df, :D) ? Tf(df[:D]) : NaN
 const seed_defect_pair::Bool = !isnan(D)
 
+# D = 0 asks for the critical separation instead of a single solution: the run
+# scans upward for the smallest separation at which the pair survives.
+const scan_separation::Bool = seed_defect_pair && D == 0
+
 # --- Integration horizon -----------------------------------------------------
 # Taken from the parameter table when it provides them, since the horizon
 # differs by figure (see params/README.md). Tables without these columns - the

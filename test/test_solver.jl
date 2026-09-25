@@ -96,6 +96,41 @@ using Test, CSV, DataFrames
         @test "D" ∉ split(first(eachline(repo("2D", "DF.csv"))), ",")
     end
 
+    @testset "the two-defect machinery is unreachable without a D column" begin
+        # Arrange
+        main = read(repo("2D", "2D.jl"), String)
+
+        # Act / Assert: every added test sits behind the guard
+        @test occursin("if seed_defect_pair && t > 1", main)
+        @test occursin("if scan_separation", main)
+
+        # the guard is false unless the table has a D column
+        inp = read(repo("2D", "InputParameters.jl"), String)
+        @test occursin("const seed_defect_pair::Bool = !isnan(D)", inp)
+        @test occursin("hasproperty(df, :D) ? Tf(df[:D]) : NaN", inp)
+    end
+
+    @testset "the published time loop is untouched by it" begin
+        # Arrange: the file with comments and whitespace removed
+        live = join([replace(split(l, "#")[1], r"\s+" => "")
+                     for l in eachline(repo("2D", "2D.jl"))
+                     if length(split(l, "#")) > 1 || !isempty(strip(l))], "\n")
+
+        # Act / Assert: the transforms and updates are all still there
+        for e in ("fρ.=W*ρ", "comp_μhσ!(", "solve_kspace!(", "comp_P!(",
+                  "∇M∇μ=M*Wi*(factorΔ.*(W*μ))", "t+=Δt")
+            @test occursin(e, live)
+        end
+
+        # nothing two-defect is reached before the guard that gates it.
+        # The constants are declared at the top, which is fine; what matters is
+        # that each is used exactly once, inside the guarded block.
+        before = first(split(live, "seed_defect_pair"))
+        @test !occursin("findmin", before)
+        @test count("CORE_GONE", live) == 2   # declaration, and one guarded use
+        @test count("SEPARATED", live) == 2
+    end
+
     @testset "interleaving the field construction leaves the RNG stream alone" begin
         # 2D.jl now builds rho between the two draws rather than after both.
         # The draws themselves must be unchanged.

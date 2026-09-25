@@ -117,9 +117,14 @@ CUDA version.
 
 A table may instead carry a `D` column, the separation between a seeded pair of
 oppositely charged defects in units of the domain width. The polarity is then
-initialised with that pair rather than with noise, for the two-defect runs. No
-table here has that column, and every published large-domain solution started
-from noise.
+initialised with that pair rather than with noise, and the run stops as soon as
+the pair's fate is decided: it returns 0 if they annihilate — no polarity core
+left anywhere, or the cores closing back in — and `D` if they hold apart.
+Setting `D = 0` scans upward for the critical separation, the smallest distance
+at which the pair survives.
+
+No table here carries that column, so every published run takes the noise path,
+and a test keeps it that way.
 
 `t_fin`, `t_prin` and `t_check` (integration horizon, snapshot interval and
 adaptive-step interval) are set at the bottom of `InputParameters.jl`, not in

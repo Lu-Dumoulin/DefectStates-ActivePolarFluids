@@ -80,10 +80,20 @@ everywhere, meaning no defect core is left anywhere in the domain, or the
 tracked separation between the two cores collapsing. The scan runs over ρ₀ ∈
 {0.6, 0.8, 1.0, 1.2} against ζ_ρ ∈ {1, 4, 8, 12} at τ = 1.
 
-Reproducing it therefore needs a driver, not a table: the scan, and those two
-annihilation tests. `2D/2D.jl` has neither — the polarity test is present in
-the code the published runs used, but commented out. Only the initial
-condition, `kernel_ini_P!`, is here.
+`2D/2D.jl` does this now. Give the table a `D` column:
+
+| `D` | what runs |
+|---|---|
+| a separation, in units of the domain width | one solution with a pair seeded that far apart |
+| `0` | the scan, reporting the critical separation |
+| column absent | the ordinary noise start — every table here |
+
+The two annihilation tests and the scan sit behind that column, so no table
+without one reaches them.
+
+What is still missing is the separation for panel (b,d), which is not stated,
+and whether the published scan used the same step as the code it came from
+(0.01 to 0.50 in steps of 0.01, which is what is implemented).
 
 ### Not a simulation table
 

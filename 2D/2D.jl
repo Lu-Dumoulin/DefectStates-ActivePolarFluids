@@ -27,6 +27,13 @@ const NOISE_AMPLITUDE = 0.002   # relative size of the initial perturbation
 const DT_GROWTH       = 1.25    # factor Δt may grow by at each check
 const CFL_FRACTION    = 0.05    # cell fraction a flow may cross in one step
 
+# Two-defect runs only. The separations the critical-distance scan walks
+# through, and the two tests that decide a pair has annihilated: no polarity
+# core left anywhere, or the cores closing back in on each other.
+const SEPARATION_SCAN = 0.01:0.01:0.50
+const CORE_GONE       = 0.995   # min |P| above this means no core in the domain
+const SEPARATED       = 5       # cells the pair must gain to count as surviving
+
 """
     write_snapshot(file, t, idx, Δt, ρ, v, P, ρ_cpu, v_cpu, P_cpu)
 
@@ -46,12 +53,16 @@ function write_snapshot(file, t, idx, Δt, ρ, v, P, ρ_cpu, v_cpu, P_cpu)
 end
 
 """
-    main() -> Int
+    main(d = D) -> Int
 
 Integrate one parameter set to `t_fin`, writing a snapshot every `t_prin`.
-Returns 1 if the density went NaN, otherwise runs to completion.
+Returns 1 if the density went NaN.
+
+For two-defect runs `d` is the initial separation, and the return value says
+what became of the pair: `0` if it annihilated, `d` if it survived. That is
+what lets the caller scan for the critical separation.
 """
-function main()
+function main(d = D)
     @inbounds begin
         # Initial noise is drawn on the host from a seeded RNG and copied to the
         # device, so a run is reproducible from `seed` in DF.csv regardless of
@@ -69,7 +80,7 @@ function main()
         # two-defect runs. The draw order is unchanged in the noise case.
         P = if seed_defect_pair
             Pd = CUDA.ones(Float64, Nx, Nz, 2)
-            @cuda threads = block_dim blocks = grid_dim kernel_ini_P!(Pd, Nx, Nz, D)
+            @cuda threads = block_dim blocks = grid_dim kernel_ini_P!(Pd, Nx, Nz, d)
             Pd
         else
             P_noise = CuArray(rand(Float64, Nx, Nz, 2))
@@ -123,6 +134,21 @@ function main()
                 any(isnan, ρ) && return 1
                 write_snapshot(file, t, idx, Δt, ρ, v, P, ρ_cpu, v_cpu, P_cpu)
                 prin += t_prin
+
+                # --- two-defect runs only --------------------------------
+                # Follow the pair and stop as soon as its fate is decided,
+                # rather than integrating to the horizon either way.
+                if seed_defect_pair && t > 1
+                    # no polarity core anywhere: the pair has annihilated
+                    @views sqrt(minimum(P[:,:,1].^2 .+ P[:,:,2].^2)) > CORE_GONE && return 0
+
+                    # the cores are the |P| minima on the mid-row, one per
+                    # half; `dist` is how far the pair has moved apart since
+                    # it was seeded, in units of the domain width.
+                    @views dist = abs(-findmin(P[1:div(Nx,2),div(Nz,2),1].^2 .+ P[1:div(Nx,2),div(Nz,2),2].^2)[2] + div(Nx,2)-1+findmin(P[div(Nx,2):end,div(Nz,2),1].^2 .+ P[div(Nx,2):end,div(Nz,2),2].^2)[2])/Nx - d
+                    dist < 0 && return 0                      # closing in
+                    t > 20 && dist > SEPARATED/Nx && return d # holding apart
+                end
             end
 
             # --- adaptive time step -----------------------------------------
@@ -178,4 +204,15 @@ function main()
     end
 end
 
-main()
+if scan_separation
+    # The critical separation: the smallest seeding distance at which the pair
+    # survives instead of annihilating. main returns d only when it survives.
+    for d in SEPARATION_SCAN
+        if d == main(d)
+            println("critical separation: idx = ", idx, ", d = ", d)
+            break
+        end
+    end
+else
+    main()
+end
