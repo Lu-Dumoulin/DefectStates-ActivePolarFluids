@@ -37,7 +37,7 @@ polarity $\mathbf{P}$ and velocity $\mathbf{v}$.
 **Density** — advection, diffusion through the chemical potential $\mu$, and
 turnover at rate $k_d$ towards the homeostatic density $\rho_0$:
 
-$$\partial_t \rho = -\nabla\cdot(\rho\mathbf{v}) + M\,\Delta\mu + k_d(\rho_0-\rho)$$
+$$\partial_t \rho = -\nabla\cdot(\rho\mathbf{v}) + M\Delta\mu + k_d(\rho_0-\rho)$$
 
 **Polarity** — advection, co-rotation, flow alignment ($\nu_1$), and relaxation
 along the molecular field $\mathbf{h}$ at rate $\gamma$:
