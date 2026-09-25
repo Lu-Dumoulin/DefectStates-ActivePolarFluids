@@ -91,14 +91,17 @@ using Test, CSV, DataFrames
     # that made the column match what the solver uses, so compare the inputs.
     physical(df) = sort([(r.rho0, r.kd, r.zetarho) for r in eachrow(df)])
 
-    @testset "DF_9 reproduces the sweep the phase-diagram runs used" begin
-        # Arrange
-        ours  = CSV.read(repo("params", "DF_9.csv"), DataFrame)
-        theirs = CSV.read(repo("Analysis", "PDpaper", "DF.csv"), DataFrame)
+    @testset "DF_9 is the sweep the runs used" begin
+        # The table those runs used is no longer in the repository, so the grid
+        # is pinned here instead. It is a full factorial over these three.
+        df = CSV.read(repo("params", "DF_9.csv"), DataFrame)
 
-        # Act / Assert
-        @test nrow(ours) == 1680
-        @test physical(ours) == physical(theirs)
+        @test sort(unique(df.rho0)) == collect(0.4:0.1:1.5)
+        @test sort(unique(df.zetarho)) == [0.0, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
+        @test sort(unique(round.(df.kd, digits=10))) ==
+              [0.01, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0, 2.0, 5.0, 10.0]
+        @test nrow(df) == 12*14*10 == 1680
+        @test length(unique(zip(df.rho0, df.zetarho, df.kd))) == nrow(df)
     end
 
     @testset "DF_11 reproduces the archival L=50 table" begin
@@ -118,9 +121,10 @@ using Test, CSV, DataFrames
 
         # Act / Assert
         @test nrow(df) == nrow(ndef) == 1008
-        @test length(unique(df.rho0)) == 12
-        @test length(unique(df.zetarho)) == 14
-        @test length(unique(df.kd)) == 6
+        @test sort(unique(df.rho0)) == collect(0.4:0.1:1.5)
+        @test sort(unique(df.zetarho)) == [0.0, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
+        @test sort(unique(round.(df.kd, digits=10))) == [0.01, 0.1, 0.2, 1.0, 5.0, 10.0]
+        @test length(unique(zip(df.rho0, df.zetarho, df.kd))) == nrow(df)
     end
 
     @testset "DF_9 covers the grid Fig9 analysed" begin

@@ -22,7 +22,7 @@ using Test
 
 include(joinpath(@__DIR__, "support", "helpers.jl"))
 
-const GROUPS = ["hygiene", "params", "solver", "analysis", "figures", "submitted"]
+const GROUPS = ["hygiene", "params", "solver", "lsa", "figures", "submitted"]
 selected = isempty(ARGS) ? GROUPS : ARGS
 
 for g in selected

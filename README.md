@@ -17,10 +17,8 @@ simulations. It holds two independent pieces:
   pair, as an interactive Pluto notebook, together with the data and sources for
   the figures they feed. These accompany the revised version of the paper.
 
-alongside [`figures/`](figures/), the LaTeX sources and data for the paper
-figures, and [`Analysis/`](Analysis/), the scripts that produce them.
-[`figures/README.md`](figures/README.md) maps each figure to the code that
-draws it.
+alongside [`params/`](params/), the simulation inputs behind each figure, and
+[`figures/`](figures/), the LaTeX sources and data for the figures themselves.
 
 A more general, better-documented and actively maintained implementation of the
 same physics — CPU/CUDA/Metal via ParallelStencil.jl, with a Pluto front end and
@@ -75,27 +73,11 @@ CFL condition on $\mathbf{v}$ and by `dtmin`.
 ├── params/                # DF_N.csv: the simulation inputs behind figure N
 │   └── README.md          # where each value comes from, and what is missing
 ├── figures/               # one directory per paper figure: tikz, data, panels
-│   └── README.md          # which code generates which figure
-├── Analysis/              # analysis and figure scripts (see caveats below)
-│   ├── config.jl          # run set from DATA_DIR / FIG_DIR
-│   ├── core.jl            # defect detection, spectra, Voronoi, batch passes
-│   ├── MakePlots.jl       # generic panels from .jld, any run set
-│   ├── figure_routines.jl # the per-figure work (reference, not runnable)
-│   ├── linear_stability.jl# figure 5's data; runs without simulation output
-│   ├── not_in_paper.jl    # figures the revision removed
-│   ├── PhaseDiagram.jl    # the phase diagram (not split yet)
-│   └── talk_figures.jl    # slides for a talk, not paper figures
-├── 1D/                    # reduced 1D models (revised version of the paper)
-│   ├── models.pluto.jl    # Pluto notebook: radial and two-defect solvers
-│   ├── figdata/           # CSVs it writes, read directly by the figures
-│   ├── fig_active_polar.tex        # pgfplots figure built from figdata/
-│   ├── fig_active_polar_loglog.tex # log-log version of the same
-│   ├── fig_core_analytic.tex       # core profiles vs the analytic small-r form
-│   └── standalone_fig.tex          # wrapper to compile a figure on its own
+│   └── README.md          # what each figure shows and where its data came from
+├── LSA/                   # linear stability analysis; reproduces figure 5's data
 ├── Utilities/             # lab-internal helpers the scripts include
 │   ├── using.jl           # using_pkg / using_mod (install-on-demand)
-│   ├── JulUtils.jl        # generate_dataframe, file helpers
-│   └── PictUtils.jl       # png/gif helpers used by the analysis scripts
+│   └── JulUtils.jl        # generate_dataframe, file helpers
 ├── slurm/submit.sh        # the array job
 └── Project.toml
 ```
@@ -254,41 +236,25 @@ point the `\input` at that copy, or strip the line.
 
 ---
 
-## Analysis
-
-```
-config.jl            paths from the environment, loads DF.csv
-   |
-core.jl              defect detection, segmentation, structure factors,
-   |                 correlations, batch passes over a run set
-MakePlots.jl         density, angle, velocity and order panels from .jld
-   |
-figure_routines.jl   the per-figure work built on those
-```
-
-plus [`PhaseDiagram.jl`](Analysis/PhaseDiagram.jl) for the state classification
-and [`linear_stability.jl`](Analysis/linear_stability.jl) for the stability
-analysis.
-
-**Most of this does not run, and is not meant to.** The figures were drawn from
-simulation output that is not published here — a single snapshot is about a
-gigabyte and a run set reaches terabytes. It is included because the article's
-appendix describes how the measured quantities were obtained, and this is that
-code: defect counting, the shape function, the low-density area statistics.
-[`figures/README.md`](figures/README.md) records which routine drew which panel.
-
-Two things do run, neither needing simulation output:
+## Linear stability analysis
 
 ```bash
-julia --project=. Analysis/linear_stability.jl    # figure 5's data, byte for byte
+julia --project=. LSA/linear_stability.jl
 ```
 
-and the figure 3 notebook in [`1D/`](1D/). The simulations themselves are
-reproducible from [`2D/`](2D/) and the tables in [`params/`](params/).
+Solves for the critical activity ζ_ρ^c against the target density, at two
+renewal times, and writes figure 5's `tau1.csv` and `tau5.csv` — which it
+reproduces byte for byte. It analyses the linearised equations rather than
+simulation output, so it needs nothing but base Julia and runs anywhere.
+[`LSA/LSA.jl`](LSA/LSA.jl) is the original script it was derived from, kept for
+provenance.
 
-`Analysis/not_in_paper.jl` holds the flow-alignment, anisotropic-stress and
-saturation figures, which the earlier version of the article had and the
-submitted one does not. `talk_figures.jl` holds slides.
+**The rest of the analysis is not published here.** The figures were measured
+from simulation output that is not either — a single snapshot is about a
+gigabyte and a run set reaches terabytes — so scripts for it could not be run
+by anyone. How each quantity was obtained is described in the article's
+appendices, and [`figures/README.md`](figures/README.md) records what each
+figure shows and which runs it came from.
 
 ## Tests
 

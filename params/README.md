@@ -36,12 +36,11 @@ then supplies what that figure varies.
 | `DF_11.csv` | 13 | L=50, ρ₀ = 0.40 : 0.05 : 1.00, τ=5, ζ_ρ=4 |
 | `DF_12.csv` | 2 | the same two solutions as Fig8 |
 
-Two of these are checkable against tables that were actually used, and both
-match exactly: `DF_9.csv` reproduces the 1680 parameter sets of
-[`Analysis/PDpaper/DF.csv`](../Analysis/PDpaper/DF.csv), and `DF_11.csv`
-reproduces [`2D/DF.csv`](../2D/DF.csv). `DF_4.csv` has 1008 rows, exactly the
-row count of [`figures/Fig4/Ndef.csv`](../figures/Fig4/Ndef.csv), with the six
-renewal times taken from `make_heatmap`'s `tkd = [10, 5, 1, 0.2, 0.1, 0.01]`.
+`DF_11.csv` reproduces [`2D/DF.csv`](../2D/DF.csv) exactly. `DF_9.csv` was
+checked against the table the sweep actually used and matched all 1680
+parameter sets; that table is not published here, so the test suite pins the
+three grids instead. `DF_4.csv` has 1008 rows, exactly the row count of
+[`figures/Fig4/Ndef.csv`](../figures/Fig4/Ndef.csv).
 
 ## Not generated, and why
 
@@ -90,11 +89,6 @@ value every simulation used is what the solver computed, which is exactly what
 the column now holds. The archival `2D/DF.csv` is unaffected and still
 regenerates byte for byte, because it sweeps only ζ_ρ = 4, where the two
 associations agree.
-
-One consequence to know about: `Analysis/PDpaper/DF.csv` predates this and its
-`ar` column still carries `zr*(4/3)`. It is an analysis input, never fed to the
-solver, so nothing reads that column — but it is why the tests compare the
-sweeps on ρ₀, τ and ζ_ρ rather than on `ar`.
 
 ## The integration horizon
 

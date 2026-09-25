@@ -61,93 +61,55 @@ Fig5 sets `\def\LW{246.0pt}` and sizes everything from that without ever
 referring to `\linewidth`. **Do not regenerate these wrappers from the
 one-column template** — the output stops matching the article.
 
-## Where each figure comes from
+## What each figure shows, and where its data came from
 
-The panels were drawn from simulation output that is not published here, so
-this is a record of which routine produced which figure rather than a pipeline
-you can run. The routines are in
-[`Analysis/figure_routines.jl`](../Analysis/figure_routines.jl); the
-measurement primitives they build on are in
-[`Analysis/core.jl`](../Analysis/core.jl).
+The analysis that produced these panels ran against simulation output that is
+not published here — a single snapshot is about a gigabyte and a run set
+reaches terabytes — so this is a description of how each figure was obtained,
+not a pipeline. The methods are described in the article's appendices.
 
-| Figure | Routine | Established by |
+| Figure | Shows | Obtained from |
 |---|---|---|
-| **1** | `make_plot_L50` | writes `phases_L50_3.png`; rows 2, 5, 8 of the L=50 table are ρ₀ = 0.45, 0.60, 0.75, the caption's three densities |
-| **2** | `dist_2defects`, `plot_2defects_zoom` | the two-defect routines; the figure ships a pre-built PDF rather than data |
-| **3** | [`1D/models.pluto.jl`](../1D/models.pluto.jl) | **reproducible from this repository**; its data is byte-identical to [`1D/figdata/`](../1D/figdata) |
-| **4** | `make_heatmap` | its six `tkd` values give 12×14×6 = 1008 rows, exactly `Ndef.csv` |
-| **5** | [`Analysis/linear_stability.jl`](../Analysis/linear_stability.jl) | **reproducible**; regenerates `tau1.csv` and `tau5.csv` byte for byte, with no simulation output |
-| **6** | `make_full_heatmap_idx`, `make_zoom_heatmap_idx` | the snapshot grid and the zoomed panels |
-| **7** | `df_tikz_phase_diagram` in [`PhaseDiagram.jl`](../Analysis/PhaseDiagram.jl) | writes `DF_tikz_norm_adjusted.csv` |
-| **8** | `plot_dens_and_angle` in [`MakePlots.jl`](../Analysis/MakePlots.jl) | writes `density.png` and `angle.png` |
-| **9** | `gamma_as_Ndefpm` | writes `g34_rho-pm.csv`; see below for panel (b) |
-| **10** | `make_csv_exp_plot` in [`PhaseDiagram.jl`](../Analysis/PhaseDiagram.jl) | writes `DF_tikz_exp_<t>.csv` |
-| **11** | `make_plot_L50`, over more of the L=50 series | the caption notes ρ₀ = 0.45 and 0.55 appear here but not in figure 6 |
-| **12** | `figure_triple` | the density, Voronoi and shape-order panels |
-| **13** | — | **not identified** |
+| **1** | schematic, and density snapshots at ρ₀ = 0.45, 0.6, 0.75 | three L=50 runs, [`params/DF_1.csv`](../params/DF_1.csv) |
+| **2** | defect pair: count against time, density and velocity maps, critical annihilation distance | two-defect runs |
+| **3** | steady state of a single defect | **reproducible**: [`1D/models.pluto.jl`](../1D/models.pluto.jl); its data is byte-identical to [`1D/figdata/`](../1D/figdata) |
+| **4** | defect density over the (ρ₀, ζ_ρ) plane at six renewal times | [`params/DF_4.csv`](../params/DF_4.csv), 1008 runs; the white dots are the critical activity from the stability analysis |
+| **5** | linear stability of the homogeneous state | **reproducible**: [`LSA/linear_stability.jl`](../LSA/linear_stability.jl) regenerates `tau1.csv` and `tau5.csv` byte for byte, with no simulation output |
+| **6** | asymptotic states at different target densities | L=10 runs at τ=5, ζ_ρ=4 |
+| **7** | state classification over τ and ρ₀, with defect density, persistence time and low-density areas | the phase-diagram runs |
+| **8** | square and hexagonal defect lattices | [`params/DF_8.csv`](../params/DF_8.csv), two runs to t = 2·10⁶ |
+| **9** | shape function against target density and against defect density | [`params/DF_9.csv`](../params/DF_9.csv), 1680 runs |
+| **10** | density correlation against time, with exponential fits | the phase-diagram runs |
+| **11** | density snapshots at L=50 across the density range | [`params/DF_11.csv`](../params/DF_11.csv) |
+| **12** | the lattices of figure 8 with Voronoi tessellation and shape order | [`params/DF_12.csv`](../params/DF_12.csv) |
+| **13** | the same two parameter sets from different initial conditions | two run sets, five initial conditions each |
 
-Two things the mapping turned up.
-
-**Figure 9(b) comes from commented-out code.** `gamma_as_Ndefpm` writes panel
-(a) live, and its final block — building `x = Ndefects` — is commented out. The
-committed `g34_densdef.csv` is that block's output with `x` divided by the area
-of the *padded* domain, (1008 × 0.01)² = 101.6064: the ratio between
-`g34_Ndef-pm.csv` and `g34_densdef.csv` is exactly that on every row. The live
-filter `Ndefects > 150` is the caption's "defect density larger than 1.5".
-
-**Three routines drew figures the revision removed.** The earlier version had
-flow-alignment, anisotropic-stress and saturation figures; the submitted one
-does not. They are in
-[`Analysis/not_in_paper.jl`](../Analysis/not_in_paper.jl).
+Defect density is counted per unit area of the padded domain, (1008 × 0.01)² =
+101.6064, not of the nominal L = 10. The figure 9 threshold "defect density
+larger than 1.5" is a count of 150.
 
 ## Still to do
 
-**Figure 13 has no identified generator.** Nothing in `Analysis/` obviously
-draws the ten-lattice panel, and its standalone project holds only the built
-PDF.
+**Figure 13** and several data files have no generator here: `omegarho.csv` and
+`zrc_eq{,2}.csv` (figure 5), `zrc_plus.csv` (figure 4's critical-activity dots,
+which come from the same stability analysis), and `DF_tikz.csv` (figure 7).
 
-**The critical-activity curves come from the linear stability analysis** —
-Fig4's white dots (`zrc_plus.csv`, and the superseded `df_zrc.csv`) and Fig5's
-`zrc_eq{,2}.csv` are the same quantity, ζ_ρ^c, solved self-consistently with
-a = 4ζ_ρ^c/3. The routine that writes them is not in this repository, and it
-could not be reconstructed: reading `zrc_plus.csv` in the panel coordinates its
-`fig_ndef.tex` uses, no arrangement of the equation reproduces the committed
-numbers — the closest of eight variants is ~7 % out.
-
-**That search turned up a discrepancy worth checking.** The article's
-Eq. (zetaRhoDeltaMuC) reads
+**The article's Eq. for the critical activity and `LSA.jl` do not agree.** The
+article reads
 
     zeta_c = A(chi=0)/(3 rho0) + ( sqrt(A(chi=0) gamma / (3 rho0^3)) + sqrt(2/(3 rho0^3 tau)) )^2
 
-while `ζc_simp` in [`LSA.jl`](../Analysis/LSA.jl), which reproduces Fig5's
-`tau1.csv` and `tau5.csv` byte for byte, differs from it in three places: it
-keeps the χ term in `A` instead of setting χ = 0, divides by `3 rho0^2` rather
-than `3 rho0^3`, and **subtracts** the second root rather than adding it. One
-of the two is not what the other describes.
+while `ζc_simp` in [`LSA/LSA.jl`](../LSA/LSA.jl), which reproduces figure 5's
+`tau1.csv` and `tau5.csv` byte for byte, keeps the χ term in `A` instead of
+setting χ = 0, divides by `3 rho0^2` rather than `3 rho0^3`, and **subtracts**
+the second root rather than adding it. One of the two is not what the other
+describes — worth resolving before publication.
 
-**`omegarho.csv` and `DF_tikz.csv` also have no generator here** — the latter
-because `make_fig7.jl` writes `DF_tikz_norm_adjusted.csv` instead.
-
-**The scripts have not been run.** No simulation output is published with this
-repository, so the drivers are wired from the evidence above rather than
-executed. Treat the argument lists as a starting point.
-
-**Snapshot counts are not fixed.** Runs were configured to `t_fin` but some
-stop earlier (see [`params/README.md`](../params/README.md)), so anything that
-indexes snapshots positionally will not read the same time point in a
-reproduction as it did originally.
-
-## What can actually be run
-
-Two things, both without any simulation output:
+## What can be run
 
 ```bash
-julia --project=. Analysis/linear_stability.jl     # figure 5's data
+julia --project=. LSA/linear_stability.jl     # figure 5's data
 ```
 
-and the figure 3 notebook in [`1D/`](../1D). Everything else in `Analysis/` is
-reference material — see the note at the top of
-[`figure_routines.jl`](../Analysis/figure_routines.jl).
-
-The simulations themselves are reproducible: [`2D/`](../2D) with the parameter
-tables in [`params/`](../params).
+and the figure 3 notebook in [`1D/`](../1D). The simulations themselves are
+reproducible from [`2D/`](../2D) with the tables in [`params/`](../params).
