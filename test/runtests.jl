@@ -11,6 +11,9 @@
 # output - the linear stability analysis - reproduces its committed data
 # exactly.
 #
+# The hygiene group checks that nothing published here depends on, or
+# discloses, the machine the runs were done on.
+#
 # Optional groups skip rather than fail when their tools are missing:
 #   figures     needs pdflatex
 #   submitted   needs pdflatex, ghostscript and SUBMITTED_DIR
@@ -19,7 +22,7 @@ using Test
 
 include(joinpath(@__DIR__, "support", "helpers.jl"))
 
-const GROUPS = ["params", "solver", "analysis", "figures", "submitted"]
+const GROUPS = ["hygiene", "params", "solver", "analysis", "figures", "submitted"]
 selected = isempty(ARGS) ? GROUPS : ARGS
 
 for g in selected

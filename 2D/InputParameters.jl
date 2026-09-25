@@ -10,9 +10,9 @@
 # ==============================================================================
 #  CONFIGURATION  --  the only block that differs from the code run for the paper
 # ==============================================================================
-#  On Baobab (UNIGE) these were hard-coded to:
+#  These were hard-coded to a scratch path and a Slurm task id:
 #
-#      dir = "/srv/beegfs/scratch/users/d/dumoulil/Data/P-series/L50/"
+#      dir = "<scratch>/P-series/L50/"
 #      idx = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
 #
 #  They are now read from the environment so the code runs anywhere. Everything

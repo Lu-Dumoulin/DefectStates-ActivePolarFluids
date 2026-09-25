@@ -106,14 +106,14 @@ behaves exactly as before.
 
 `t_check` is 1 everywhere: Δt is retuned once per unit of simulated time.
 
-`t_fin` and `t_prin` are read from the `InputParameters.jl` of the run set each
-figure came from, on the cluster under `Code/`:
+`t_fin` and `t_prin` are taken from the configuration of the run set each
+figure came from:
 
 | Figure | t_fin | t_prin | run set |
 |---|---|---|---|
-| 1, 11 | 150 000 | 1 000 | `FFT_2D_P_L50` |
-| 4, 9 | 200 000 | 1 000 | `FFT_2D_P_AdptDt` — its `DF.csv` is the same 1680-row sweep |
-| 8, 12 | 2 000 000 | 10 000 | `FFT_2D_P_7D`, the seven-day lattice runs |
+| 1, 11 | 150 000 | 1 000 | the L=50 series |
+| 4, 9 | 200 000 | 1 000 | the 1680-row sweep |
+| 8, 12 | 2 000 000 | 10 000 | the seven-day lattice runs |
 
 Note `t_prin` is 10 000 rather than 1 000 for the lattice figures: the long runs
 snapshot ten times less often.
@@ -128,7 +128,7 @@ reproduce them. Expect a reproduction to run longer than some of the original
 solutions did, and do not treat the difference as an error in either place.
 
 Horizons for figures whose tables are not yet generated, from the same source:
-Fig2 ran at `t_fin` = 30 000 with `t_prin` = 500 (`FFT_2D_P_2defects`), with a
-second, much shorter set at 1 000 / 20 for the critical-distance measurement
-(`FFT_2D_P_2defects2`); Fig7 and Fig10 ran at 300 000 / 1 000
-(`FFT_2D_P_phasediag2`), which is consistent with Fig10's stated t_f = 287·10³.
+Fig2's two-defect runs used `t_fin` = 30 000 with `t_prin` = 500, alongside a
+much shorter set at 1 000 / 20 for the critical-distance measurement; the
+phase-diagram runs behind Fig7 and Fig10 used 300 000 / 1 000, consistent with
+Fig10's stated t_f = 287·10³.

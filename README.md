@@ -12,9 +12,7 @@ simulations. It holds two independent pieces:
 - **[`2D/`](2D/)** — the 2D GPU run set behind the main results: a
   pseudo-spectral solver written directly against
   [CUDA.jl](https://github.com/JuliaGPU/CUDA.jl) and run as a Slurm array job on
-  the [Baobab](https://doc.eresearch.unige.ch/hpc/start) cluster at the
-  University of Geneva. This is `Code/FFT_2D_P_L50` on the cluster, renamed here
-  for symmetry with `1D/`.
+  a GPU cluster.
 - **[`1D/`](1D/)** — reduced 1D models of a single defect core and of a defect
   pair, as an interactive Pluto notebook, together with the data and sources for
   the figures they feed. These accompany the revised version of the paper.
@@ -153,7 +151,7 @@ The committed `DF.csv` is the one used for the paper; regenerating overwrites it
 ## Running
 
 Requires Julia ≥ 1.10 and an NVIDIA GPU. The paper runs used A100 40 GB / 80 GB
-cards with Julia supplied by Baobab's `module load Julia`. Note the memory
+cards, with Julia supplied by the cluster's module system. Note the memory
 footprint: at 5008² in `Float64`, the field and Fourier arrays come to several
 GB of device memory, so the grid as configured needs a 40 GB-class card.
 
@@ -305,6 +303,7 @@ suite does check:
 
 | Group | Checks |
 |---|---|
+| `hygiene` | nothing published depends on, or discloses, the machine the runs were done on |
 | `params` | the tables carry the columns the solver reads, `a` is tied to the activity as Table I says, Table I's constants hold in every row, and `DF_9`/`DF_11` reproduce the tables the runs actually used |
 | `solver` | every source parses, the integration horizon resolves from the table and falls back to the archival values without one, and `AllInputParam.jl` regenerates `2D/DF.csv` byte for byte |
 | `analysis` | every script parses, there is one per figure it is claimed for, none shadows the configured run set, and the stability analysis regenerates Fig5's `tau1.csv` and `tau5.csv` byte for byte |

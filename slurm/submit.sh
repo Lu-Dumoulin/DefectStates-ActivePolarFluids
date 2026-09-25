@@ -9,9 +9,9 @@
 #  simulation index; set DATA_DIR in your environment (or edit
 #  InputParameters.jl) to choose where snapshots are written.
 #
-#  Reconstructed from the lab's Code2Cluster.jl job generator with the settings
-#  used for the published runs. The partition and constraint are specific to
-#  Baobab (UNIGE) — change them for your site.
+#  Reconstructed from the job generator used for the published runs. The
+#  partition and constraint name one particular cluster — change them for
+#  wherever you are running.
 #
 #    --array=1-13%20   13 simulations, at most 20 running at once
 #    --time            12 h, which is what t_fin = 150000 was sized against

@@ -31,7 +31,7 @@ git -C "$ROOT" archive "$REF" | tar -x -C "$WORK/ref"
 git -C "$ROOT" archive HEAD   | tar -x -C "$WORK/cur"
 
 # Locate the solver directory in each tree. It is not hardcoded because the
-# directory was renamed from FFT_2D_P_L50 to 2D, so older revisions differ.
+# directory has been renamed, so older revisions hold it elsewhere.
 solver_dir() {
     local found
     found=$(find "$1" -maxdepth 2 -name 2D.jl -print -quit)

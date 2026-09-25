@@ -2,9 +2,9 @@ name = "DefectStatesActivePolarFluids"
 
 # Environment for the simulation, sweep-generation and figure scripts.
 #
-# No Manifest.toml is shipped on purpose: the paper runs used CUDA on Linux
-# (Baobab, UNIGE), and a Manifest resolved on any other platform would pin the
-# wrong binary artifacts. Versions actually used are recorded in the README.
+# No Manifest.toml is shipped on purpose: the paper runs used CUDA on Linux,
+# and a Manifest resolved on any other platform would pin the wrong binary
+# artifacts. Versions actually used are recorded in the README.
 #
 # Makie appears only because the vendored Utilities/JulUtils.jl carries a
 # `screensize()` helper that needs it. Nothing in this repository calls it.
