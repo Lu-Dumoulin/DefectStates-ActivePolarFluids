@@ -7,6 +7,9 @@
 # full run. Both revisions get the same t_fin/t_prin override, so the only
 # difference is the solver code itself.
 #
+# Both revisions run in this repository's environment, so instantiate it first
+# (julia --project=. -e 'using Pkg; Pkg.instantiate()').
+#
 # Run this on a GPU node. It needs enough device memory for the grid in DF.csv
 # row IDX; for the published L=50 row that means a 40 GB-class card.
 set -euo pipefail
@@ -50,7 +53,7 @@ for d in ref cur; do
     echo "--- running $d ---"
     ( cd "$(solver_dir "$WORK/$d")" \
       && DATA_DIR="$WORK/out_$d/" SIM_IDX="$IDX" \
-         julia --project="$WORK/$d" --optimize=3 2D.jl )
+         julia --project="$ROOT" --optimize=3 2D.jl )
 done
 
 echo
