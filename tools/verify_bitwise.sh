@@ -42,7 +42,7 @@ solver_dir() {
 # Shorten the run identically in both copies.
 for d in ref cur; do
     f="$(solver_dir "$WORK/$d")/InputParameters.jl"
-    sed -i.bak -E "s/^t_fin = .*/t_fin = $TFIN/; s/^t_prin = .*/t_prin = $TPRIN/" "$f"
+    sed -i.bak -E "s/^t_fin[[:space:]]*=.*/t_fin = $TFIN/; s/^t_prin[[:space:]]*=.*/t_prin = $TPRIN/" "$f"
     rm -f "$f.bak"
 done
 
