@@ -39,7 +39,6 @@ this work; use this repository to reproduce the article.
 ├── LSA/                   linear stability analysis; writes the data of figure 5
 ├── figures/               one directory per figure: LaTeX source and data
 ├── slurm/submit.sh        Slurm array job
-├── tools/                 comparison of two runs, bit for bit
 ├── test/                  test suite
 ├── Utilities/             helper functions used by the simulation scripts
 └── Project.toml
@@ -219,10 +218,6 @@ julia --project=. test/runtests.jl
 checks the parameter tables, the solver sources, the linear stability analysis
 and the compilation of every figure. It does not run the GPU solver. The figure
 tests are skipped if `pdflatex` is not installed.
-
-[`tools/verify_bitwise.sh`](tools/verify_bitwise.sh) runs a short simulation
-with two revisions of the code on a GPU and checks that their outputs are
-identical bit for bit.
 
 ---
 
