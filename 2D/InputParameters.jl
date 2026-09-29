@@ -8,34 +8,20 @@
 # =============================================================================
 
 # ==============================================================================
-#  CONFIGURATION  --  the only block that differs from the code run for the paper
-# ==============================================================================
-#  These were hard-coded to a scratch path and a Slurm task id:
-#
-#      dir = "<scratch>/P-series/L50/"
-#      idx = Base.parse(Int, ENV["SLURM_ARRAY_TASK_ID"])
-#
-#  They are now read from the environment so the code runs anywhere. Everything
-#  below this block, and every other simulation file, is byte-identical to what
-#  produced the published results.
-#
-#  A third, `localpath`, is gone: it only told an old Code2Cluster.jl where to
-#  download results to, and nothing here read it.
+#  CONFIGURATION, from the environment
 #
 #      DATA_DIR  output root; simulation `idx` writes to <DATA_DIR>/<idx>/Data/
-#                (default: ./data/L50/ next to this repository)
-#      SIM_IDX   which row of DF.csv to run; defaults to SLURM_ARRAY_TASK_ID
-#                under Slurm, or 1 when running a single job by hand
+#                (default: data/L50/ at the repository root)
+#      SIM_IDX   which row of the parameter table to run; defaults to
+#                SLURM_ARRAY_TASK_ID under Slurm, or 1 when run by hand
+#      DF_FILE   the parameter table, relative to this directory (below)
 # ==============================================================================
 dir = get(ENV, "DATA_DIR", abspath(joinpath(@__DIR__, "..", "data", "L50")) * "/")
 idx = Base.parse(Int, get(ENV, "SIM_IDX", get(ENV, "SLURM_ARRAY_TASK_ID", "1")))
 @show fn = "$idx/"
 file = joinpath(dir, fn)
 mkpath(file)
-# Added for this release: on the cluster the <idx>/Data/ folders already existed
-# from earlier runs, so the original code never created them. 2D.jl saves into
-# string(file, "Data/data<t>.jld"), which fails on a fresh checkout without this.
-mkpath(joinpath(file, "Data"))
+mkpath(joinpath(file, "Data"))    # 2D.jl writes its snapshots here
 println("path_c = ", dir)
 println(idx)
 
@@ -136,7 +122,7 @@ const scan_separation::Bool = seed_defect_pair && D == 0
 # --- Integration horizon -----------------------------------------------------
 # Taken from the parameter table when it provides them, since the horizon
 # differs by figure (see params/README.md). Tables without these columns - the
-# archival 2D/DF.csv among them - fall back to the values used for the paper's
+# 2D/DF.csv among them - fall back to the values used for the paper's
 # L=50 runs, sized for the 12 h wall-clock limit of the Slurm job.
 t_fin   = hasproperty(df, :t_fin)   ? df[:t_fin]   : 150000
 t_prin  = hasproperty(df, :t_prin)  ? df[:t_prin]  : 1000

@@ -1,115 +1,51 @@
-# Paper figures
+# Figures
 
-One directory per figure, holding its LaTeX/TikZ source, the data it plots and
-the rendered panels. Each `main.tex` is a standalone wrapper that compiles that
-figure on its own; `abrv.tex` and `some_command.tex` are the shared macro files
-the sources expect.
+One directory per figure of the article, containing its LaTeX source
+(`fig_*.tex`), the data it plots, and the images it includes. Field snapshots
+(density, polarity, velocity) are included as PNG images; the raw simulation
+output they were made from is not distributed, as it amounts to several
+terabytes.
 
-Panels showing fields (density, polarity, velocity) are committed as **PNG
-snapshots**. The raw `.jld` output they were rendered from is not published —
-at 5008² in `Float64` a single snapshot is about 1 GB, and a full run set runs
-to terabytes.
+## Compiling
 
-Only images a figure actually `\includegraphics` are kept. The working
-directory they came from held some 300 MB of candidates and superseded
-variants; what the paper compiles is a fraction of that.
-
-**Images belong to their figure's directory, never to a shared pool.** The
-names collide: `density.png` exists as three different images across the
-lattice and triple-panel figures, and `voronoi.png` as two. Flattening them
-would silently overwrite one with another.
-
-## Building a figure on its own
+Each directory has a `main.tex` that compiles the figure on its own, at the
+size it has in the article:
 
 ```bash
-./build_all.sh          # all of them
-./build_all.sh Fig6     # just one
+./build_all.sh          # all figures
+./build_all.sh Fig6     # one figure
 ```
 
-Every figure has the same layout: `main.tex` is the wrapper, and the picture
-itself lives in a `fig_*.tex` beside it, with its data and images. Building a
-wrapper produces `main.pdf`.
+This produces `FigN/main.pdf`. It needs `pdflatex` with the usual `pgfplots`
+and TikZ packages.
 
-**All ten reproduce the figure PDFs that were submitted, exactly** — verified by
-comparing bounding boxes against `Dumoulin_etal_FigN.pdf` in the resubmission.
+## Contents
 
-The wrappers are *not* interchangeable, because the submitted figures were not
-all produced the same way:
-
-| | figures | how the wrapper is set up |
+| Figure | Shows | Data from |
 |---|---|---|
-| Built **inside the article**, externalised by TikZ | 2, 4, 6, 8, 9 | must recreate the article's text block and font |
-| Built as a **standalone project** and included as a PDF | 1, 3, 5, 7, 10 | keeps that project's own preamble |
+| 1 | schematic of the model; density snapshots at $\rho_0 = 0.45, 0.6, 0.75$, $L = 50$ | [`params/DF_1.csv`](../params/DF_1.csv) |
+| 2 | defect pairs: number of defects over time, density and velocity around a pair, critical annihilation distance | [`params/DF_2.csv`](../params/DF_2.csv) for (a); two-defect simulations for (b–d), see [`params/`](../params) |
+| 3 | steady state of a single defect | the 1D notebook, [`1D/`](../1D) |
+| 4 | defect density in the $(\rho_0, \zeta_\rho)$ plane for six renewal times | [`params/DF_4.csv`](../params/DF_4.csv); white dots from the linear stability analysis |
+| 5 | linear stability of the homogeneous states | [`LSA/`](../LSA) |
+| 6 | asymptotic states for different target densities, $L = 10$ | [`params/DF_6.csv`](../params/DF_6.csv) |
+| 7 | classification of the states in the $(\tau, \rho_0)$ plane | [`params/DF_7.csv`](../params/DF_7.csv) |
+| 8 | square and hexagonal defect lattices | [`params/DF_8.csv`](../params/DF_8.csv) |
+| 9 | shape order against target density and defect density | [`params/DF_9.csv`](../params/DF_9.csv) |
+| 10 | density correlation function and its exponential fits | [`params/DF_10.csv`](../params/DF_10.csv) |
+| 11 | density snapshots for $L = 50$ | [`params/DF_11.csv`](../params/DF_11.csv) |
+| 12 | the lattices of figure 8: Voronoi tessellation and shape order over time | [`params/DF_12.csv`](../params/DF_12.csv) |
+| 13 | the lattices of figure 8 from five different initial conditions | [`params/DF_13.csv`](../params/DF_13.csv) |
 
-For the first group the figure is written in terms of `\linewidth` and inherits
-the article's font, so the wrapper reproduces both:
+The quantities shown — defect density, structural persistence time, areas of
+low-density regions, shape order — are defined in the appendices of the
+article. Defect densities are counted per unit area of the computational
+domain, $(1008\,\Delta x)^2 = 101.6$ for $L = 10$.
 
-- **Text width set explicitly** — `\textwidth`, `\columnwidth`, `\linewidth`
-  and `\hsize` to 246.0 pt for a one-column `figure` (2, 4, 8, 9) or 510.0 pt
-  for a two-column `figure*` (6). The standalone class's `varwidth` option does
-  not do this: with the `tikz` option the class crops to the picture and leaves
-  `\linewidth` at its own default of 345.0 pt.
-- **9 pt Computer Modern on a 10.5 pt baseline** — what revtex4-2 uses *inside*
-  a figure, not the 10 pt document size, and not Latin Modern.
-- **`abrv.tex` loaded**, since the figures use its shorthands (`\zr`, `\Dmu`,
-  …). Without it those labels silently disappear.
-
-The second group never went through the article's text block at all, so none of
-that applies: each keeps the preamble it was built with, and changing it changes
-the figure. Fig1 renders at `varwidth=180mm` with Latin Modern at 10 pt, and
-Fig5 sets `\def\LW{246.0pt}` and sizes everything from that without ever
-referring to `\linewidth`. **Do not regenerate these wrappers from the
-one-column template** — the output stops matching the article.
-
-## What each figure shows, and where its data came from
-
-The analysis that produced these panels ran against simulation output that is
-not published here — a single snapshot is about a gigabyte and a run set
-reaches terabytes — so this is a description of how each figure was obtained,
-not a pipeline. The methods are described in the article's appendices.
-
-| Figure | Shows | Obtained from |
-|---|---|---|
-| **1** | schematic, and density snapshots at ρ₀ = 0.45, 0.6, 0.75 | three L=50 runs, [`params/DF_1.csv`](../params/DF_1.csv) |
-| **2** | defect pair: count against time, density and velocity maps, critical annihilation distance | panel (a) from [`params/DF_2.csv`](../params/DF_2.csv); (b–d) seed a defect pair, and (c) scans the separation rather than sweeping a table — see [`params/README.md`](../params/README.md) |
-| **3** | steady state of a single defect | **reproducible**: [`1D/models.pluto.jl`](../1D/models.pluto.jl); its data is byte-identical to [`1D/figdata/`](../1D/figdata) |
-| **4** | defect density over the (ρ₀, ζ_ρ) plane at six renewal times | [`params/DF_4.csv`](../params/DF_4.csv), 1008 runs; the white dots are the critical activity from the stability analysis |
-| **5** | linear stability of the homogeneous state | **reproducible**: [`LSA/linear_stability.jl`](../LSA/linear_stability.jl) regenerates `tau1.csv` and `tau5.csv` byte for byte, with no simulation output |
-| **6** | asymptotic states at different target densities | [`params/DF_6.csv`](../params/DF_6.csv), eight L=10 runs at τ=5, ζ_ρ=4 |
-| **7** | state classification over τ and ρ₀, with defect density, persistence time and low-density areas | [`params/DF_7.csv`](../params/DF_7.csv), 120 runs at ζ_ρ=4 |
-| **8** | square and hexagonal defect lattices | [`params/DF_8.csv`](../params/DF_8.csv), two runs to t = 2·10⁶ |
-| **9** | shape function against target density and against defect density | [`params/DF_9.csv`](../params/DF_9.csv), 1680 runs |
-| **10** | density correlation against time, with exponential fits | [`params/DF_10.csv`](../params/DF_10.csv), three of figure 7's solutions |
-| **11** | density snapshots at L=50 across the density range | [`params/DF_11.csv`](../params/DF_11.csv) |
-| **12** | the lattices of figure 8 with Voronoi tessellation and shape order | [`params/DF_12.csv`](../params/DF_12.csv) |
-| **13** | the same two parameter sets from different initial conditions | [`params/DF_13.csv`](../params/DF_13.csv), figure 8's two solutions × five seeds |
-
-Defect density is counted per unit area of the padded domain, (1008 × 0.01)² =
-101.6064, not of the nominal L = 10. The figure 9 threshold "defect density
-larger than 1.5" is a count of 150.
-
-## Still to do
-
-**Several data files have no generator here:** `omegarho.csv` and
-`zrc_eq{,2}.csv` (figure 5), `zrc_plus.csv` (figure 4's critical-activity dots,
-which come from the same stability analysis), and `DF_tikz.csv` (figure 7).
-
-**The article's Eq. for the critical activity and `LSA.jl` do not agree.** The
-article reads
-
-    zeta_c = A(chi=0)/(3 rho0) + ( sqrt(A(chi=0) gamma / (3 rho0^3)) + sqrt(2/(3 rho0^3 tau)) )^2
-
-while `ζc_simp` in [`LSA/LSA.jl`](../LSA/LSA.jl), which reproduces figure 5's
-`tau1.csv` and `tau5.csv` byte for byte, keeps the χ term in `A` instead of
-setting χ = 0, divides by `3 rho0^2` rather than `3 rho0^3`, and **subtracts**
-the second root rather than adding it. One of the two is not what the other
-describes — worth resolving before publication.
-
-## What can be run
+Figures 3 and 5 can be regenerated directly from this repository:
 
 ```bash
-julia --project=. LSA/linear_stability.jl     # figure 5's data
+julia --project=. LSA/linear_stability.jl     # figure 5: tau1.csv, tau5.csv
 ```
 
-and the figure 3 notebook in [`1D/`](../1D). The simulations themselves are
-reproducible from [`2D/`](../2D) with the tables in [`params/`](../params).
+and the notebook in [`1D/`](../1D) for figure 3.

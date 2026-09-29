@@ -1,22 +1,20 @@
 #!/bin/env bash
 # =============================================================================
-#  Slurm array job for the L50 run set: one task per row of DF.csv.
+#  Slurm array job: one task per row of a parameter table.
 #
-#  Submit from the simulation directory so that $SLURM_SUBMIT_DIR points at it:
-#      sbatch --chdir=2D ../slurm/submit.sh
+#  Submit from the repository root:
 #
-#  Each task gets one GPU and runs 2D.jl with SLURM_ARRAY_TASK_ID as the
-#  simulation index; set DATA_DIR in your environment (or edit
-#  InputParameters.jl) to choose where snapshots are written.
+#      export DF_FILE=../params/DF_9.csv       # which table (default: 2D/DF.csv)
+#      export DATA_DIR=/scratch/me/fig9/       # where snapshots go
+#      sbatch --chdir=2D --array=1-1680%20 slurm/submit.sh
 #
-#  Reconstructed from the job generator used for the published runs. The
-#  partition and constraint name one particular cluster — change them for
-#  wherever you are running.
+#  --array must match the number of rows in the table. Slurm exports your
+#  environment to the job, so DF_FILE and DATA_DIR reach every task, and each
+#  task runs the row given by its SLURM_ARRAY_TASK_ID.
 #
-#    --array=1-13%20   13 simulations, at most 20 running at once
-#    --time            12 h, which is what t_fin = 150000 was sized against
-#    --mem=3000        host memory; the fields live on the GPU
-#    --constraint      A100 40 GB or 80 GB (the 5008² Float64 grid needs it)
+#  The partition and constraint below name one particular cluster: change them
+#  for yours. The time limit suits the L=50 runs; the 2e6 lattice runs
+#  (figures 8, 12, 13) need several days.
 # =============================================================================
 #SBATCH --array=1-13%20
 #SBATCH --partition=private-kruse-gpu,shared-gpu
@@ -28,5 +26,5 @@
 
 module load Julia
 
-cd "$SLURM_SUBMIT_DIR"
-srun julia --optimize=3 2D.jl
+# The job starts in the directory given by --chdir, i.e. 2D/.
+srun julia --project=.. --optimize=3 2D.jl

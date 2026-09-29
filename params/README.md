@@ -1,161 +1,66 @@
-# Input parameters, per figure
+# Parameters of the simulations, per figure
 
-`DF_<N>.csv` holds the simulations behind figure N — one row each, in the
-schema [`2D/InputParameters.jl`](../2D/InputParameters.jl) reads. Regenerate
-them all with:
+`DF_N.csv` lists the simulations used in figure N of the article, one per row.
+To run row 1 of the table behind figure 9, from `2D/`:
+
+```bash
+DF_FILE=../params/DF_9.csv DATA_DIR=/path/to/output/ SIM_IDX=1 \
+    julia --project=.. --optimize=3 2D.jl
+```
+
+and see the main [README](../README.md#on-a-slurm-cluster) to run a whole table
+on a cluster. The columns are described in the main README.
+
+All tables use the common values of Table I of the article — $\chi = 0.1$,
+$\kappa = 10^{-4}$, $\gamma = 10^{-4}$, $\Gamma = 1$, $\nu = 0$, $\zeta_p = 0$,
+$\xi = 1$, $a = 4\zeta_\rho/3$ — and the discretisation of the numerical
+appendix, $\Delta x = 10^{-2}$ and $\Delta t_\text{max} = 10^{-2}$.
+
+**The article gives the renewal time $\tau$; the tables give the renewal rate
+`kd` $= 1/\tau$.**
+
+## The tables
+
+| File | Figure | Runs | Parameters | `t_fin` | `t_prin` |
+|---|---|---|---|---|---|
+| `DF_1.csv` | 1 | 3 | $L = 50$, $\rho_0 \in \{0.45, 0.6, 0.75\}$, $\tau = 5$, $\zeta_\rho = 4$ | 150 000 | 1 000 |
+| `DF_2.csv` | 2(a) | 150 | $L = 10$, $\rho_0 = 1$, $\zeta_\rho = 4$, $\tau \in \{0.2, 1, 10\}$, 50 seeds each | 150 000 | 1 000 |
+| `DF_4.csv` | 4 | 1008 | $L = 10$, $\rho_0 = 0.4, 0.5, \ldots, 1.5$, $\zeta_\rho \in \{0, 1, 2, 4, 6, \ldots, 24\}$, $\tau \in \{0.1, 0.2, 1, 5, 10, 100\}$ | 200 000 | 1 000 |
+| `DF_6.csv` | 6 | 8 | $L = 10$, $\rho_0 \in \{0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 1.2\}$, $\tau = 5$, $\zeta_\rho = 4$ | 200 000 | 1 000 |
+| `DF_7.csv` | 7 | 120 | $L = 10$, $\rho_0 = 0.4, 0.5, \ldots, 1.5$, 10 values of $\tau$ from 0.1 to 100, $\zeta_\rho = 4$ | 300 000 | 1 000 |
+| `DF_8.csv` | 8 | 2 | $L = 10$; $(\rho_0, \tau, \zeta_\rho) = (0.7, 1, 10)$ and $(1.3, 0.2, 1)$ | 2 000 000 | 10 000 |
+| `DF_9.csv` | 9 | 1680 | $L = 10$, the grid of `DF_4.csv` with all 10 values of $\tau$ | 200 000 | 1 000 |
+| `DF_10.csv` | 10 | 3 | $L = 10$, $\zeta_\rho = 4$; $(\rho_0, \tau) = (0.7, 1)$, $(1.2, 0.5)$, $(0.7, 5)$ | 300 000 | 1 000 |
+| `DF_11.csv` | 11 | 13 | $L = 50$, $\rho_0 = 0.40, 0.45, \ldots, 1.00$, $\tau = 5$, $\zeta_\rho = 4$ | 150 000 | 1 000 |
+| `DF_12.csv` | 12 | 2 | the two simulations of figure 8 | 2 000 000 | 10 000 |
+| `DF_13.csv` | 13 | 10 | the two simulations of figure 8, with seeds 1 to 5 | 2 000 000 | 10 000 |
+
+The ten renewal times are $\tau$ = 0.1, 0.2, 0.5, 1, 1.25, 1.67, 2.5, 5, 10 and
+100.
+
+`t_fin` is the time the simulations were set to reach. Some of the original
+simulations stopped earlier, after reaching a steady state; every one reached
+at least $t = 10^5$.
+
+## Figures without a table
+
+- **Figure 2(b–d)** uses two-defect simulations, which start from a pair of
+  defects rather than from a random perturbation; see the main
+  [README](../README.md#parameter-tables). Panels (b) and (d) show one
+  simulation at $\rho_0 = 0.6$, $\tau = 1$, $\zeta_\rho = 12$, $L = 10$, with
+  `t_fin` = 30 000 and `t_prin` = 500. Panel (c) gives the critical distance
+  for $\rho_0 \in \{0.6, 0.8, 1.0, 1.2\}$ and $\zeta_\rho \in \{1, 4, 8, 12\}$
+  at $\tau = 1$, $L = 10$, obtained with `D = 0`, `t_fin` = 1 000 and
+  `t_prin` = 20.
+- **Figure 3** comes from the 1D notebook in [`1D/`](../1D), with $\chi = 1$,
+  $\gamma = 10^{-2}$, $\tau = 0.2$, $\kappa = 10^{-3}$, $\zeta_\rho = 0$.
+- **Figure 5** comes from the linear stability analysis in [`LSA/`](../LSA)
+  and needs no simulation.
+
+## Regenerating the tables
 
 ```bash
 julia --project=. params/make_dataframes.jl
 ```
 
-To run a figure's set, point the solver at its table:
-
-```bash
-DF_FILE=../params/DF_9.csv DATA_DIR=/scratch/fig9/ SIM_IDX=1 \
-    julia --project=. --optimize=3 2D/2D.jl
-```
-
-`DF_FILE` is relative to `2D/`; unset, the solver reads `2D/DF.csv` as before.
-
-## Where the values come from
-
-Table I of the article fixes everything common to every run: `ap` (χ) = 0.1,
-`nu1` (ν) = 0, `gamma` (Γ) = 1, `kp` (κ) = 10⁻⁴, `M` (γ) = 10⁻⁴, `zetap` = 0,
-`xi` = 1, and `ar` = 4ζ_ρ/3, falling back to 4/3 when ζ_ρ = 0. The numerical
-appendix fixes `dx` = `dz` = 10⁻² and `dtmin` (Δt_max) = 10⁻². Each caption
-then supplies what that figure varies.
-
-**The article writes the renewal time τ; the solver takes the rate `kd` = 1/τ.**
-
-| File | Rows | Figure varies |
-|---|---|---|
-| `DF_1.csv` | 3 | L=50, ρ₀ ∈ {0.45, 0.6, 0.75}, τ=5, ζ_ρ=4 |
-| `DF_2.csv` | 150 | L=10, ρ₀=1, ζ_ρ=4, τ ∈ {10, 1, 0.2}, 50 initial conditions each — **panel (a) only** |
-| `DF_4.csv` | 1008 | L=10, 12 ρ₀ × 14 ζ_ρ × 6 τ |
-| `DF_6.csv` | 8 | L=10, ρ₀ ∈ {0.4, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 1.2}, τ=5, ζ_ρ=4 |
-| `DF_8.csv` | 2 | L=10, (ρ₀=0.7, τ=1, ζ_ρ=10) and (ρ₀=1.3, τ=0.2, ζ_ρ=1) |
-| `DF_7.csv` | 120 | L=10, 12 ρ₀ × 10 τ, ζ_ρ=4 |
-| `DF_9.csv` | 1680 | L=10, 12 ρ₀ × 14 ζ_ρ × 10 τ |
-| `DF_10.csv` | 3 | L=10, ζ_ρ=4, (ρ₀=0.7, τ=1), (1.2, 0.5), (0.7, 5) |
-| `DF_11.csv` | 13 | L=50, ρ₀ = 0.40 : 0.05 : 1.00, τ=5, ζ_ρ=4 |
-| `DF_12.csv` | 2 | the same two solutions as Fig8 |
-| `DF_13.csv` | 10 | Fig8's two solutions from five initial conditions each |
-
-`DF_11.csv` reproduces [`2D/DF.csv`](../2D/DF.csv) exactly. `DF_9.csv` was
-checked against the table the sweep actually used and matched all 1680
-parameter sets; that table is not published here, so the test suite pins the
-three grids instead. `DF_4.csv` has 1008 rows, exactly the row count of
-[`figures/Fig4/Ndef.csv`](../figures/Fig4/Ndef.csv).
-
-## Not generated, and why
-
-### Figure 2, panels (b) to (d)
-
-Those panels are two-defect runs: a pair of oppositely charged defects placed a
-set distance apart, rather than the noisy uniform state everything else starts
-from.
-
-The solver can now do this. `kernel_ini_P!` in [`2D/kernels.jl`](../2D/kernels.jl)
-seeds the pair, and it is selected by giving the table a `D` column — the
-separation in units of the domain width. Without that column the run starts
-from noise, which is what every table here does and what every published
-large-domain solution did.
-
-No table is generated for these panels.
-
-Panel (b,d) is a single solution at ρ₀ = 0.6, τ = 1, ζ_ρ = 12; the separation
-it was run at is not stated anywhere.
-
-Panel (c) is not a parameter sweep at all, so no table could express it. It
-measures the **critical separation** — the smallest initial distance at which
-an oppositely charged pair survives instead of annihilating — and finds it by
-scanning within a single job:
-
-1. seed a pair at d = 0.01 and integrate;
-2. if they annihilate, retry at d + 0.01;
-3. the first d at which they survive to the horizon is the critical distance.
-
-Annihilation is detected two ways: the polarity magnitude rising above 0.995
-everywhere, meaning no defect core is left anywhere in the domain, or the
-tracked separation between the two cores collapsing. The scan runs over ρ₀ ∈
-{0.6, 0.8, 1.0, 1.2} against ζ_ρ ∈ {1, 4, 8, 12} at τ = 1.
-
-`2D/2D.jl` does this now. Give the table a `D` column:
-
-| `D` | what runs |
-|---|---|
-| a separation, in units of the domain width | one solution with a pair seeded that far apart |
-| `0` | the scan, reporting the critical separation |
-| column absent | the ordinary noise start — every table here |
-
-The two annihilation tests and the scan sit behind that column, so no table
-without one reaches them.
-
-What is still missing is the separation for panel (b,d), which is not stated,
-and whether the published scan used the same step as the code it came from
-(0.01 to 0.50 in steps of 0.01, which is what is implemented).
-
-### Not a simulation table
-
-- **Fig3** is the 1D model, whose inputs are notebook fields rather than a row
-  of `DF.csv`: χ=1, γ=10⁻², τ=0.2, κ=10⁻³, ζ_ρ=0. Note these differ from
-  Table I, which is correct — it is a different reduction — but the τ range for
-  the inset sweep is not given.
-- **Fig5** is linear stability analysis, computed from the equations rather than
-  from simulation output. See [`Analysis/make_fig_LSA.jl`](../Analysis/make_fig_LSA.jl).
-
-## The `ar` column
-
-`ar` is the compressibility coefficient a', which Table I ties to the activity:
-a' = 4ζ_ρ'/3, or 4/3 when ζ_ρ = 0. The solver reads it from the table.
-
-It used not to. `2D/InputParameters.jl` recomputed it and ignored the column,
-and the two were associated differently — `AllInputParam.jl` scaled a
-precomputed 4/3, giving `zr*(4/3)`, while the solver computed `(zr*4)/3`. Those
-differ in the last bit for ζ_ρ = 10, 14 and 20, so the column never held the
-value the run used, and editing it had no effect.
-
-All three now associate it the same way, as `(zr*4)/3`: the sweep writes it,
-these tables carry it, and the solver reads it. The change moved no run — the
-value every simulation used is what the solver computed, which is exactly what
-the column now holds. The archival `2D/DF.csv` is unaffected and still
-regenerates byte for byte, because it sweeps only ζ_ρ = 4, where the two
-associations agree.
-
-## The integration horizon
-
-`t_fin`, `t_prin` and `t_check` are columns of these tables, so a figure's run
-is fully described by its row. `2D/InputParameters.jl` reads them when present
-and otherwise falls back to 150000 / 1000 / 1, the values the paper's L=50 runs
-used — so the archival [`2D/DF.csv`](../2D/DF.csv), which has no such columns,
-behaves exactly as before.
-
-`t_check` is 1 everywhere: Δt is retuned once per unit of simulated time.
-
-`t_fin` and `t_prin` are taken from the configuration of the run set each
-figure came from:
-
-| Figure | t_fin | t_prin | run set |
-|---|---|---|---|
-| 1, 11 | 150 000 | 1 000 | the L=50 series |
-| 4, 9 | 200 000 | 1 000 | the 1680-row sweep |
-| 6 | 200 000 | 1 000 | the L=10 detailed-density runs |
-| 8, 12, 13 | 2 000 000 | 10 000 | the seven-day lattice runs |
-| 2 | 150 000 | 1 000 | the saturation runs |
-| 7, 10 | 300 000 | 1 000 | the phase-diagram runs; Fig10's t_f = 287·10³ fits inside |
-
-Note `t_prin` is 10 000 rather than 1 000 for the lattice figures: the long runs
-snapshot ten times less often.
-
-**`t_fin` is the configured cap, not the length of every run, and it does not
-contradict the article.** The sweeps were set to 200 000, while the article
-quotes a typical simulated time of 10⁵. Both are right: the cluster sometimes
-went down mid-run, and runs that had already reached a steady state were not
-restarted, so a number of them stop somewhere between 10⁵ and the cap. 10⁵ is
-what every run is guaranteed to have reached; 200 000 is what to configure to
-reproduce them. Expect a reproduction to run longer than some of the original
-solutions did, and do not treat the difference as an error in either place.
-
-Figure 2's two-defect runs, which have no table here, used `t_fin` = 30 000
-with `t_prin` = 500, alongside a much shorter set at 1 000 / 20 for the
-critical-distance measurement.
+rebuilds every `DF_N.csv` from the values above.
