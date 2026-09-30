@@ -4,6 +4,7 @@ Simulation code for
 
 > L. Dumoulin, C. Blanch-Mercader, K. Kruse,
 > *Defect states in compressible active polar fluids with renewal*,
+> PRX Life (2026), [doi:10.1103/bnx5-sryc](https://doi.org/10.1103/bnx5-sryc);
 > [arXiv:2506.03795](https://arxiv.org/abs/2506.03795).
 
 > **To explore the model, start with [HydraFluids](https://github.com/Lu-Dumoulin/HydraFluids).**
@@ -248,11 +249,14 @@ tests are skipped if `pdflatex` is not installed.
 ## Citing
 
 ```bibtex
-@article{dumoulin2025defect,
-  title   = {Defect states in compressible active polar fluids with renewal},
-  author  = {Dumoulin, Ludovic and Blanch-Mercader, Carles and Kruse, Karsten},
-  journal = {arXiv preprint arXiv:2506.03795},
-  year    = {2025}
+@article{dumoulin2026defect,
+  title         = {Defect states in compressible active polar fluids with renewal},
+  author        = {Dumoulin, Ludovic and Blanch-Mercader, Carles and Kruse, Karsten},
+  journal       = {PRX Life},
+  year          = {2026},
+  doi           = {10.1103/bnx5-sryc},
+  eprint        = {2506.03795},
+  archivePrefix = {arXiv}
 }
 ```
 
