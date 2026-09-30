@@ -6,7 +6,16 @@ Simulation code for
 > *Defect states in compressible active polar fluids with renewal*,
 > [arXiv:2506.03795](https://arxiv.org/abs/2506.03795).
 
-This repository contains the code used to produce the results of the article:
+> **To explore the model, start with [HydraFluids](https://github.com/Lu-Dumoulin/HydraFluids).**
+> It implements the same equations with an interactive
+> [Pluto](https://plutojl.org/) interface, runs on a laptop CPU as well as on
+> a GPU, and needs no cluster. It is the easiest way to play with the system
+> and recovers qualitatively the same states as in the article — defect
+> lattices, foams, waves, homogeneous polar states. It also supports nematic
+> and nematopolar order, and is actively maintained.
+
+This repository contains the code used to produce the results of the article
+itself, and is the place to look for the exact simulations behind each figure:
 
 - **[`2D/`](2D/)** — the 2D solver, a pseudo-spectral GPU code written with
   [CUDA.jl](https://github.com/JuliaGPU/CUDA.jl);
@@ -17,10 +26,8 @@ This repository contains the code used to produce the results of the article:
 - **[`LSA/`](LSA/)** — the linear stability analysis of the homogeneous states;
 - **[`figures/`](figures/)** — the LaTeX sources and data of the figures.
 
-A more general and actively maintained implementation of the same model —
-CPU, CUDA and Metal back ends, and nematic and nematopolar order — is available
-in [HydraFluids](https://github.com/Lu-Dumoulin/HydraFluids). Use it to build on
-this work; use this repository to reproduce the article.
+The 2D solver needs an NVIDIA GPU, and the large simulations of the article need
+a GPU cluster.
 
 ---
 
@@ -210,10 +217,9 @@ holding a closed-form estimate (`y`) and the threshold found by integrating the
 linearised equations (`yy`). It needs no simulation output and runs in under a
 minute.
 
-These files are not the curves plotted in figure 5, whose data is provided in
-[`figures/Fig5/`](figures/Fig5/) (`zrc_eq2.csv` for panel (a), `omegarho.csv`
-for panel (b)). The critical activity used in figure 4 and in the article is
-given in closed form by Eq. (zetaRhoDeltaMuC) of the article.
+The data plotted in figure 5 is provided in [`figures/Fig5/`](figures/Fig5/):
+`zrc_eq2.csv` for panel (a) and `omegarho.csv` for panel (b). The closed-form
+expression of the critical activity used in figure 4 is given in the article.
 
 ---
 
