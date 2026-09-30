@@ -48,13 +48,14 @@ at least $t = 10^5$.
   defects rather than from a random perturbation; see the main
   [README](../README.md#parameter-tables). Panels (b) and (d) show one
   simulation at $\rho_0 = 0.6$, $\tau = 1$, $\zeta_\rho = 12$, $L = 10$, with
-  `t_fin` = 30 000 and `t_prin` = 500. Panel (c) gives the critical distance
+  `t_fin` = 30 000 and `t_prin` = 500; any initial separation `D` that is not
+  too large gives the same picture. Panel (c) gives the critical distance
   for $\rho_0 \in \{0.6, 0.8, 1.0, 1.2\}$ and $\zeta_\rho \in \{1, 4, 8, 12\}$
   at $\tau = 1$, $L = 10$, obtained with `D = 0`, `t_fin` = 1 000 and
   `t_prin` = 20.
 - **Figure 3** comes from the 1D notebook in [`1D/`](../1D), with $\chi = 1$,
   $\gamma = 10^{-2}$, $\tau = 0.2$, $\kappa = 10^{-3}$, $\zeta_\rho = 0$.
-- **Figure 5** comes from the linear stability analysis in [`LSA/`](../LSA)
+- **Figure 5** comes from the linear stability analysis (see [`LSA/`](../LSA))
   and needs no simulation.
 
 ## Regenerating the tables

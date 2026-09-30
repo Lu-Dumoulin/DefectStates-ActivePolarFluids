@@ -27,7 +27,7 @@ and TikZ packages.
 | 2 | defect pairs: number of defects over time, density and velocity around a pair, critical annihilation distance | [`params/DF_2.csv`](../params/DF_2.csv) for (a); two-defect simulations for (b–d), see [`params/`](../params) |
 | 3 | steady state of a single defect | the 1D notebook, [`1D/`](../1D) |
 | 4 | defect density in the $(\rho_0, \zeta_\rho)$ plane for six renewal times | [`params/DF_4.csv`](../params/DF_4.csv); white dots from the linear stability analysis |
-| 5 | linear stability of the homogeneous states | [`LSA/`](../LSA) |
+| 5 | linear stability of the homogeneous states | linear stability analysis; data in `Fig5/` |
 | 6 | asymptotic states for different target densities, $L = 10$ | [`params/DF_6.csv`](../params/DF_6.csv) |
 | 7 | classification of the states in the $(\tau, \rho_0)$ plane | [`params/DF_7.csv`](../params/DF_7.csv) |
 | 8 | square and hexagonal defect lattices | [`params/DF_8.csv`](../params/DF_8.csv) |
@@ -42,10 +42,6 @@ low-density regions, shape order — are defined in the appendices of the
 article. Defect densities are counted per unit area of the computational
 domain, $(1008\,\Delta x)^2 = 101.6$ for $L = 10$.
 
-Figures 3 and 5 can be regenerated directly from this repository:
-
-```bash
-julia --project=. LSA/linear_stability.jl     # figure 5: tau1.csv, tau5.csv
-```
-
-and the notebook in [`1D/`](../1D) for figure 3.
+The data of figure 3 can be regenerated with the notebook in [`1D/`](../1D).
+The linear stability analysis in [`LSA/`](../LSA) is described in the main
+[README](../README.md#linear-stability-analysis).

@@ -14,7 +14,7 @@ This repository contains the code used to produce the results of the article:
   figures, one table per figure;
 - **[`1D/`](1D/)** — the reduced 1D model of a single defect (figure 3), as a
   [Pluto](https://plutojl.org/) notebook;
-- **[`LSA/`](LSA/)** — the linear stability analysis (figure 5);
+- **[`LSA/`](LSA/)** — the linear stability analysis of the homogeneous states;
 - **[`figures/`](figures/)** — the LaTeX sources and data of the figures.
 
 A more general and actively maintained implementation of the same model —
@@ -36,7 +36,7 @@ this work; use this repository to reproduce the article.
 │   └── DF.csv             the L=50 density series (figures 1 and 11)
 ├── params/                DF_N.csv, the simulations behind figure N
 ├── 1D/                    1D model notebook and the data of figure 3
-├── LSA/                   linear stability analysis; writes the data of figure 5
+├── LSA/                   linear stability analysis of the homogeneous states
 ├── figures/               one directory per figure: LaTeX source and data
 ├── slurm/submit.sh        Slurm array job
 ├── test/                  test suite
@@ -176,7 +176,7 @@ See [`params/README.md`](params/README.md) for the table behind each figure.
 | 1, 2(a), 4, 6–13 | run the simulations of [`params/DF_N.csv`](params/) |
 | 2(b–d) | two-defect simulations, see above |
 | 3 | [`1D/models.pluto.jl`](1D/models.pluto.jl) |
-| 5 | `julia --project=. LSA/linear_stability.jl` |
+| 5 | linear stability analysis, see below; the data plotted is in [`figures/Fig5/`](figures/Fig5/) |
 
 The analysis of the simulation output is described in the appendices of the
 article. [`figures/README.md`](figures/README.md) lists what each figure shows
@@ -197,15 +197,23 @@ The notebook contains a radial model of a single defect, used for figure 3, and
 a Cartesian model of a defect pair. Its symbols relate to those of the 2D code
 as `A` = `ar`, `χ` = `ap`, `κ` = `kp`, `τ` = `1/kd`.
 
-### Figure 5: linear stability analysis
+### Linear stability analysis
 
 ```bash
 julia --project=. LSA/linear_stability.jl
 ```
 
-computes the critical activity $\zeta_\rho^c$ as a function of $\rho_0$ for
-$\tau = 1$ and $\tau = 5$, and writes `tau1.csv` and `tau5.csv` into
-`figures/Fig5/`. It needs no simulation output and runs in under a minute.
+linearises the dynamic equations about the homogeneous polar state and computes
+the critical activity $\zeta_\rho^c$ as a function of $\rho_0$, for $\tau = 1$
+and $\tau = 5$. It writes `tau1.csv` and `tau5.csv` into `figures/Fig5/`, each
+holding a closed-form estimate (`y`) and the threshold found by integrating the
+linearised equations (`yy`). It needs no simulation output and runs in under a
+minute.
+
+These files are not the curves plotted in figure 5, whose data is provided in
+[`figures/Fig5/`](figures/Fig5/) (`zrc_eq2.csv` for panel (a), `omegarho.csv`
+for panel (b)). The critical activity used in figure 4 and in the article is
+given in closed form by Eq. (zetaRhoDeltaMuC) of the article.
 
 ---
 
