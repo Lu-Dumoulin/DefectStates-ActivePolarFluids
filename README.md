@@ -61,17 +61,17 @@ density $\rho$, the polarity $\mathbf{P}$ and the velocity $\mathbf{v}$.
 **Density** — advection, diffusion driven by the chemical potential $\mu$, and
 renewal at rate $k_d = 1/\tau$ towards the target density $\rho_0$:
 
-$$\partial_t \rho = -\nabla\cdot(\rho\mathbf{v}) + \gamma\,\Delta\mu + k_d(\rho_0-\rho)$$
+$$\partial_t \rho = -\nabla\cdot(\rho\mathbf{v}) + \gamma \Delta\mu + k_d(\rho_0-\rho)$$
 
 **Polarity** — flow alignment and relaxation along the molecular field
 $\mathbf{h}$, with $D/Dt$ the co-rotational derivative (advection and
 rotation by the flow) and $\mathbf{u}$ the strain rate:
 
-$$\frac{D\mathbf{P}}{Dt} = -\nu\,\mathbf{P}\cdot\mathbf{u} + \frac{1}{\Gamma}\mathbf{h}$$
+$$\frac{D\mathbf{P}}{Dt} = -\nu \mathbf{P}\cdot\mathbf{u} + \frac{1}{\Gamma}\mathbf{h}$$
 
 **Force balance** — viscous flow with substrate friction $\xi$, driven by the
-Ericksen stress and the active stresses $\zeta_\rho \Delta\mu\, \rho^3$ and
-$\zeta_p \Delta\mu\, \rho P_i P_j$.
+Ericksen stress and the active stresses $\zeta_\rho \Delta\mu \rho^3$ and
+$\zeta_p \Delta\mu \rho P_i P_j$.
 
 The full expressions are derived in the article and implemented in
 [`2D/kernels.jl`](2D/kernels.jl). Spatial derivatives and the force balance are
@@ -160,7 +160,7 @@ Each row of a table gives, in the notation of the article (Table I):
 | `t_check` | | interval between time-step updates |
 
 The initial condition is the uniform isotropic state with a small random
-perturbation: $\rho = \rho_0(1 + 0.002\,\eta)$, $\mathbf{P} = 0.002\,\eta'$,
+perturbation: $\rho = \rho_0(1 + 0.002 \eta)$, $\mathbf{P} = 0.002 \eta'$,
 with $\eta, \eta'$ uniform in $[-0.5, 0.5]$. For a given seed, a simulation is
 reproducible bit for bit on the same GPU model and CUDA version.
 

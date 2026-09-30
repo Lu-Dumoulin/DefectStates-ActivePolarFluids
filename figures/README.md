@@ -40,7 +40,7 @@ and TikZ packages.
 The quantities shown — defect density, structural persistence time, areas of
 low-density regions, shape order — are defined in the appendices of the
 article. Defect densities are counted per unit area of the computational
-domain, $(1008\,\Delta x)^2 = 101.6$ for $L = 10$.
+domain, $(1008 \Delta x)^2 = 101.6$ for $L = 10$.
 
 The data of figure 3 can be regenerated with the notebook in [`1D/`](../1D).
 The linear stability analysis in [`LSA/`](../LSA) is described in the main
